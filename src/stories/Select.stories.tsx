@@ -4,7 +4,7 @@ import { ComponentStory, ComponentMeta } from "@storybook/react";
 // import { within, userEvent } from "@storybook/testing-library";
 import { useForm } from "react-hook-form";
 
-import { Select } from "../Select";
+import { Select } from "../../packages/mui/src/Select";
 import { Form } from "./Form";
 
 export default {

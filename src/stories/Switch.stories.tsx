@@ -2,7 +2,7 @@ import Stack from "@mui/material/Stack";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { useForm } from "react-hook-form";
 
-import { Switch } from "../Switch";
+import { Switch } from "../../packages/mui/src/Switch";
 import { Form } from "./Form";
 
 export default {

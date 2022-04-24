@@ -18,7 +18,6 @@ export interface CheckboxGroupProps<
     "checked" | "name" | "defaultChecked" | "form"
   > {
   name: Path<TFieldValues>;
-  group?: Group;
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
   errors: FieldErrors<TFieldValues>;
@@ -28,7 +27,6 @@ export function CheckboxGroup<Group extends boolean | undefined, TFieldValues>({
   control,
   name,
   rules,
-  group = false,
   value,
   ...props
 }: CheckboxGroupProps<Group, TFieldValues>) {
