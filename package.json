@@ -15,16 +15,20 @@
     "@mui/material": "5.6.2",
     "react": "18.0.0",
     "react-dom": "18.0.0",
-    "react-hook-form": "^7.30.0"
+    "react-hook-form": "7.30.0"
+  },
+  "peerDependencies": {
+    "@mui/material": ">5.6.0",
+    "react-hook-form": ">7.0.0"
   },
   "devDependencies": {
     "@babel/core": "7.17.9",
-    "@storybook/addon-actions": "6.4.22",
-    "@storybook/addon-essentials": "6.4.22",
-    "@storybook/addon-interactions": "6.4.22",
-    "@storybook/addon-links": "6.4.22",
+    "@storybook/addon-actions": "6.5.0-alpha.64",
+    "@storybook/addon-essentials": "6.5.0-alpha.64",
+    "@storybook/addon-interactions": "6.5.0-alpha.64",
+    "@storybook/addon-links": "6.5.0-alpha.64",
     "@storybook/builder-vite": "0.1.30",
-    "@storybook/react": "6.4.22",
+    "@storybook/react": "6.5.0-alpha.64",
     "@storybook/testing-library": "0.0.11",
     "@types/react": "18.0.0",
     "@types/react-dom": "18.0.0",

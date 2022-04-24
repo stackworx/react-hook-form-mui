@@ -6,25 +6,22 @@ import {
   useController,
   FieldValues,
 } from "react-hook-form";
-import MuiTextField, {
-  TextFieldProps as MuiTextFieldProps,
-} from "@mui/material/TextField";
+import MuiSelect, { SelectProps as MuiSelectProps } from "@mui/material/Select";
 
-export interface TextFieldProps<TFieldValues extends FieldValues = FieldValues>
-  extends Omit<MuiTextFieldProps, "value"> {
+export interface SelectProps<TFieldValues extends FieldValues = FieldValues>
+  extends Omit<MuiSelectProps, "value"> {
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
   errors: FieldErrors<TFieldValues>;
 }
 
-export function TextField<TFieldValues>({
-  // register,
+export function Select<TFieldValues>({
   control,
   name,
   rules,
   ...props
-}: TextFieldProps<TFieldValues>) {
+}: SelectProps<TFieldValues>) {
   const {
     field: { onChange, onBlur, value, ref },
     fieldState: { isTouched, error },
@@ -35,7 +32,7 @@ export function TextField<TFieldValues>({
   });
 
   return (
-    <MuiTextField
+    <MuiSelect
       {...props}
       inputRef={ref}
       onChange={onChange}
@@ -43,9 +40,6 @@ export function TextField<TFieldValues>({
       value={value}
       name={name}
       error={!!error}
-      // TODO: handle required error
-      // helperText={isTouched && error?.message}
-      helperText={error?.message}
     />
   );
 }

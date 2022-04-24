@@ -6,28 +6,29 @@ import {
   useController,
   FieldValues,
 } from "react-hook-form";
-import MuiTextField, {
-  TextFieldProps as MuiTextFieldProps,
-} from "@mui/material/TextField";
+import MuiCheckbox, {
+  CheckboxProps as MuiCheckboxProps,
+} from "@mui/material/Checkbox";
 
-export interface TextFieldProps<TFieldValues extends FieldValues = FieldValues>
-  extends Omit<MuiTextFieldProps, "value"> {
+export interface CheckboxProps<TFieldValues extends FieldValues = FieldValues>
+  extends Omit<
+    MuiCheckboxProps,
+    "checked" | "name" | "value" | "defaultChecked" | "form"
+  > {
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
   errors: FieldErrors<TFieldValues>;
 }
 
-export function TextField<TFieldValues>({
-  // register,
+export function Checkbox<TFieldValues>({
   control,
   name,
   rules,
   ...props
-}: TextFieldProps<TFieldValues>) {
+}: CheckboxProps<TFieldValues>) {
   const {
     field: { onChange, onBlur, value, ref },
-    fieldState: { isTouched, error },
   } = useController({
     name,
     control,
@@ -35,17 +36,15 @@ export function TextField<TFieldValues>({
   });
 
   return (
-    <MuiTextField
+    <MuiCheckbox
       {...props}
+      checked={Boolean(value)}
       inputRef={ref}
       onChange={onChange}
       onBlur={onBlur}
       value={value}
+      required={!!rules?.required}
       name={name}
-      error={!!error}
-      // TODO: handle required error
-      // helperText={isTouched && error?.message}
-      helperText={error?.message}
     />
   );
 }

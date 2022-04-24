@@ -1,21 +1,22 @@
 import Stack from "@mui/material/Stack";
 import MenuItem from "@mui/material/MenuItem";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
+// import { within, userEvent } from "@storybook/testing-library";
 import { useForm } from "react-hook-form";
 
-import { TextField } from "../TextField";
+import { Select } from "../Select";
 import { Form } from "./Form";
 
 export default {
-  title: "Core/TextField",
-  component: TextField,
+  title: "Core/Select",
+  component: Select,
   parameters: {
     layout: "fullscreen",
   },
   argTypes: { onSubmit: { action: "submit" } },
-} as ComponentMeta<typeof TextField>;
+} as ComponentMeta<typeof Select>;
 
-const Template: ComponentStory<typeof TextField> = (args: any) => {
+const Template: ComponentStory<typeof Select> = (args: any) => {
   const formProps = useForm<{
     text: any;
   }>({
@@ -26,7 +27,7 @@ const Template: ComponentStory<typeof TextField> = (args: any) => {
   return (
     <Form {...formProps} onSubmit={args.onSubmit}>
       <Stack>
-        <TextField
+        <Select
           name="text"
           label="Text"
           control={formProps.control}
@@ -53,7 +54,6 @@ export const SingleSelect = Template.bind({});
 SingleSelect.args = {
   label: "Single Select",
   rules: { required: "Required" },
-  select: true,
   children: [
     <MenuItem key={10} value={10}>
       Ten
@@ -71,8 +71,7 @@ export const MultipleSelect = Template.bind({});
 MultipleSelect.args = {
   label: "Multiple Select",
   rules: { required: "Required" },
-  select: true,
-  SelectProps: { multiple: true },
+  multiple: true,
   children: [
     <MenuItem key={10} value={10}>
       Ten
