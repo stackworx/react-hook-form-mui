@@ -3,12 +3,13 @@ import {
   UseFormReturn,
   SubmitHandler,
   FormState,
-  UnpackNestedValue,
   UseFormGetValues,
 } from "react-hook-form";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 interface FormProps<TFieldValues> extends UseFormReturn<TFieldValues, {}> {
   children: React.ReactNode;
@@ -53,30 +54,32 @@ export function Form<TFieldValues>({
   onSubmit,
 }: FormProps<TFieldValues>) {
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Box sx={{ p: 2 }}>
-        <>{children}</>
-        <Values getValues={getValues} />
-        {/* <Errors errors={formState.errors} /> */}
-        <Stack sx={{ p: 1 }} direction="row">
-          <Button
-            sx={{ m: 1 }}
-            variant="contained"
-            color="primary"
-            type="submit"
-          >
-            Submit
-          </Button>
-          <Button
-            sx={{ m: 1 }}
-            variant="contained"
-            color="secondary"
-            onClick={() => reset()}
-          >
-            Reset
-          </Button>
-        </Stack>
-      </Box>
-    </form>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Box sx={{ p: 2 }}>
+          <>{children}</>
+          <Values getValues={getValues} />
+          {/* <Errors errors={formState.errors} /> */}
+          <Stack sx={{ p: 1 }} direction="row">
+            <Button
+              sx={{ m: 1 }}
+              variant="contained"
+              color="primary"
+              type="submit"
+            >
+              Submit
+            </Button>
+            <Button
+              sx={{ m: 1 }}
+              variant="contained"
+              color="secondary"
+              onClick={() => reset()}
+            >
+              Reset
+            </Button>
+          </Stack>
+        </Box>
+      </form>
+    </LocalizationProvider>
   );
 }

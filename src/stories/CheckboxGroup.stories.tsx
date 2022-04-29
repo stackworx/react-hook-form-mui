@@ -1,7 +1,7 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { useForm } from "react-hook-form";
 
-import { CheckboxGroup } from "../CheckboxGroup";
+import { CheckboxGroup } from "../../packages/mui/src/CheckboxGroup";
 import { Form } from "./Form";
 
 export default {

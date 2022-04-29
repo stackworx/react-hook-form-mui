@@ -1,0 +1,12 @@
+{
+  "name": "mui-react-hook-form",
+  "version": "0.0.0",
+  "scripts": {
+    "build": "tsc && vite build",
+    "typecheck": "tsc"
+  },
+  "peerDependencies": {
+    "@mui/material": ">5.6.0",
+    "react-hook-form": ">7.0.0"
+  }
+}

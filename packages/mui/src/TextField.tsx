@@ -19,7 +19,6 @@ export interface TextFieldProps<TFieldValues extends FieldValues = FieldValues>
 }
 
 export function TextField<TFieldValues>({
-  // register,
   control,
   name,
   rules,
@@ -34,6 +33,8 @@ export function TextField<TFieldValues>({
     rules,
   });
 
+  console.log(isTouched, error);
+
   return (
     <MuiTextField
       {...props}
@@ -44,8 +45,7 @@ export function TextField<TFieldValues>({
       name={name}
       error={!!error}
       // TODO: handle required error
-      // helperText={isTouched && error?.message}
-      helperText={error?.message}
+      helperText={isTouched && error?.message}
     />
   );
 }

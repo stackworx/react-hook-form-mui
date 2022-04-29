@@ -4,7 +4,7 @@ import { ComponentStory, ComponentMeta } from "@storybook/react";
 // import { within, userEvent } from "@storybook/testing-library";
 import { useForm } from "react-hook-form";
 
-import { Select } from "../Select";
+import { Select } from "../../packages/mui/src/Select";
 import { Form } from "./Form";
 
 export default {
@@ -21,7 +21,7 @@ const Template: ComponentStory<typeof Select> = (args: any) => {
     text: any;
   }>({
     defaultValues: {
-      text: args.SelectProps?.multiple ? [] : "",
+      text: args?.multiple ? [] : "",
     },
   });
   return (
@@ -37,17 +37,6 @@ const Template: ComponentStory<typeof Select> = (args: any) => {
       </Stack>
     </Form>
   );
-};
-
-export const Default = Template.bind({});
-Default.args = {
-  label: "Default",
-};
-
-export const Required = Template.bind({});
-Required.args = {
-  label: "Required",
-  rules: { required: "Required" },
 };
 
 export const SingleSelect = Template.bind({});

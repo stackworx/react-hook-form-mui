@@ -3,7 +3,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { useForm } from "react-hook-form";
 
-import { TextField } from "../TextField";
+import { TextField } from "../../packages/mui/src/TextField";
 import { Form } from "./Form";
 
 export default {
