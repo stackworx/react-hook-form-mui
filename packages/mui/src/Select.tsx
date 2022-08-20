@@ -2,7 +2,6 @@ import {
   Path,
   RegisterOptions,
   Control,
-  FieldErrors,
   useController,
   FieldValues,
 } from "react-hook-form";
@@ -13,7 +12,6 @@ export interface SelectProps<TFieldValues extends FieldValues = FieldValues>
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
-  errors: FieldErrors<TFieldValues>;
 }
 
 export function Select<TFieldValues>({
@@ -43,3 +41,5 @@ export function Select<TFieldValues>({
     />
   );
 }
+
+Select.displayName = "MuiReactHookFormSelect";

@@ -15,8 +15,11 @@ import {
 import TextField from "@mui/material/TextField";
 import { format } from "date-fns";
 
-export interface DatePickerProps<TFieldValues extends FieldValues = FieldValues>
-  extends Omit<MuiDatePickerProps, "value"> {
+export interface DatePickerProps<
+  TInputDate,
+  TDate,
+  TFieldValues extends FieldValues = FieldValues
+> extends Omit<MuiDatePickerProps<TInputDate, TDate>, "value"> {
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
@@ -25,14 +28,14 @@ export interface DatePickerProps<TFieldValues extends FieldValues = FieldValues>
   errors: FieldErrors<TFieldValues>;
 }
 
-export function DatePicker<TFieldValues>({
+export function DatePicker<TInputDate, TDate, TFieldValues>({
   control,
   name,
   rules,
   setError,
   clearErrors,
   ...props
-}: DatePickerProps<TFieldValues>) {
+}: DatePickerProps<TInputDate, TDate, TFieldValues>) {
   const {
     field: { onChange, value, ref },
     fieldState,
@@ -46,6 +49,7 @@ export function DatePicker<TFieldValues>({
     <MuiDatePicker
       {...props}
       onChange={onChange}
+      // @ts-expect-error
       value={value}
       onError={(reason, value) => {
         console.log(reason, value);
@@ -56,6 +60,11 @@ export function DatePicker<TFieldValues>({
 
           case "disablePast":
             setError(name, { message: "Values in the past are not allowed" });
+            break;
+          case "disableFuture":
+            break;
+          case "minDate":
+            // TODO
             break;
 
           case "maxDate":

@@ -16,8 +16,10 @@ import TextField from "@mui/material/TextField";
 import { format } from "date-fns";
 
 export interface DateTimePickerProps<
+  TInputDate,
+  TDate,
   TFieldValues extends FieldValues = FieldValues
-> extends Omit<MuiDateTimePickerProps, "value"> {
+> extends Omit<MuiDateTimePickerProps<TInputDate, TDate>, "value"> {
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
@@ -26,14 +28,14 @@ export interface DateTimePickerProps<
   errors: FieldErrors<TFieldValues>;
 }
 
-export function DateTimePicker<TFieldValues>({
+export function DateTimePicker<TInputDate, TDate, TFieldValues>({
   control,
   name,
   rules,
   setError,
   clearErrors,
   ...props
-}: DateTimePickerProps<TFieldValues>) {
+}: DateTimePickerProps<TInputDate, TDate, TFieldValues>) {
   const {
     field: { onChange, value, ref },
     fieldState,
@@ -47,6 +49,7 @@ export function DateTimePicker<TFieldValues>({
     <MuiDateTimePicker
       {...props}
       onChange={onChange}
+      // @ts-expect-error
       value={value}
       onError={(reason, value) => {
         console.log(reason, value);

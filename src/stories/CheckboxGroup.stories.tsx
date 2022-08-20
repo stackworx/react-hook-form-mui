@@ -1,5 +1,7 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { useForm } from "react-hook-form";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 import { CheckboxGroup } from "../../packages/mui/src/CheckboxGroup";
 import { Form } from "./Form";
@@ -23,30 +25,48 @@ const Template: ComponentStory<typeof CheckboxGroup> = (args: any) => {
   });
   return (
     <Form {...formProps} onSubmit={args.onSubmit}>
-      <CheckboxGroup
-        name="colours"
-        label="Red"
-        value="red"
-        control={formProps.control}
-        errors={formProps.formState.errors}
-        {...args}
-      />
-      <CheckboxGroup
-        name="colours"
-        label="Green"
-        value="green"
-        control={formProps.control}
-        errors={formProps.formState.errors}
-        {...args}
-      />
-      <CheckboxGroup
-        name="colours"
-        label="Blue"
-        value="blue"
-        control={formProps.control}
-        errors={formProps.formState.errors}
-        {...args}
-      />
+      <FormGroup>
+        <FormControlLabel
+          control={
+            <CheckboxGroup
+              name="colours"
+              value="red"
+              control={formProps.control}
+              errors={formProps.formState.errors}
+              {...args}
+            />
+          }
+          label="Red"
+        ></FormControlLabel>
+      </FormGroup>
+      <FormGroup>
+        <FormControlLabel
+          control={
+            <CheckboxGroup
+              name="colours"
+              value="green"
+              control={formProps.control}
+              errors={formProps.formState.errors}
+              {...args}
+            />
+          }
+          label="Green"
+        ></FormControlLabel>
+      </FormGroup>
+      <FormGroup>
+        <FormControlLabel
+          control={
+            <CheckboxGroup
+              name="colours"
+              value="blue"
+              control={formProps.control}
+              errors={formProps.formState.errors}
+              {...args}
+            />
+          }
+          label="Blue"
+        ></FormControlLabel>
+      </FormGroup>
     </Form>
   );
 };

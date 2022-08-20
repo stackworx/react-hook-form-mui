@@ -2,7 +2,6 @@ import {
   Path,
   RegisterOptions,
   Control,
-  FieldErrors,
   useController,
   FieldValues,
 } from "react-hook-form";
@@ -15,7 +14,6 @@ export interface TextFieldProps<TFieldValues extends FieldValues = FieldValues>
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
-  errors: FieldErrors<TFieldValues>;
 }
 
 export function TextField<TFieldValues>({
@@ -33,8 +31,6 @@ export function TextField<TFieldValues>({
     rules,
   });
 
-  console.log(isTouched, error);
-
   return (
     <MuiTextField
       {...props}
@@ -44,8 +40,9 @@ export function TextField<TFieldValues>({
       value={value}
       name={name}
       error={!!error}
-      // TODO: handle required error
-      helperText={isTouched && error?.message}
+      helperText={(isTouched && error?.message) ?? "Error"}
     />
   );
 }
+
+TextField.displayName = "MuiReactHookFormTextField";

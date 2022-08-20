@@ -1,8 +1,8 @@
+import * as React from "react";
 import {
   Path,
   RegisterOptions,
   Control,
-  FieldErrors,
   useController,
   FieldValues,
 } from "react-hook-form";
@@ -18,7 +18,6 @@ export interface RadioGroupProps<TFieldValues extends FieldValues = FieldValues>
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
-  errors: FieldErrors<TFieldValues>;
 }
 
 export function RadioGroup<TFieldValues>({
@@ -28,7 +27,7 @@ export function RadioGroup<TFieldValues>({
   ...props
 }: RadioGroupProps<TFieldValues>) {
   const {
-    field: { onChange, onBlur, value, ref },
+    field: { onChange, onBlur, value },
   } = useController({
     name,
     control,
@@ -38,13 +37,12 @@ export function RadioGroup<TFieldValues>({
   return (
     <MuiRadioGroup
       {...props}
-      checked={Boolean(value)}
-      inputRef={ref}
       onChange={onChange}
       onBlur={onBlur}
       value={value}
-      required={!!rules?.required}
       name={name}
     />
   );
 }
+
+RadioGroup.displayName = "MuiReactHookFormRadioGroup";

@@ -15,8 +15,11 @@ import {
 import TextField from "@mui/material/TextField";
 import { format } from "date-fns";
 
-export interface TimePickerProps<TFieldValues extends FieldValues = FieldValues>
-  extends Omit<MuiTimePickerProps, "value"> {
+export interface TimePickerProps<
+  TInputDate,
+  TDate,
+  TFieldValues extends FieldValues = FieldValues
+> extends Omit<MuiTimePickerProps<TInputDate, TDate>, "value"> {
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
@@ -25,14 +28,14 @@ export interface TimePickerProps<TFieldValues extends FieldValues = FieldValues>
   errors: FieldErrors<TFieldValues>;
 }
 
-export function TimePicker<TFieldValues>({
+export function TimePicker<TInputDate, TDate, TFieldValues>({
   control,
   name,
   rules,
   setError,
   clearErrors,
   ...props
-}: TimePickerProps<TFieldValues>) {
+}: TimePickerProps<TInputDate, TDate, TFieldValues>) {
   const {
     field: { onChange, value, ref },
     fieldState,
@@ -46,6 +49,7 @@ export function TimePicker<TFieldValues>({
     <MuiTimePicker
       {...props}
       onChange={onChange}
+      // @ts-expect-error
       value={value}
       onError={(reason, value) => {
         console.log(reason, value);
@@ -54,11 +58,11 @@ export function TimePicker<TFieldValues>({
             setError(name, { type: "value", message: "" });
             break;
 
-          case "disablePast":
-            setError(name, { message: "Values in the past are not allowed" });
+          case "minutesStep":
+            // TODO
             break;
 
-          case "maxDate":
+          case "maxTime":
             setError(name, {
               type: "max",
               message: `Date should not be after ${format(
@@ -68,8 +72,7 @@ export function TimePicker<TFieldValues>({
               )}`,
             });
             break;
-
-          case "minDate":
+          case "minTime":
             setError(name, {
               type: "min",
               message: `Date should not be before ${format(
@@ -80,7 +83,9 @@ export function TimePicker<TFieldValues>({
             });
             break;
 
-          case "shouldDisableDate":
+          case "shouldDisableTime-hours":
+          case "shouldDisableTime-minutes":
+          case "shouldDisableTime-seconds":
             // TODO
             // shouldDisableDate returned true, render custom message according to the `shouldDisableDate` logic
             // setError(name, getShouldDisableDateError(value));

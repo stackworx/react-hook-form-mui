@@ -46,7 +46,7 @@ Default.args = {
 export const Required = Template.bind({});
 Required.args = {
   label: "Required",
-  rules: { required: "Required" },
+  rules: { required: true, maxLength: 5 },
 };
 
 export const SingleSelect = Template.bind({});

@@ -2,7 +2,6 @@ import {
   Path,
   RegisterOptions,
   Control,
-  FieldErrors,
   useController,
   FieldValues,
 } from "react-hook-form";
@@ -18,7 +17,6 @@ export interface CheckboxProps<TFieldValues extends FieldValues = FieldValues>
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
-  errors: FieldErrors<TFieldValues>;
 }
 
 export function Checkbox<TFieldValues>({
@@ -48,3 +46,5 @@ export function Checkbox<TFieldValues>({
     />
   );
 }
+
+Checkbox.displayName = "MuiReactHookFormCheckbox";

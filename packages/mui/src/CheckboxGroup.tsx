@@ -2,7 +2,6 @@ import {
   Path,
   RegisterOptions,
   Control,
-  FieldErrors,
   useController,
   FieldValues,
 } from "react-hook-form";
@@ -11,7 +10,6 @@ import MuiCheckbox, {
 } from "@mui/material/Checkbox";
 
 export interface CheckboxGroupProps<
-  Group extends boolean | undefined,
   TFieldValues extends FieldValues = FieldValues
 > extends Omit<
     MuiCheckboxProps,
@@ -20,16 +18,15 @@ export interface CheckboxGroupProps<
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
-  errors: FieldErrors<TFieldValues>;
 }
 
-export function CheckboxGroup<Group extends boolean | undefined, TFieldValues>({
+export function CheckboxGroup<TFieldValues>({
   control,
   name,
   rules,
   value,
   ...props
-}: CheckboxGroupProps<Group, TFieldValues>) {
+}: CheckboxGroupProps<TFieldValues>) {
   const { field } = useController({
     name,
     control,
@@ -67,3 +64,5 @@ export function CheckboxGroup<Group extends boolean | undefined, TFieldValues>({
     />
   );
 }
+
+CheckboxGroup.displayName = "MuiReactHookFormCheckboxGroup";

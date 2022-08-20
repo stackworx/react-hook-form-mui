@@ -2,7 +2,6 @@ import {
   Path,
   RegisterOptions,
   Control,
-  FieldErrors,
   useController,
   FieldValues,
 } from "react-hook-form";
@@ -16,7 +15,6 @@ export interface SwitchProps<TFieldValues extends FieldValues = FieldValues>
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
-  errors: FieldErrors<TFieldValues>;
 }
 
 export function Switch<TFieldValues>({
@@ -46,3 +44,5 @@ export function Switch<TFieldValues>({
     />
   );
 }
+
+Switch.displayName = "MuiReactHookFormSwitch";
