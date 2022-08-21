@@ -13,7 +13,7 @@ jobs:
       - name: Build
         run: |
           npm ci
-          npm build
+          npm run build
         working-directory: docs
 
       # Docs: https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-docusaurus
