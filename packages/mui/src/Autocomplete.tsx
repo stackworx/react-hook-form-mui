@@ -4,7 +4,6 @@ import {
   Control,
   useController,
   FieldValues,
-  UseFormSetValue,
 } from "react-hook-form";
 import MuiAutocomplete, {
   AutocompleteProps as MuiAutocompleteProps,
@@ -23,7 +22,6 @@ export interface AutocompleteProps<
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
-  setValue: UseFormSetValue<TFieldValues>;
 }
 
 export function Autocomplete<
@@ -35,13 +33,10 @@ export function Autocomplete<
   name,
   control,
   rules,
-  setValue,
   onChange,
   ...props
 }: AutocompleteProps<T, Multiple, DisableClearable, FreeSolo>) {
-  const {
-    field: { onBlur, value },
-  } = useController({
+  const { field } = useController({
     name,
     control,
     rules,
@@ -52,11 +47,11 @@ export function Autocomplete<
       onChange={
         onChange ??
         function (_event, value) {
-          setValue(name, value);
+          field.onChange(value);
         }
       }
-      onBlur={onBlur}
-      value={value}
+      onBlur={field.onBlur}
+      value={field.value}
       {...props}
     />
   );

@@ -23,7 +23,7 @@ const Template: ComponentStory<typeof ToggleButtonGroup> = (args: any) => {
     alignment: any;
   }>({
     defaultValues: {
-      alignment: [],
+      alignment: "left",
     },
   });
   return (
@@ -33,6 +33,7 @@ const Template: ComponentStory<typeof ToggleButtonGroup> = (args: any) => {
         value="red"
         control={formProps.control}
         setValue={formProps.setValue}
+        exclusive={true}
         {...args}
       >
         <ToggleButton value="left" aria-label="left aligned">

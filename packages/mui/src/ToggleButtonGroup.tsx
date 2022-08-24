@@ -5,7 +5,6 @@ import {
   Control,
   useController,
   FieldValues,
-  UseFormSetValue,
 } from "react-hook-form";
 import MuiToggleButtonGroup, {
   ToggleButtonGroupProps as MuiToggleButtonGroupProps,
@@ -22,7 +21,6 @@ export interface ToggleButtonGroupProps<
   rules?: RegisterOptions;
   control: Control<TFieldValues>;
   exclusive: Exclusive;
-  setValue: UseFormSetValue<TFieldValues>;
 }
 
 export function ToggleButtonGroup<
@@ -32,10 +30,7 @@ export function ToggleButtonGroup<
   control,
   name,
   rules,
-  // TODO: handle exclusive
-  exclusive,
   children,
-  setValue,
   ...props
 }: ToggleButtonGroupProps<Exclusive, TFieldValues>) {
   const { field } = useController({
@@ -44,27 +39,14 @@ export function ToggleButtonGroup<
     rules,
   });
 
-  const { onBlur, value } = field;
-
   return (
     <MuiToggleButtonGroup
       {...props}
-      value={value}
+      value={field.value}
       onChange={(_event, value) => {
-        /*
-        if (exclusive) {
-          setValue(name, value);
-        } else {
-          if (Array.isArray(field.value)) {
-            setValue(name, value);
-          } else {
-            throw new Error(`Expected Array. Got: ${field.value}`);
-          }
-        }
-        */
-        setValue(name, value);
+        field.onChange(value);
       }}
-      onBlur={onBlur}
+      onBlur={field.onBlur}
     >
       {children}
     </MuiToggleButtonGroup>
