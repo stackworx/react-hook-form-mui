@@ -1,5 +1,5 @@
 {
-  "name": "mui-react-hook-form",
+  "name": "@stackworx/react-hook-form-mui",
   "version": "0.0.0",
   "scripts": {
     "build": "tsc && vite build",

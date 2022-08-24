@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Path,
   RegisterOptions,
@@ -15,8 +14,6 @@ import {
 } from "@mui/x-date-pickers";
 import TextField from "@mui/material/TextField";
 import { format } from "date-fns";
-
-import { ErrorContext } from "./ErrorContext";
 
 export interface DatePickerProps<
   TInputDate,
@@ -48,7 +45,6 @@ export function DatePicker<TInputDate, TDate, TFieldValues>({
     rules,
   });
 
-  const {} = React.useContext(ErrorContext);
   return (
     <MuiDatePicker
       {...props}
@@ -56,6 +52,7 @@ export function DatePicker<TInputDate, TDate, TFieldValues>({
       // @ts-expect-error
       value={value}
       onError={(reason, value) => {
+        console.log(reason, value);
         switch (reason) {
           case "invalidDate":
             setError(name, { type: "value", message: "" });

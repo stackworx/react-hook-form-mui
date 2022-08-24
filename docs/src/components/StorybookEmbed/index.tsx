@@ -16,6 +16,7 @@ interface Props {
 }
 
 export function StorybookEmbed({ group = "core", name }: Props) {
+  // TODO: whitebackground as dark mode breaks
   // TODO border
   const src = React.useMemo(() => storyUrl(group, name), [group, name]);
   return <iframe width="100%" height="300px" src={src}></iframe>;

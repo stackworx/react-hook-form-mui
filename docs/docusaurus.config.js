@@ -6,8 +6,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'React Hook Form MUI',
+  tagline: 'MUI Bindings for React Hook Form',
   url: 'https://stackworx.github.io/',
   baseUrl: '/react-hook-form-mui/',
   onBrokenLinks: 'throw',
