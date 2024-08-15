@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[840],{117:o=>{o.exports=JSON.parse('[{"label":"hola","permalink":"/react-hook-form-mui/blog/tags/hola","count":1},{"label":"docusaurus","permalink":"/react-hook-form-mui/blog/tags/docusaurus","count":1}]')}}]);
