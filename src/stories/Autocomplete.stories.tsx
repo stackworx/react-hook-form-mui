@@ -1,4 +1,4 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
+import { StoryFn, Meta } from "@storybook/react";
 import { useForm } from "react-hook-form";
 import { AutocompleteRenderInputParams, TextField } from "@mui/material";
 
@@ -13,9 +13,9 @@ export default {
     layout: "fullscreen",
   },
   argTypes: { onSubmit: { action: "submit" } },
-} as ComponentMeta<typeof Autocomplete>;
+} as Meta<typeof Autocomplete>;
 
-const Template: ComponentStory<typeof Autocomplete> = (args: any) => {
+const Template: StoryFn<typeof Autocomplete> = (args: any) => {
   const formProps = useForm<{
     autocomplete: any;
   }>({
@@ -54,10 +54,11 @@ const Template: ComponentStory<typeof Autocomplete> = (args: any) => {
   );
 };
 
-export const Default = Template.bind({});
+export const Default = {
+  render: Template,
+};
 
-export const Multiple = Template.bind({});
-Multiple.args = { multiple: true };
-// Required.args = {
-//   rules: { required: "Required" },
-// };
+export const Multiple = {
+  render: Template,
+  args: { multiple: true },
+};

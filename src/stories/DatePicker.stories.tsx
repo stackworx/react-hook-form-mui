@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { useForm } from "react-hook-form";
+import { StoryFn, Meta } from "@storybook/react";
+import { useForm, FormProvider } from "react-hook-form";
 
 import { DatePicker } from "../../packages/x-date-pickers/src/DatePicker";
 import { Form } from "./Form";
@@ -12,35 +12,37 @@ export default {
     layout: "fullscreen",
   },
   argTypes: { onSubmit: { action: "submit" } },
-} as ComponentMeta<typeof DatePicker>;
+} as Meta<typeof DatePicker>;
 
-const Template: ComponentStory<typeof DatePicker> = (args: any) => {
+const Template: StoryFn<typeof DatePicker> = (args: any) => {
   const formProps = useForm<{
     picker: any;
   }>({
     defaultValues: {
-      picker: null,
+      picker: "08/24/2022",
     },
   });
   return (
-    <Form {...formProps} onSubmit={args.onSubmit}>
-      <Stack>
-        <DatePicker
-          name="picker"
-          label="Date Picker"
-          setError={formProps.setError}
-          clearErrors={formProps.clearErrors}
-          control={formProps.control}
-          errors={formProps.formState.errors}
-          rules={{ required: true }}
-          {...args}
-        />
-      </Stack>
-    </Form>
+    <FormProvider {...formProps}>
+      <Form {...formProps} onSubmit={args.onSubmit}>
+        <Stack>
+          <DatePicker
+            name="picker"
+            label="Date Picker"
+            rules={{ required: true }}
+            disablePast={true}
+            {...args}
+          />
+        </Stack>
+      </Form>
+    </FormProvider>
   );
 };
 
-export const Default = Template.bind({});
-Default.args = {
-  label: "Default",
+export const Default = {
+  render: Template,
+
+  args: {
+    label: "Default",
+  },
 };

@@ -1,12 +1,9 @@
 import {
   Path,
   RegisterOptions,
-  Control,
-  FieldErrors,
   useController,
   FieldValues,
-  UseFormSetError,
-  UseFormClearErrors,
+  useFormContext,
 } from "react-hook-form";
 import {
   TimePicker as MuiTimePicker,
@@ -22,20 +19,14 @@ export interface TimePickerProps<
 > extends Omit<MuiTimePickerProps<TInputDate, TDate>, "value"> {
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
-  control: Control<TFieldValues>;
-  setError: UseFormSetError<TFieldValues>;
-  clearErrors: UseFormClearErrors<TFieldValues>;
-  errors: FieldErrors<TFieldValues>;
 }
 
 export function TimePicker<TInputDate, TDate, TFieldValues>({
-  control,
   name,
   rules,
-  setError,
-  clearErrors,
   ...props
 }: TimePickerProps<TInputDate, TDate, TFieldValues>) {
+  const { setError, clearErrors, control } = useFormContext();
   const {
     field: { onChange, value, ref },
     fieldState,
@@ -49,7 +40,6 @@ export function TimePicker<TInputDate, TDate, TFieldValues>({
     <MuiTimePicker
       {...props}
       onChange={onChange}
-      // @ts-expect-error
       value={value}
       onError={(reason, value) => {
         console.log(reason, value);

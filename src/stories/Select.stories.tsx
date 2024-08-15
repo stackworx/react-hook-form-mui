@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 import MenuItem from "@mui/material/MenuItem";
-import { ComponentStory, ComponentMeta } from "@storybook/react";
+import { StoryFn, Meta } from "@storybook/react";
 // import { within, userEvent } from "@storybook/testing-library";
 import { useForm } from "react-hook-form";
 
@@ -14,9 +14,9 @@ export default {
     layout: "fullscreen",
   },
   argTypes: { onSubmit: { action: "submit" } },
-} as ComponentMeta<typeof Select>;
+} as Meta<typeof Select>;
 
-const Template: ComponentStory<typeof Select> = (args: any) => {
+const Template: StoryFn<typeof Select> = (args: any) => {
   const formProps = useForm<{
     text: any;
   }>({
@@ -39,37 +39,43 @@ const Template: ComponentStory<typeof Select> = (args: any) => {
   );
 };
 
-export const SingleSelect = Template.bind({});
-SingleSelect.args = {
-  label: "Single Select",
-  rules: { required: "Required" },
-  children: [
-    <MenuItem key={10} value={10}>
-      Ten
-    </MenuItem>,
-    <MenuItem key={20} value={20}>
-      Twenty
-    </MenuItem>,
-    <MenuItem key={30} value={30}>
-      Thirty
-    </MenuItem>,
-  ],
+export const SingleSelect = {
+  render: Template,
+
+  args: {
+    label: "Single Select",
+    rules: { required: "Required" },
+    children: [
+      <MenuItem key={10} value={10}>
+        Ten
+      </MenuItem>,
+      <MenuItem key={20} value={20}>
+        Twenty
+      </MenuItem>,
+      <MenuItem key={30} value={30}>
+        Thirty
+      </MenuItem>,
+    ],
+  },
 };
 
-export const MultipleSelect = Template.bind({});
-MultipleSelect.args = {
-  label: "Multiple Select",
-  rules: { required: "Required" },
-  multiple: true,
-  children: [
-    <MenuItem key={10} value={10}>
-      Ten
-    </MenuItem>,
-    <MenuItem key={20} value={20}>
-      Twenty
-    </MenuItem>,
-    <MenuItem key={30} value={30}>
-      Thirty
-    </MenuItem>,
-  ],
+export const MultipleSelect = {
+  render: Template,
+
+  args: {
+    label: "Multiple Select",
+    rules: { required: "Required" },
+    multiple: true,
+    children: [
+      <MenuItem key={10} value={10}>
+        Ten
+      </MenuItem>,
+      <MenuItem key={20} value={20}>
+        Twenty
+      </MenuItem>,
+      <MenuItem key={30} value={30}>
+        Thirty
+      </MenuItem>,
+    ],
+  },
 };

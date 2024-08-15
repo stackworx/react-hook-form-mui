@@ -1,4 +1,4 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
+import { StoryFn, Meta } from "@storybook/react";
 import { useForm } from "react-hook-form";
 
 import { Switch } from "../../packages/mui/src/Switch";
@@ -11,9 +11,9 @@ export default {
     layout: "fullscreen",
   },
   argTypes: { onSubmit: { action: "submit" } },
-} as ComponentMeta<typeof Switch>;
+} as Meta<typeof Switch>;
 
-const Template: ComponentStory<typeof Switch> = (args: any) => {
+const Template: StoryFn<typeof Switch> = (args: any) => {
   const formProps = useForm<{
     switch: any;
   }>({
@@ -34,9 +34,14 @@ const Template: ComponentStory<typeof Switch> = (args: any) => {
   );
 };
 
-export const Default = Template.bind({});
+export const Default = {
+  render: Template,
+};
 
-export const Required = Template.bind({});
-Required.args = {
-  rules: { required: "Required" },
+export const Required = {
+  render: Template,
+
+  args: {
+    rules: { required: "Required" },
+  },
 };

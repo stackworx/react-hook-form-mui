@@ -1,4 +1,4 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
+import { StoryFn, Meta } from "@storybook/react";
 import { useForm } from "react-hook-form";
 import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
 import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
@@ -16,9 +16,9 @@ export default {
     layout: "fullscreen",
   },
   argTypes: { onSubmit: { action: "submit" } },
-} as ComponentMeta<typeof ToggleButtonGroup>;
+} as Meta<typeof ToggleButtonGroup>;
 
-const Template: ComponentStory<typeof ToggleButtonGroup> = (args: any) => {
+const Template: StoryFn<typeof ToggleButtonGroup> = (args: any) => {
   const formProps = useForm<{
     alignment: any;
   }>({
@@ -53,4 +53,6 @@ const Template: ComponentStory<typeof ToggleButtonGroup> = (args: any) => {
   );
 };
 
-export const Default = Template.bind({});
+export const Default = {
+  render: Template,
+};

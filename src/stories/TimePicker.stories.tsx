@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { useForm } from "react-hook-form";
+import { StoryFn, Meta } from "@storybook/react";
+import { useForm, FormProvider } from "react-hook-form";
 
 import { TimePicker } from "../../packages/x-date-pickers/src/TimePicker";
 import { Form } from "./Form";
@@ -12,9 +12,9 @@ export default {
     layout: "fullscreen",
   },
   argTypes: { onSubmit: { action: "submit" } },
-} as ComponentMeta<typeof TimePicker>;
+} as Meta<typeof TimePicker>;
 
-const Template: ComponentStory<typeof TimePicker> = (args: any) => {
+const Template: StoryFn<typeof TimePicker> = (args: any) => {
   const formProps = useForm<{
     picker: any;
   }>({
@@ -23,24 +23,25 @@ const Template: ComponentStory<typeof TimePicker> = (args: any) => {
     },
   });
   return (
-    <Form {...formProps} onSubmit={args.onSubmit}>
-      <Stack>
-        <TimePicker
-          name="picker"
-          label="Date Picker"
-          setError={formProps.setError}
-          clearErrors={formProps.clearErrors}
-          control={formProps.control}
-          errors={formProps.formState.errors}
-          rules={{ required: true }}
-          {...args}
-        />
-      </Stack>
-    </Form>
+    <FormProvider {...formProps}>
+      <Form {...formProps} onSubmit={args.onSubmit}>
+        <Stack>
+          <TimePicker
+            name="picker"
+            label="Date Picker"
+            rules={{ required: true }}
+            {...args}
+          />
+        </Stack>
+      </Form>
+    </FormProvider>
   );
 };
 
-export const Default = Template.bind({});
-Default.args = {
-  label: "Default",
+export const Default = {
+  render: Template,
+
+  args: {
+    label: "Default",
+  },
 };

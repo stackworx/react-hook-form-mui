@@ -1,4 +1,4 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
+import { StoryFn, Meta } from "@storybook/react";
 import { useForm } from "react-hook-form";
 
 import { Checkbox } from "../../packages/mui/src/Checkbox";
@@ -11,9 +11,9 @@ export default {
     layout: "fullscreen",
   },
   argTypes: { onSubmit: { action: "submit" } },
-} as ComponentMeta<typeof Checkbox>;
+} as Meta<typeof Checkbox>;
 
-const Template: ComponentStory<typeof Checkbox> = (args: any) => {
+const Template: StoryFn<typeof Checkbox> = (args: any) => {
   const formProps = useForm<{
     checkbox: any;
   }>({
@@ -34,9 +34,14 @@ const Template: ComponentStory<typeof Checkbox> = (args: any) => {
   );
 };
 
-export const Default = Template.bind({});
+export const Default = {
+  render: Template,
+};
 
-export const Required = Template.bind({});
-Required.args = {
-  rules: { required: "Required" },
+export const Required = {
+  render: Template,
+
+  args: {
+    rules: { required: "Required" },
+  },
 };

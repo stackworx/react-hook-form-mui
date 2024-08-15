@@ -1,4 +1,4 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
+import { StoryFn, Meta } from "@storybook/react";
 import { useForm } from "react-hook-form";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -13,9 +13,9 @@ export default {
     layout: "fullscreen",
   },
   argTypes: { onSubmit: { action: "submit" } },
-} as ComponentMeta<typeof CheckboxGroup>;
+} as Meta<typeof CheckboxGroup>;
 
-const Template: ComponentStory<typeof CheckboxGroup> = (args: any) => {
+const Template: StoryFn<typeof CheckboxGroup> = (args: any) => {
   const formProps = useForm<{
     colours: any;
   }>({
@@ -71,4 +71,6 @@ const Template: ComponentStory<typeof CheckboxGroup> = (args: any) => {
   );
 };
 
-export const Default = Template.bind({});
+export const Default = {
+  render: Template,
+};
