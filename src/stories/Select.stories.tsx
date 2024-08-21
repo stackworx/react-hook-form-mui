@@ -56,7 +56,6 @@ const Template: StoryFn<typeof Select> = (args: any) => {
       <Stack>
         <Select
           name="text"
-          label="Text"
           control={formProps.control}
           errors={formProps.formState.errors}
           {...args}
@@ -70,7 +69,6 @@ export const SingleSelect = {
   render: Template,
 
   args: {
-    label: "Single Select",
     rules: { required: "Required" },
     children: [
       <MenuItem key={10} value={10}>
@@ -90,7 +88,6 @@ export const MultipleSelect = {
   render: Template,
 
   args: {
-    label: "Multiple Select",
     rules: { required: "Required" },
     multiple: true,
     children: [
