@@ -4,24 +4,23 @@ import {
   Control,
   useController,
   FieldValues,
+  UseControllerProps,
+  FieldPath,
 } from "react-hook-form";
 import MuiTextField, {
   TextFieldProps as MuiTextFieldProps,
 } from "@mui/material/TextField";
 
-export interface TextFieldProps<TFieldValues extends FieldValues = FieldValues>
-  extends Omit<MuiTextFieldProps, "value"> {
-  name: Path<TFieldValues>;
-  rules?: RegisterOptions;
-  control: Control<TFieldValues>;
-}
+export type TextFieldProps<
+  TName extends FieldPath<TFieldValues>,
+  TFieldValues extends FieldValues = FieldValues,
+> = UseControllerProps<TFieldValues, TName> &
+  Omit<MuiTextFieldProps, "value" | "name">;
 
-export function TextField<TFieldValues>({
-  control,
-  name,
-  rules,
-  ...props
-}: TextFieldProps<TFieldValues>) {
+export function TextField<
+  TName extends FieldPath<TFieldValues>,
+  TFieldValues extends FieldValues,
+>({ control, name, rules, ...props }: TextFieldProps<TName, TFieldValues>) {
   const {
     field: { onChange, onBlur, value, ref },
     fieldState: { isTouched, error },

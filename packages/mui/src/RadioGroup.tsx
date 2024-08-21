@@ -1,31 +1,27 @@
 import * as React from "react";
 import {
-  Path,
-  RegisterOptions,
-  Control,
   useController,
   FieldValues,
+  FieldPath,
+  UseControllerProps,
 } from "react-hook-form";
 import MuiRadioGroup, {
   RadioGroupProps as MuiRadioGroupProps,
 } from "@mui/material/RadioGroup";
 
-export interface RadioGroupProps<TFieldValues extends FieldValues = FieldValues>
-  extends Omit<
+export type RadioGroupProps<
+  TName extends FieldPath<TFieldValues>,
+  TFieldValues extends FieldValues = FieldValues,
+> = UseControllerProps<TFieldValues, TName> &
+  Omit<
     MuiRadioGroupProps,
     "checked" | "name" | "value" | "defaultChecked" | "form"
-  > {
-  name: Path<TFieldValues>;
-  rules?: RegisterOptions;
-  control: Control<TFieldValues>;
-}
+  >;
 
-export function RadioGroup<TFieldValues>({
-  control,
-  name,
-  rules,
-  ...props
-}: RadioGroupProps<TFieldValues>) {
+export function RadioGroup<
+  TName extends FieldPath<TFieldValues>,
+  TFieldValues extends FieldValues,
+>({ control, name, rules, ...props }: RadioGroupProps<TName, TFieldValues>) {
   const {
     field: { onChange, onBlur, value },
   } = useController({

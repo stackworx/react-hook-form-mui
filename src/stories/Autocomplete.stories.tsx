@@ -62,3 +62,10 @@ export const Multiple = {
   render: Template,
   args: { multiple: true },
 };
+export const Required = {
+  render: Template,
+
+  args: {
+    rules: { required: "Required" },
+  },
+};

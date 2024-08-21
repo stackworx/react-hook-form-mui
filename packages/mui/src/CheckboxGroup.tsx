@@ -1,32 +1,29 @@
 import {
-  Path,
-  RegisterOptions,
-  Control,
   useController,
   FieldValues,
+  UseControllerProps,
+  FieldPath,
 } from "react-hook-form";
 import MuiCheckbox, {
   CheckboxProps as MuiCheckboxProps,
 } from "@mui/material/Checkbox";
 
-export interface CheckboxGroupProps<
-  TFieldValues extends FieldValues = FieldValues
-> extends Omit<
-    MuiCheckboxProps,
-    "checked" | "name" | "defaultChecked" | "form"
-  > {
-  name: Path<TFieldValues>;
-  rules?: RegisterOptions;
-  control: Control<TFieldValues>;
-}
+export type CheckboxGroupProps<
+  TName extends FieldPath<TFieldValues>,
+  TFieldValues extends FieldValues = FieldValues,
+> = UseControllerProps<TFieldValues, TName> &
+  Omit<MuiCheckboxProps, "checked" | "name" | "defaultChecked" | "form">;
 
-export function CheckboxGroup<TFieldValues>({
+export function CheckboxGroup<
+  TName extends FieldPath<TFieldValues>,
+  TFieldValues extends FieldValues = FieldValues,
+>({
   control,
   name,
   rules,
   value,
   ...props
-}: CheckboxGroupProps<TFieldValues>) {
+}: CheckboxGroupProps<TName, TFieldValues>) {
   const { field } = useController({
     name,
     control,
@@ -38,22 +35,15 @@ export function CheckboxGroup<TFieldValues>({
   return (
     <MuiCheckbox
       {...props}
-      checked={
-        // @ts-expect-error must be array
-        field.value.includes(value)
-      }
+      checked={field.value.includes(value)}
       inputRef={ref}
       onChange={(_event, checked) => {
         if (checked) {
-          onChange([
-            // @ts-expect-error must be array
-            ...field.value,
-            value,
-          ]);
+          onChange([...field.value, value]);
         } else {
           onChange(
             // @ts-expect-error must be array
-            field.value.filter((v) => v !== value)
+            field.value.filter((v) => v !== value),
           );
         }
       }}

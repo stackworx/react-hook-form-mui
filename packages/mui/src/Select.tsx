@@ -4,22 +4,21 @@ import {
   Control,
   useController,
   FieldValues,
+  FieldPath,
+  UseControllerProps,
 } from "react-hook-form";
 import MuiSelect, { SelectProps as MuiSelectProps } from "@mui/material/Select";
 
-export interface SelectProps<TFieldValues extends FieldValues = FieldValues>
-  extends Omit<MuiSelectProps, "value"> {
-  name: Path<TFieldValues>;
-  rules?: RegisterOptions;
-  control: Control<TFieldValues>;
-}
+export type SelectProps<
+  TName extends FieldPath<TFieldValues>,
+  TFieldValues extends FieldValues = FieldValues,
+> = UseControllerProps<TFieldValues, TName> &
+  Omit<MuiSelectProps, "value" | "name">;
 
-export function Select<TFieldValues>({
-  control,
-  name,
-  rules,
-  ...props
-}: SelectProps<TFieldValues>) {
+export function Select<
+  TName extends FieldPath<TFieldValues>,
+  TFieldValues extends FieldValues,
+>({ control, name, rules, ...props }: SelectProps<TName, TFieldValues>) {
   const {
     field: { onChange, onBlur, value, ref },
     fieldState: { isTouched, error },
