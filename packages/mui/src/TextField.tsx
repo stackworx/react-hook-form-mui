@@ -39,7 +39,7 @@ export function TextField<
       value={value}
       name={name}
       error={!!error}
-      helperText={(isTouched && error?.message) ?? "Error"}
+      helperText={error?.message ?? props.helperText ?? " "}
     />
   );
 }
