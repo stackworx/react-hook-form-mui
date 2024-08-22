@@ -24,7 +24,10 @@ export function CheckboxGroup<
   value,
   ...props
 }: CheckboxGroupProps<TName, TFieldValues>) {
-  const { field } = useController({
+  const {
+    field,
+    fieldState: { error },
+  } = useController({
     name,
     control,
     rules,
@@ -34,6 +37,15 @@ export function CheckboxGroup<
 
   return (
     <MuiCheckbox
+      sx={(theme) => ({
+        ...(error && {
+          color: theme.palette.error.main,
+          "&.Mui-checked": {
+            color: theme.palette.error.main,
+          },
+        }),
+        py: 0,
+      })}
       {...props}
       checked={field.value.includes(value)}
       inputRef={ref}
@@ -43,13 +55,12 @@ export function CheckboxGroup<
         } else {
           onChange(
             // @ts-expect-error must be array
-            field.value.filter((v) => v !== value),
+            field.value.filter((v) => v !== value)
           );
         }
       }}
       onBlur={onBlur}
       value={value}
-      required={!!rules?.required}
       name={name}
     />
   );
