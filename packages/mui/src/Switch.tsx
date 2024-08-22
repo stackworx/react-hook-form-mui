@@ -23,6 +23,7 @@ export function Switch<
   TFieldValues extends FieldValues,
 >({ control, name, rules, ...props }: SwitchProps<TName, TFieldValues>) {
   const {
+    fieldState: { error },
     field: { onChange, onBlur, value, ref },
   } = useController({
     name,
@@ -32,13 +33,23 @@ export function Switch<
 
   return (
     <MuiSwitch
+      sx={(theme) => ({
+        ...(error && {
+          "& .MuiSwitch-thumb": {
+            backgroundColor: theme.palette.error.main,
+          },
+          "& .MuiSwitch-track": {
+            backgroundColor: theme.palette.error.main,
+          },
+        }),
+      })}
       {...props}
       checked={Boolean(value)}
       inputRef={ref}
       onChange={onChange}
       onBlur={onBlur}
       value={value}
-      required={!!rules?.required}
+      // required={!!rules?.required}
       name={name}
     />
   );
