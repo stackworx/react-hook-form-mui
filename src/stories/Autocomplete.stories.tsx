@@ -42,7 +42,7 @@ const Template: StoryFn<typeof Autocomplete> = (args: any) => {
             name="single"
             error={touchedFields["autocomplete"] && !!errors["autocomplete"]}
             helperText={
-              touchedFields["autocomplete"] && errors["autocomplete"]?.message
+              errors["autocomplete"]?.message ?? args.helperText ?? " "
             }
             label="Single"
             variant="outlined"
@@ -67,5 +67,13 @@ export const Required = {
 
   args: {
     rules: { required: "Required" },
+  },
+};
+
+export const WithHelperText = {
+  render: Template,
+  args: {
+    rules: { required: "Required" },
+    helperText: "Should be overwritten by error",
   },
 };
