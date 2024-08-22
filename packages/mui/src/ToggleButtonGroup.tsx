@@ -1,8 +1,5 @@
 import * as React from "react";
 import {
-  Path,
-  RegisterOptions,
-  Control,
   useController,
   FieldValues,
   FieldPath,

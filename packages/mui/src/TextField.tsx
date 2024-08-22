@@ -1,7 +1,4 @@
 import {
-  Path,
-  RegisterOptions,
-  Control,
   useController,
   FieldValues,
   UseControllerProps,

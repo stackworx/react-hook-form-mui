@@ -1,9 +1,4 @@
-import {
-  useController,
-  FieldValues,
-  FieldPath,
-  useFormState,
-} from "react-hook-form";
+import { FieldValues, FieldPath, useFormState } from "react-hook-form";
 import { CheckboxProps, Checkbox } from "./Checkbox";
 
 import { FormControlLabel } from "@mui/material";
