@@ -18,11 +18,11 @@ export function CheckboxWithLabel<
 
   return (
     <FormControlLabel
-      sx={(theme) => ({
+      sx={{
         ...(errors[props.name as keyof typeof errors] && {
-          color: theme.palette.error.main,
+          color: "error.main",
         }),
-      })}
+      }}
       control={<Checkbox {...props} />}
       label={label}
     />

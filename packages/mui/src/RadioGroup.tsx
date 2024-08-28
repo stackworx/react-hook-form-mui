@@ -1,13 +1,17 @@
-import * as React from "react";
 import {
   useController,
   FieldValues,
   FieldPath,
   UseControllerProps,
+  useFormState,
+  Control,
+  FieldError,
 } from "react-hook-form";
 import MuiRadioGroup, {
   RadioGroupProps as MuiRadioGroupProps,
+  useRadioGroup,
 } from "@mui/material/RadioGroup";
+import { Radio as MuiRadio, RadioProps } from "@mui/material";
 
 export type RadioGroupProps<
   TName extends FieldPath<TFieldValues>,
@@ -42,3 +46,33 @@ export function RadioGroup<
 }
 
 RadioGroup.displayName = "MuiReactHookFormRadioGroup";
+
+interface MyRadioProps<T extends FieldValues> extends RadioProps {
+  control: Control<T>;
+}
+
+export function Radio<T extends FieldValues>({
+  control,
+  ...props
+}: MyRadioProps<T>) {
+  const radioGroup = useRadioGroup();
+  const { errors } = useFormState({ control });
+
+  const fieldName = radioGroup?.name || props.name || "";
+  const fieldError = (errors as Record<string, FieldError>)[fieldName];
+
+  const showError = !!fieldError;
+
+  return (
+    <MuiRadio
+      sx={{
+        ...(showError && {
+          "& .MuiSvgIcon-root": {
+            color: "error.main",
+          },
+        }),
+      }}
+      {...props}
+    />
+  );
+}

@@ -1,9 +1,9 @@
 import { StoryFn, Meta } from "@storybook/react";
 import { useForm } from "react-hook-form";
 
-import { RadioGroup } from "../../packages/mui/src/RadioGroup";
+import { Radio, RadioGroup } from "../../packages/mui/src/RadioGroup";
 import { Form } from "./Form";
-import { FormControl, FormControlLabel, FormLabel, Radio } from "@mui/material";
+import { FormControl, FormControlLabel, FormLabel } from "@mui/material";
 
 export default {
   title: "Core/RadioGroup",
@@ -25,9 +25,7 @@ const Template: StoryFn<typeof RadioGroup> = (args: any) => {
   return (
     <Form {...formProps} onSubmit={args.onSubmit}>
       <FormControl>
-        <FormLabel id="demo-radio-buttons-group-label" error>
-          Gender
-        </FormLabel>
+        <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
         <RadioGroup
           name="radioGroup"
           control={formProps.control}
@@ -36,17 +34,17 @@ const Template: StoryFn<typeof RadioGroup> = (args: any) => {
         >
           <FormControlLabel
             value="female"
-            control={<Radio required={true} />}
+            control={<Radio control={formProps.control} />}
             label="Female"
           />
           <FormControlLabel
             value="male"
-            control={<Radio required={true} />}
+            control={<Radio control={formProps.control} />}
             label="Male"
           />
           <FormControlLabel
             value="other"
-            control={<Radio required={true} />}
+            control={<Radio control={formProps.control} />}
             label="Other"
           />
         </RadioGroup>

@@ -30,16 +30,16 @@ export function Switch<
 
   return (
     <MuiSwitch
-      sx={(theme) => ({
+      sx={{
         ...(error && {
           "& .MuiSwitch-thumb": {
-            backgroundColor: theme.palette.error.main,
+            backgroundColor: "error.main",
           },
           "& .MuiSwitch-track": {
-            backgroundColor: theme.palette.error.main,
+            backgroundColor: "error.main",
           },
         }),
-      })}
+      }}
       {...props}
       checked={Boolean(value)}
       inputRef={ref}

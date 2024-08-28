@@ -32,15 +32,14 @@ export function Checkbox<
 
   return (
     <MuiCheckbox
-      sx={(theme) => ({
+      sx={{
         ...(error && {
-          color: theme.palette.error.main,
+          color: "error.main",
           "&.Mui-checked": {
-            color: theme.palette.error.main,
+            color: "error.main",
           },
         }),
-        py: 0,
-      })}
+      }}
       {...props}
       checked={Boolean(value)}
       inputRef={ref}

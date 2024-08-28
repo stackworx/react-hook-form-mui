@@ -37,15 +37,14 @@ export function CheckboxGroup<
 
   return (
     <MuiCheckbox
-      sx={(theme) => ({
+      sx={{
         ...(error && {
-          color: theme.palette.error.main,
+          color: "error.main",
           "&.Mui-checked": {
-            color: theme.palette.error.main,
+            color: "error.main",
           },
         }),
-        py: 0,
-      })}
+      }}
       {...props}
       checked={field.value.includes(value)}
       inputRef={ref}
@@ -55,7 +54,7 @@ export function CheckboxGroup<
         } else {
           onChange(
             // @ts-expect-error must be array
-            field.value.filter((v) => v !== value)
+            field.value.filter((v) => v !== value),
           );
         }
       }}
