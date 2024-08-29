@@ -74,3 +74,10 @@ const Template: StoryFn<typeof CheckboxGroup> = (args: any) => {
 export const Default = {
   render: Template,
 };
+
+export const Required = {
+  render: Template,
+  args: {
+    rules: { required: "Required" },
+  },
+};

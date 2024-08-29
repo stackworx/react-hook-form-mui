@@ -1,7 +1,6 @@
 import Stack from "@mui/material/Stack";
 import MenuItem from "@mui/material/MenuItem";
 import { StoryFn, Meta } from "@storybook/react";
-// import { within, userEvent } from "@storybook/testing-library";
 import { useForm } from "react-hook-form";
 
 import { Select } from "../../packages/mui/src/Select";
@@ -21,7 +20,7 @@ const Template: StoryFn<typeof Select> = (args: any) => {
     text: any;
   }>({
     defaultValues: {
-      text: args?.multiple ? [] : "",
+      text: args.SelectProps?.multiple ? [] : "",
     },
   });
   return (
@@ -39,12 +38,50 @@ const Template: StoryFn<typeof Select> = (args: any) => {
   );
 };
 
+export const Default = {
+  render: Template,
+
+  args: {
+    label: "Default",
+    children: [
+      <MenuItem key={10} value={10}>
+        Ten
+      </MenuItem>,
+      <MenuItem key={20} value={20}>
+        Twenty
+      </MenuItem>,
+      <MenuItem key={30} value={30}>
+        Thirty
+      </MenuItem>,
+    ],
+  },
+};
+
+export const Required = {
+  render: Template,
+
+  args: {
+    label: "Required",
+    rules: { required: "Required" },
+    children: [
+      <MenuItem key={10} value={10}>
+        Ten
+      </MenuItem>,
+      <MenuItem key={20} value={20}>
+        Twenty
+      </MenuItem>,
+      <MenuItem key={30} value={30}>
+        Thirty
+      </MenuItem>,
+    ],
+  },
+};
+
 export const SingleSelect = {
   render: Template,
 
   args: {
     label: "Single Select",
-    rules: { required: "Required" },
     children: [
       <MenuItem key={10} value={10}>
         Ten
@@ -64,8 +101,7 @@ export const MultipleSelect = {
 
   args: {
     label: "Multiple Select",
-    rules: { required: "Required" },
-    multiple: true,
+    SelectProps: { multiple: true },
     children: [
       <MenuItem key={10} value={10}>
         Ten

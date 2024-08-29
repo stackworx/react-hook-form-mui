@@ -1,31 +1,31 @@
-import * as React from "react";
 import {
-  Path,
-  RegisterOptions,
-  Control,
   useController,
   FieldValues,
+  FieldPath,
+  UseControllerProps,
+  useFormState,
+  Control,
+  FieldError,
 } from "react-hook-form";
 import MuiRadioGroup, {
   RadioGroupProps as MuiRadioGroupProps,
+  useRadioGroup,
 } from "@mui/material/RadioGroup";
+import { Radio as MuiRadio, RadioProps } from "@mui/material";
 
-export interface RadioGroupProps<TFieldValues extends FieldValues = FieldValues>
-  extends Omit<
+export type RadioGroupProps<
+  TName extends FieldPath<TFieldValues>,
+  TFieldValues extends FieldValues = FieldValues,
+> = UseControllerProps<TFieldValues, TName> &
+  Omit<
     MuiRadioGroupProps,
     "checked" | "name" | "value" | "defaultChecked" | "form"
-  > {
-  name: Path<TFieldValues>;
-  rules?: RegisterOptions;
-  control: Control<TFieldValues>;
-}
+  >;
 
-export function RadioGroup<TFieldValues>({
-  control,
-  name,
-  rules,
-  ...props
-}: RadioGroupProps<TFieldValues>) {
+export function RadioGroup<
+  TName extends FieldPath<TFieldValues>,
+  TFieldValues extends FieldValues,
+>({ control, name, rules, ...props }: RadioGroupProps<TName, TFieldValues>) {
   const {
     field: { onChange, onBlur, value },
   } = useController({
@@ -46,3 +46,33 @@ export function RadioGroup<TFieldValues>({
 }
 
 RadioGroup.displayName = "MuiReactHookFormRadioGroup";
+
+interface MyRadioProps<T extends FieldValues> extends RadioProps {
+  control: Control<T>;
+}
+
+export function Radio<T extends FieldValues>({
+  control,
+  ...props
+}: MyRadioProps<T>) {
+  const radioGroup = useRadioGroup();
+  const { errors } = useFormState({ control });
+
+  const fieldName = radioGroup?.name || props.name || "";
+  const fieldError = (errors as Record<string, FieldError>)[fieldName];
+
+  const showError = !!fieldError;
+
+  return (
+    <MuiRadio
+      sx={{
+        ...(showError && {
+          "& .MuiSvgIcon-root": {
+            color: "error.main",
+          },
+        }),
+      }}
+      {...props}
+    />
+  );
+}

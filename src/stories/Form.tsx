@@ -4,6 +4,7 @@ import {
   SubmitHandler,
   FormState,
   UseFormGetValues,
+  FieldValues,
 } from "react-hook-form";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -11,12 +12,13 @@ import Stack from "@mui/material/Stack";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
-interface FormProps<TFieldValues> extends UseFormReturn<TFieldValues, {}> {
+interface FormProps<TFieldValues extends FieldValues>
+  extends UseFormReturn<TFieldValues> {
   children: React.ReactNode;
   onSubmit: SubmitHandler<TFieldValues>;
 }
 
-function Values<TFieldValues>({
+function Values<TFieldValues extends FieldValues>({
   getValues,
 }: {
   getValues: UseFormGetValues<TFieldValues>;
@@ -33,7 +35,6 @@ function Values<TFieldValues>({
     };
   }, [getValues]);
 
-  // console.log("values", values);
   return <pre>Values: {JSON.stringify(values, null, 2)}</pre>;
 }
 
@@ -45,7 +46,7 @@ function Errors<TFieldValues>({
   return <pre>Errors: {JSON.stringify(errors, null, 2)}</pre>;
 }
 
-export function Form<TFieldValues>({
+export function Form<TFieldValues extends FieldValues>({
   handleSubmit,
   formState,
   children,

@@ -1,25 +1,24 @@
 import {
-  Path,
-  RegisterOptions,
-  Control,
   useController,
   FieldValues,
+  UseControllerProps,
+  FieldPath,
 } from "react-hook-form";
-import MuiSelect, { SelectProps as MuiSelectProps } from "@mui/material/Select";
+import MuiTextField, {
+  TextFieldProps as MuiTextFieldProps,
+} from "@mui/material/TextField";
+import React from "react";
 
-export interface SelectProps<TFieldValues extends FieldValues = FieldValues>
-  extends Omit<MuiSelectProps, "value"> {
-  name: Path<TFieldValues>;
-  rules?: RegisterOptions;
-  control: Control<TFieldValues>;
-}
+export type TextFieldProps<
+  TName extends FieldPath<TFieldValues>,
+  TFieldValues extends FieldValues = FieldValues,
+> = UseControllerProps<TFieldValues, TName> &
+  Omit<MuiTextFieldProps, "value" | "name">;
 
-export function Select<TFieldValues>({
-  control,
-  name,
-  rules,
-  ...props
-}: SelectProps<TFieldValues>) {
+export function Select<
+  TName extends FieldPath<TFieldValues>,
+  TFieldValues extends FieldValues,
+>({ control, name, rules, ...props }: TextFieldProps<TName, TFieldValues>) {
   const {
     field: { onChange, onBlur, value, ref },
     fieldState: { isTouched, error },
@@ -30,7 +29,7 @@ export function Select<TFieldValues>({
   });
 
   return (
-    <MuiSelect
+    <MuiTextField
       {...props}
       inputRef={ref}
       onChange={onChange}
@@ -38,6 +37,8 @@ export function Select<TFieldValues>({
       value={value}
       name={name}
       error={!!error}
+      helperText={error?.message ?? props.helperText ?? " "}
+      select //Textfield as Select
     />
   );
 }

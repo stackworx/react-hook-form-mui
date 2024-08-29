@@ -12,6 +12,7 @@ import {
 import {
   DatePicker as MuiDatePicker,
   DatePickerProps as MuiDatePickerProps,
+  PickerValidDate,
 } from "@mui/x-date-pickers";
 import TextField from "@mui/material/TextField";
 import { format } from "date-fns";
@@ -21,24 +22,25 @@ import { format } from "date-fns";
 export interface DatePickerProps<
   TInputDate,
   TDate,
-  TFieldValues extends FieldValues = FieldValues
-> extends Omit<MuiDatePickerProps<TInputDate, TDate>, "value"> {
+  TFieldValues extends FieldValues = FieldValues,
+> extends Omit<MuiDatePickerProps<PickerValidDate>, "value"> {
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
 }
 
-export function useDatePicker<TInputDate, TDate, TFieldValues extends FieldValues = FieldValues>({name,
+export function useDatePicker<TFieldValues extends FieldValues = FieldValues>({
+  name,
   rules,
   setError,
   clearErrors,
-  control
+  control,
 }: {
-  name: string,
-  rules?: RegisterOptions,
-  control: Control<TFieldValues>,
-  setError: UseFormSetError<TFieldValues>,
-  clearErrors: UseFormClearErrors<TFieldValues>,
-}): MuiDatePickerProps<TInputDate, TDate> {
+  name: Path<TFieldValues>;
+  rules?: RegisterOptions;
+  control: Control<TFieldValues>;
+  setError: UseFormSetError<TFieldValues>;
+  clearErrors: UseFormClearErrors<TFieldValues>;
+}): MuiDatePickerProps<Date> {
   const {
     field: { onChange, value, ref },
     fieldState,
@@ -52,10 +54,10 @@ export function useDatePicker<TInputDate, TDate, TFieldValues extends FieldValue
     onChange: onChange,
     value: value,
     onError: (reason, value) => {
-      console.log(reason, value);
+      // console.log(reason, value);
       switch (reason) {
         case "invalidDate":
-          setError(name, { type: "value", message: "" });
+          // setError(name, { type: "value", message: "Test" });
           break;
 
         case "disablePast":
@@ -68,13 +70,15 @@ export function useDatePicker<TInputDate, TDate, TFieldValues extends FieldValue
           break;
 
         case "maxDate":
+          console.log("Hello world");
           setError(name, {
             type: "max",
-            message: `Date should not be after ${format(
-              // @ts-expect-error
-              props.maxDate,
-              "P"
-            )}`,
+            message: "Hello",
+            // message: `Date should not be after ${format(
+            //   // @ts-expect-error
+            //   "2050",
+            //   "P",
+            // )}`,
           });
           break;
 
@@ -83,8 +87,8 @@ export function useDatePicker<TInputDate, TDate, TFieldValues extends FieldValue
             type: "min",
             message: `Date should not be before ${format(
               // @ts-expect-error
-              props.minDate,
-              "P"
+              "1999",
+              "P",
             )}`,
           });
           break;
@@ -99,20 +103,20 @@ export function useDatePicker<TInputDate, TDate, TFieldValues extends FieldValue
           clearErrors(name);
       }
     },
-    renderInput: ({ helperText, error, ...params }) => {
-      // console.log(helperText, error, fieldState);
-      return (
-        <TextField
-          name={name}
-          inputRef={ref}
-          error={error && !!fieldState.error}
-          helperText={
-            helperText ?? (fieldState.isTouched && fieldState.error?.message)
-          }
-          {...params}
-        />
-      );
-    },
+    // renderInput: ({ helperText, error, ...params }) => {
+    //   // console.log(helperText, error, fieldState);
+    //   return (
+    //     <TextField
+    //       name={name}
+    //       inputRef={ref}
+    //       error={error && !!fieldState.error}
+    //       helperText={
+    //         helperText ?? (fieldState.isTouched && fieldState.error?.message)
+    //       }
+    //       {...params}
+    //     />
+    //   );
+    // },
   };
 }
 
@@ -120,15 +124,17 @@ export function DatePicker<TInputDate, TDate, TFieldValues>({
   name,
   rules,
   ...props
-}: DatePickerProps<TInputDate, TDate, TFieldValues>) {
-  const transformedProps = useDatePicker<TInputDate, TDate>({
+}: DatePickerProps<TInputDate, TDate, FieldValues>) {
+  const { setError, clearErrors, control } = useFormContext();
+
+  const transformedProps = useDatePicker<FieldValues>({
     name,
     rules,
     setError,
     clearErrors,
-    control
-  }
-  );
+    control,
+  });
+
   return <MuiDatePicker {...transformedProps} {...props} />;
 }
 
@@ -136,14 +142,14 @@ export function DatePickerProvider<TInputDate, TDate, TFieldValues>({
   name,
   rules,
   ...props
-}: DatePickerProps<TInputDate, TDate, TFieldValues>) {
+}: DatePickerProps<TInputDate, TDate, FieldValues>) {
   const { setError, clearErrors, control } = useFormContext();
-  const transformedProps = useDatePicker<TInputDate, TDate>({
+  const transformedProps = useDatePicker<FieldValues>({
     name,
     rules,
     setError,
     clearErrors,
-    control
+    control,
   });
   return <MuiDatePicker {...transformedProps} {...props} />;
 }

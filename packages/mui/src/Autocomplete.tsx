@@ -1,41 +1,57 @@
-import {
-  Path,
-  RegisterOptions,
-  Control,
-  useController,
-  FieldValues,
-} from "react-hook-form";
+import { ChipTypeMap } from "@mui/material";
 import MuiAutocomplete, {
   AutocompleteProps as MuiAutocompleteProps,
 } from "@mui/material/Autocomplete";
+import {
+  FieldPath,
+  FieldValues,
+  useController,
+  UseControllerProps,
+} from "react-hook-form";
 
-export interface AutocompleteProps<
-  T,
+export type AutocompleteProps<
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
+  Value,
   Multiple extends boolean | undefined,
   DisableClearable extends boolean | undefined,
   FreeSolo extends boolean | undefined,
-  TFieldValues extends FieldValues = FieldValues
-> extends Omit<
-    MuiAutocompleteProps<T, Multiple, DisableClearable, FreeSolo>,
+  ChipComponent extends React.ElementType = ChipTypeMap["defaultComponent"],
+> = UseControllerProps<TFieldValues, TName> &
+  Omit<
+    MuiAutocompleteProps<
+      Value,
+      Multiple,
+      DisableClearable,
+      FreeSolo,
+      ChipComponent
+    >,
     "name" | "value" | "defaultValue"
-  > {
-  name: Path<TFieldValues>;
-  rules?: RegisterOptions;
-  control: Control<TFieldValues>;
-}
+  >;
 
 export function Autocomplete<
-  T,
-  Multiple extends boolean | undefined,
-  DisableClearable extends boolean | undefined,
-  FreeSolo extends boolean | undefined
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
+  Value = unknown,
+  Multiple extends boolean | undefined = false,
+  DisableClearable extends boolean | undefined = false,
+  FreeSolo extends boolean | undefined = false,
+  ChipComponent extends React.ElementType = ChipTypeMap["defaultComponent"],
 >({
   name,
   control,
   rules,
   onChange,
   ...props
-}: AutocompleteProps<T, Multiple, DisableClearable, FreeSolo>) {
+}: AutocompleteProps<
+  TFieldValues,
+  TName,
+  Value,
+  Multiple,
+  DisableClearable,
+  FreeSolo,
+  ChipComponent
+>) {
   const { field } = useController({
     name,
     control,

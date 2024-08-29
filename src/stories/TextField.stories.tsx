@@ -46,6 +46,43 @@ export const Default = {
   },
 };
 
+export const RegexCheck = {
+  render: Template,
+
+  args: {
+    label: "RegexCheck",
+    helperText: "Some text",
+    rules: {
+      pattern: {
+        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+        message: "Enter a valid Email Address",
+      },
+    },
+  },
+};
+
+export const MinLength = {
+  render: Template,
+  args: {
+    label: "MinLength",
+    helperText: "Should be overriden by error",
+    rules: {
+      minLength: { value: 10, message: "Minimum length is 10 characters" },
+    },
+  },
+};
+
+export const MaxLength = {
+  render: Template,
+  args: {
+    label: "MaxLength",
+    helperText: "Should be overriden by error",
+    rules: {
+      maxLength: { value: 5, message: "Max length is 5 characters" },
+    },
+  },
+};
+
 export const Required = {
   render: Template,
 
