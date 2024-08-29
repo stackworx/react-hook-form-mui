@@ -1,30 +1,30 @@
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import * as path from "path";
 import react from "@vitejs/plugin-react";
+import dts from "vite-plugin-dts";
 
 const external = [
+  /node_modules/,
   "react",
   "react/jsx-runtime",
   "react-hook-form",
-  "@mui/material/Autocomplete",
-  "@mui/material/Checkbox",
-  "@mui/material/RadioGroup",
-  "@mui/material/Select",
-  "@mui/material/Switch",
-  "@mui/material/TextField",
-  "@mui/material/ToggleButtonGroup",
+  "@mui/utils",
+  /@mui\/material/,
 ];
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), dts({
+    rollupTypes: true,
+    // https://github.com/qmhc/vite-plugin-dts/issues/344#issuecomment-2231355823
+    tsconfigPath: "./tsconfig.app.json",
+  })],
   build: {
     lib: {
       entry: path.resolve(__dirname, "src/main.ts"),
-      name: "react-hook-form-mui",
-      formats: ["es"],
-      fileName: (format) => `react-hook-form-mui.${format}.js`,
     },
+    sourcemap: true,
     minify: false,
     rollupOptions: {
       external,
@@ -32,27 +32,16 @@ export default defineConfig({
         {
           format: "es",
           dir: "./dist",
-          sourcemap: true,
           preserveModules: true,
           entryFileNames: ({ name: fileName }) => {
             return `${fileName}.js`;
           },
-          // entryFileNames: (entry) => {
-          //   const { name, facadeModuleId } = entry;
-          //   const fileName = `${name}.js`;
-          //   if (!facadeModuleId) {
-          //     return fileName;
-          //   }
-          //   const relativeDir = path.relative(
-          //     path.resolve(__dirname, "src"),
-          //     path.dirname(facadeModuleId)
-          //   );
-          //   return path.join(relativeDir, fileName);
-          // },
-          // manualChunks: undefined,
-          // manualChunks: (id) => path.parse(id).name,
         },
       ],
     },
   },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./vitest-setup.js'],
+  }
 });

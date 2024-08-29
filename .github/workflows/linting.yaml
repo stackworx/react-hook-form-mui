@@ -1,5 +1,11 @@
-name: Build Storybook
-on: [push]
+name: Linting
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'
 
 jobs:
   build:
@@ -18,6 +24,6 @@ jobs:
       - name: build
         run: |
           npm ci
-          npm run build-storybook
+          npm run lint
         env:
           CI: true

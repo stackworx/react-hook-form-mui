@@ -10,16 +10,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Build
-        run: |
-          npm ci
-          npm run build
-        working-directory: docs
 
-      # Docs: https://github.com/peaceiris/actions-gh-pages#%EF%B8%8F-docusaurus
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Build output to publish to the `gh-pages` branch:
-          publish_dir: ./docs/build
+      - name: Build Pages
+        run: |
+          # Build Storybook
+          npm ci
+          npm run build-storybook
+          cd docs
+          npm ci
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Pages Action"
+          npm run build
+          mv ../storybook-static ./build/storybook
+          npm run deploy -- --skip-build
+        env:
+          GIT_USER: ${{ secrets.ACCESS_TOKEN }}
