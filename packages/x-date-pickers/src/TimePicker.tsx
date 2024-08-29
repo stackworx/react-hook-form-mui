@@ -6,7 +6,7 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import {
-  default as MuiTimePicker,
+  TimePicker as MuiTimePicker,
   type TimePickerProps as MuiTimePickerProps,
 } from '@mui/x-date-pickers/TimePicker';
 import TextField from '@mui/material/TextField';

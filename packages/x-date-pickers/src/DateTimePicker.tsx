@@ -6,9 +6,9 @@ import {
   useFormContext,
 } from 'react-hook-form';
 import {
-  default as MuiDateTimePicker,
+  DateTimePicker as MuiDateTimePicker,
   type DateTimePickerProps as MuiDateTimePickerProps,
-} from '@mui/x-date-pickers/DatePicker';
+} from '@mui/x-date-pickers/DateTimePicker';
 import TextField from '@mui/material/TextField';
 import { format } from 'date-fns';
 

@@ -9,10 +9,10 @@ import {
   UseFormClearErrors,
 } from 'react-hook-form';
 import {
-  default as MuiDatePicker,
+  DatePicker as MuiDatePicker,
   type DatePickerProps as MuiDatePickerProps,
-  PickerValidDate,
 } from '@mui/x-date-pickers/DatePicker';
+import type { PickerValidDate } from '@mui/x-date-pickers/models';
 import { format } from 'date-fns';
 
 // import { ErrorContext } from "./ErrorContext";
