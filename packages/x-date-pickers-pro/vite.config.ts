@@ -8,7 +8,7 @@ const external = [
   /node_modules/,
   "react",
   "react/jsx-runtime",
-  "formik",
+  "react-hook-form",
   "tiny-warning",
   "@mui/utils",
   /@mui\/material/,

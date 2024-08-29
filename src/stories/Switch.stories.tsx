@@ -1,16 +1,16 @@
-import { StoryFn, Meta } from "@storybook/react";
-import { useForm } from "react-hook-form";
+import { StoryFn, Meta } from '@storybook/react';
+import { useForm } from 'react-hook-form';
 
-import { Switch } from "../../packages/mui/src/Switch";
-import { Form } from "./Form";
+import { Switch } from '../../packages/mui/src/Switch';
+import { Form } from './Form';
 
 export default {
-  title: "Core/Switch",
+  title: 'Core/Switch',
   component: Switch,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: "submit" } },
+  argTypes: { onSubmit: { action: 'submit' } },
 } as Meta<typeof Switch>;
 
 const Template: StoryFn<typeof Switch> = (args: any) => {
@@ -42,6 +42,6 @@ export const Required = {
   render: Template,
 
   args: {
-    rules: { required: "Required" },
+    rules: { required: 'Required' },
   },
 };

@@ -6,12 +6,12 @@ import {
   useFormState,
   Control,
   FieldError,
-} from "react-hook-form";
+} from 'react-hook-form';
 import MuiRadioGroup, {
   RadioGroupProps as MuiRadioGroupProps,
   useRadioGroup,
-} from "@mui/material/RadioGroup";
-import { Radio as MuiRadio, RadioProps } from "@mui/material";
+} from '@mui/material/RadioGroup';
+import { default as MuiRadio, type RadioProps } from '@mui/material/Radio';
 
 export type RadioGroupProps<
   TName extends FieldPath<TFieldValues>,
@@ -19,7 +19,7 @@ export type RadioGroupProps<
 > = UseControllerProps<TFieldValues, TName> &
   Omit<
     MuiRadioGroupProps,
-    "checked" | "name" | "value" | "defaultChecked" | "form"
+    'checked' | 'name' | 'value' | 'defaultChecked' | 'form'
   >;
 
 export function RadioGroup<
@@ -45,7 +45,7 @@ export function RadioGroup<
   );
 }
 
-RadioGroup.displayName = "MuiReactHookFormRadioGroup";
+RadioGroup.displayName = 'MuiReactHookFormRadioGroup';
 
 interface MyRadioProps<T extends FieldValues> extends RadioProps {
   control: Control<T>;
@@ -58,7 +58,7 @@ export function Radio<T extends FieldValues>({
   const radioGroup = useRadioGroup();
   const { errors } = useFormState({ control });
 
-  const fieldName = radioGroup?.name || props.name || "";
+  const fieldName = radioGroup?.name || props.name || '';
   const fieldError = (errors as Record<string, FieldError>)[fieldName];
 
   const showError = !!fieldError;
@@ -67,8 +67,8 @@ export function Radio<T extends FieldValues>({
     <MuiRadio
       sx={{
         ...(showError && {
-          "& .MuiSvgIcon-root": {
-            color: "error.main",
+          '& .MuiSvgIcon-root': {
+            color: 'error.main',
           },
         }),
       }}

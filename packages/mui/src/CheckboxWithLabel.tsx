@@ -1,7 +1,7 @@
-import { FieldValues, FieldPath, useFormState } from "react-hook-form";
-import { CheckboxProps, Checkbox } from "./Checkbox";
+import { FieldValues, FieldPath, useFormState } from 'react-hook-form';
+import { CheckboxProps, Checkbox } from './Checkbox';
 
-import { FormControlLabel } from "@mui/material";
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 export type CheckboxPropsWithLabelProps<
   TName extends FieldPath<TFieldValues>,
@@ -20,7 +20,7 @@ export function CheckboxWithLabel<
     <FormControlLabel
       sx={{
         ...(errors[props.name as keyof typeof errors] && {
-          color: "error.main",
+          color: 'error.main',
         }),
       }}
       control={<Checkbox {...props} />}
@@ -29,4 +29,4 @@ export function CheckboxWithLabel<
   );
 }
 
-CheckboxWithLabel.displayName = "MuiReactHookFormCheckboxWithLabel";
+CheckboxWithLabel.displayName = 'MuiReactHookFormCheckboxWithLabel';

@@ -1,21 +1,21 @@
-import { StoryFn, Meta } from "@storybook/react";
-import { useForm } from "react-hook-form";
-import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
-import FormatAlignCenterIcon from "@mui/icons-material/FormatAlignCenter";
-import FormatAlignRightIcon from "@mui/icons-material/FormatAlignRight";
-import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
-import ToggleButton from "@mui/material/ToggleButton";
+import { StoryFn, Meta } from '@storybook/react';
+import { useForm } from 'react-hook-form';
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
+import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
+import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
+import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
+import ToggleButton from '@mui/material/ToggleButton';
 
-import { ToggleButtonGroup } from "../../packages/mui/src/ToggleButtonGroup";
-import { Form } from "./Form";
+import { ToggleButtonGroup } from '../../packages/mui/src/ToggleButtonGroup';
+import { Form } from './Form';
 
 export default {
-  title: "Core/ToggleButtonGroup",
+  title: 'Core/ToggleButtonGroup',
   component: ToggleButtonGroup,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: "submit" } },
+  argTypes: { onSubmit: { action: 'submit' } },
 } as Meta<typeof ToggleButtonGroup>;
 
 const Template: StoryFn<typeof ToggleButtonGroup> = (args: any) => {
@@ -23,7 +23,7 @@ const Template: StoryFn<typeof ToggleButtonGroup> = (args: any) => {
     alignment: any;
   }>({
     defaultValues: {
-      alignment: "left",
+      alignment: 'left',
     },
   });
   return (

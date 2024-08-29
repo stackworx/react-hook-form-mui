@@ -1,18 +1,18 @@
-import Stack from "@mui/material/Stack";
-import MenuItem from "@mui/material/MenuItem";
-import { StoryFn, Meta } from "@storybook/react";
-import { useForm } from "react-hook-form";
+import Stack from '@mui/material/Stack';
+import MenuItem from '@mui/material/MenuItem';
+import { StoryFn, Meta } from '@storybook/react';
+import { useForm } from 'react-hook-form';
 
-import { TextField } from "../../packages/mui/src/TextField";
-import { Form } from "./Form";
+import { TextField } from '../../packages/mui/src/TextField';
+import { Form } from './Form';
 
 export default {
-  title: "Core/TextField",
+  title: 'Core/TextField',
   component: TextField,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: "submit" } },
+  argTypes: { onSubmit: { action: 'submit' } },
 } as Meta<typeof TextField>;
 
 const Template: StoryFn<typeof TextField> = (args: any) => {
@@ -20,7 +20,7 @@ const Template: StoryFn<typeof TextField> = (args: any) => {
     text: any;
   }>({
     defaultValues: {
-      text: args.SelectProps?.multiple ? [] : "",
+      text: args.SelectProps?.multiple ? [] : '',
     },
   });
   return (
@@ -42,7 +42,7 @@ export const Default = {
   render: Template,
 
   args: {
-    label: "Default",
+    label: 'Default',
   },
 };
 
@@ -50,12 +50,12 @@ export const RegexCheck = {
   render: Template,
 
   args: {
-    label: "RegexCheck",
-    helperText: "Some text",
+    label: 'RegexCheck',
+    helperText: 'Some text',
     rules: {
       pattern: {
         value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-        message: "Enter a valid Email Address",
+        message: 'Enter a valid Email Address',
       },
     },
   },
@@ -64,10 +64,10 @@ export const RegexCheck = {
 export const MinLength = {
   render: Template,
   args: {
-    label: "MinLength",
-    helperText: "Should be overriden by error",
+    label: 'MinLength',
+    helperText: 'Should be overriden by error',
     rules: {
-      minLength: { value: 10, message: "Minimum length is 10 characters" },
+      minLength: { value: 10, message: 'Minimum length is 10 characters' },
     },
   },
 };
@@ -75,10 +75,10 @@ export const MinLength = {
 export const MaxLength = {
   render: Template,
   args: {
-    label: "MaxLength",
-    helperText: "Should be overriden by error",
+    label: 'MaxLength',
+    helperText: 'Should be overriden by error',
     rules: {
-      maxLength: { value: 5, message: "Max length is 5 characters" },
+      maxLength: { value: 5, message: 'Max length is 5 characters' },
     },
   },
 };
@@ -87,7 +87,7 @@ export const Required = {
   render: Template,
 
   args: {
-    label: "Required",
+    label: 'Required',
     rules: { required: true, maxLength: 5 },
   },
 };
@@ -96,8 +96,8 @@ export const SingleSelect = {
   render: Template,
 
   args: {
-    label: "Single Select",
-    rules: { required: "Required" },
+    label: 'Single Select',
+    rules: { required: 'Required' },
     select: true,
     children: [
       <MenuItem key={10} value={10}>
@@ -117,8 +117,8 @@ export const MultipleSelect = {
   render: Template,
 
   args: {
-    label: "Multiple Select",
-    rules: { required: "Required" },
+    label: 'Multiple Select',
+    rules: { required: 'Required' },
     select: true,
     SelectProps: { multiple: true },
     children: [

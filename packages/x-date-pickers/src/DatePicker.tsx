@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Path,
   RegisterOptions,
@@ -8,14 +7,13 @@ import {
   Control,
   UseFormSetError,
   UseFormClearErrors,
-} from "react-hook-form";
+} from 'react-hook-form';
 import {
-  DatePicker as MuiDatePicker,
-  DatePickerProps as MuiDatePickerProps,
+  default as MuiDatePicker,
+  type DatePickerProps as MuiDatePickerProps,
   PickerValidDate,
-} from "@mui/x-date-pickers";
-import TextField from "@mui/material/TextField";
-import { format } from "date-fns";
+} from '@mui/x-date-pickers/DatePicker';
+import { format } from 'date-fns';
 
 // import { ErrorContext } from "./ErrorContext";
 
@@ -23,7 +21,7 @@ export interface DatePickerProps<
   TInputDate,
   TDate,
   TFieldValues extends FieldValues = FieldValues,
-> extends Omit<MuiDatePickerProps<PickerValidDate>, "value"> {
+> extends Omit<MuiDatePickerProps<PickerValidDate>, 'value'> {
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
 }
@@ -56,44 +54,39 @@ export function useDatePicker<TFieldValues extends FieldValues = FieldValues>({
     onError: (reason, value) => {
       // console.log(reason, value);
       switch (reason) {
-        case "invalidDate":
+        case 'invalidDate':
           // setError(name, { type: "value", message: "Test" });
           break;
 
-        case "disablePast":
-          setError(name, { message: "Values in the past are not allowed" });
+        case 'disablePast':
+          setError(name, { message: 'Values in the past are not allowed' });
           break;
-        case "disableFuture":
+        case 'disableFuture':
           break;
-        case "minDate":
-          // TODO
-          break;
-
-        case "maxDate":
-          console.log("Hello world");
+        case 'maxDate':
+          console.log('Hello world');
           setError(name, {
-            type: "max",
-            message: "Hello",
+            type: 'max',
+            message: 'Hello',
             // message: `Date should not be after ${format(
-            //   // @ts-expect-error
             //   "2050",
             //   "P",
             // )}`,
           });
           break;
 
-        case "minDate":
+        case 'minDate':
           setError(name, {
-            type: "min",
+            type: 'min',
             message: `Date should not be before ${format(
-              // @ts-expect-error
-              "1999",
-              "P",
+              // @ts-expect-error todo
+              '1999',
+              'P'
             )}`,
           });
           break;
 
-        case "shouldDisableDate":
+        case 'shouldDisableDate':
           // TODO
           // shouldDisableDate returned true, render custom message according to the `shouldDisableDate` logic
           // setError(name, getShouldDisableDateError(value));

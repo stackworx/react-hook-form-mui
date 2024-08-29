@@ -4,19 +4,19 @@ import {
   useController,
   FieldValues,
   useFormContext,
-} from "react-hook-form";
+} from 'react-hook-form';
 import {
-  TimePicker as MuiTimePicker,
-  TimePickerProps as MuiTimePickerProps,
-} from "@mui/x-date-pickers";
-import TextField from "@mui/material/TextField";
-import { format } from "date-fns";
+  default as MuiTimePicker,
+  type TimePickerProps as MuiTimePickerProps,
+} from '@mui/x-date-pickers/TimePicker';
+import TextField from '@mui/material/TextField';
+import { format } from 'date-fns';
 
 export interface TimePickerProps<
   TInputDate,
   TDate,
-  TFieldValues extends FieldValues = FieldValues
-> extends Omit<MuiTimePickerProps<TInputDate, TDate>, "value"> {
+  TFieldValues extends FieldValues = FieldValues,
+> extends Omit<MuiTimePickerProps<TInputDate, TDate>, 'value'> {
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
 }
@@ -44,38 +44,38 @@ export function TimePicker<TInputDate, TDate, TFieldValues>({
       onError={(reason, value) => {
         console.log(reason, value);
         switch (reason) {
-          case "invalidDate":
-            setError(name, { type: "value", message: "" });
+          case 'invalidDate':
+            setError(name, { type: 'value', message: '' });
             break;
 
-          case "minutesStep":
+          case 'minutesStep':
             // TODO
             break;
 
-          case "maxTime":
+          case 'maxTime':
             setError(name, {
-              type: "max",
+              type: 'max',
               message: `Date should not be after ${format(
-                // @ts-expect-error
+                // @ts-expect-error todo
                 props.maxDate,
-                "P"
+                'P'
               )}`,
             });
             break;
-          case "minTime":
+          case 'minTime':
             setError(name, {
-              type: "min",
+              type: 'min',
               message: `Date should not be before ${format(
-                // @ts-expect-error
+                // @ts-expect-error todo
                 props.minDate,
-                "P"
+                'P'
               )}`,
             });
             break;
 
-          case "shouldDisableTime-hours":
-          case "shouldDisableTime-minutes":
-          case "shouldDisableTime-seconds":
+          case 'shouldDisableTime-hours':
+          case 'shouldDisableTime-minutes':
+          case 'shouldDisableTime-seconds':
             // TODO
             // shouldDisableDate returned true, render custom message according to the `shouldDisableDate` logic
             // setError(name, getShouldDisableDateError(value));

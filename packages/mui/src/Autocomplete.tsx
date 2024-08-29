@@ -1,13 +1,13 @@
-import { ChipTypeMap } from "@mui/material";
+import type { ChipTypeMap } from '@mui/material/Chip';
 import MuiAutocomplete, {
   AutocompleteProps as MuiAutocompleteProps,
-} from "@mui/material/Autocomplete";
+} from '@mui/material/Autocomplete';
 import {
   FieldPath,
   FieldValues,
   useController,
   UseControllerProps,
-} from "react-hook-form";
+} from 'react-hook-form';
 
 export type AutocompleteProps<
   TFieldValues extends FieldValues,
@@ -16,7 +16,7 @@ export type AutocompleteProps<
   Multiple extends boolean | undefined,
   DisableClearable extends boolean | undefined,
   FreeSolo extends boolean | undefined,
-  ChipComponent extends React.ElementType = ChipTypeMap["defaultComponent"],
+  ChipComponent extends React.ElementType = ChipTypeMap['defaultComponent'],
 > = UseControllerProps<TFieldValues, TName> &
   Omit<
     MuiAutocompleteProps<
@@ -26,7 +26,7 @@ export type AutocompleteProps<
       FreeSolo,
       ChipComponent
     >,
-    "name" | "value" | "defaultValue"
+    'name' | 'value' | 'defaultValue'
   >;
 
 export function Autocomplete<
@@ -36,7 +36,7 @@ export function Autocomplete<
   Multiple extends boolean | undefined = false,
   DisableClearable extends boolean | undefined = false,
   FreeSolo extends boolean | undefined = false,
-  ChipComponent extends React.ElementType = ChipTypeMap["defaultComponent"],
+  ChipComponent extends React.ElementType = ChipTypeMap['defaultComponent'],
 >({
   name,
   control,
@@ -73,4 +73,4 @@ export function Autocomplete<
   );
 }
 
-Autocomplete.displayName = "MuiReactHookFormAutocomplete";
+Autocomplete.displayName = 'MuiReactHookFormAutocomplete';

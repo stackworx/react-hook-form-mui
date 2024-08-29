@@ -1,18 +1,18 @@
-import Stack from "@mui/material/Stack";
-import MenuItem from "@mui/material/MenuItem";
-import { StoryFn, Meta } from "@storybook/react";
-import { useForm } from "react-hook-form";
+import Stack from '@mui/material/Stack';
+import MenuItem from '@mui/material/MenuItem';
+import { StoryFn, Meta } from '@storybook/react';
+import { useForm } from 'react-hook-form';
 
-import { Select } from "../../packages/mui/src/Select";
-import { Form } from "./Form";
+import { Select } from '../../packages/mui/src/Select';
+import { Form } from './Form';
 
 export default {
-  title: "Core/Select",
+  title: 'Core/Select',
   component: Select,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: "submit" } },
+  argTypes: { onSubmit: { action: 'submit' } },
 } as Meta<typeof Select>;
 
 const Template: StoryFn<typeof Select> = (args: any) => {
@@ -20,7 +20,7 @@ const Template: StoryFn<typeof Select> = (args: any) => {
     text: any;
   }>({
     defaultValues: {
-      text: args.SelectProps?.multiple ? [] : "",
+      text: args.SelectProps?.multiple ? [] : '',
     },
   });
   return (
@@ -42,7 +42,7 @@ export const Default = {
   render: Template,
 
   args: {
-    label: "Default",
+    label: 'Default',
     children: [
       <MenuItem key={10} value={10}>
         Ten
@@ -61,8 +61,8 @@ export const Required = {
   render: Template,
 
   args: {
-    label: "Required",
-    rules: { required: "Required" },
+    label: 'Required',
+    rules: { required: 'Required' },
     children: [
       <MenuItem key={10} value={10}>
         Ten
@@ -81,7 +81,7 @@ export const SingleSelect = {
   render: Template,
 
   args: {
-    label: "Single Select",
+    label: 'Single Select',
     children: [
       <MenuItem key={10} value={10}>
         Ten
@@ -100,7 +100,7 @@ export const MultipleSelect = {
   render: Template,
 
   args: {
-    label: "Multiple Select",
+    label: 'Multiple Select',
     SelectProps: { multiple: true },
     children: [
       <MenuItem key={10} value={10}>

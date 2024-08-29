@@ -1,17 +1,17 @@
-import { StoryFn, Meta } from "@storybook/react";
-import { useForm } from "react-hook-form";
+import { StoryFn, Meta } from '@storybook/react';
+import { useForm } from 'react-hook-form';
 
-import { Checkbox } from "../../packages/mui/src/Checkbox";
-import { CheckboxWithLabel } from "../../packages/mui/src/CheckboxWithLabel";
-import { Form } from "./Form";
+import { Checkbox } from '../../packages/mui/src/Checkbox';
+import { CheckboxWithLabel } from '../../packages/mui/src/CheckboxWithLabel';
+import { Form } from './Form';
 
 export default {
-  title: "Core/Checkbox",
+  title: 'Core/Checkbox',
   component: Checkbox,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: "submit" } },
+  argTypes: { onSubmit: { action: 'submit' } },
 } as Meta<typeof Checkbox>;
 
 const WithFormControlLabel: StoryFn<typeof Checkbox> = (args: any) => {
@@ -63,13 +63,13 @@ export const Required = {
   render: Template,
 
   args: {
-    rules: { required: "Required" },
+    rules: { required: 'Required' },
   },
 };
 
 export const WithFormLabel = {
   render: WithFormControlLabel,
   args: {
-    rules: { required: "Required" },
+    rules: { required: 'Required' },
   },
 };

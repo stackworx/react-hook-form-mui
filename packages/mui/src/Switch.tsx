@@ -3,8 +3,8 @@ import {
   FieldValues,
   FieldPath,
   UseControllerProps,
-} from "react-hook-form";
-import MuiSwitch, { SwitchProps as MuiSwitchProps } from "@mui/material/Switch";
+} from 'react-hook-form';
+import MuiSwitch, { SwitchProps as MuiSwitchProps } from '@mui/material/Switch';
 
 export type SwitchProps<
   TName extends FieldPath<TFieldValues>,
@@ -12,7 +12,7 @@ export type SwitchProps<
 > = UseControllerProps<TFieldValues, TName> &
   Omit<
     MuiSwitchProps,
-    "checked" | "name" | "value" | "defaultChecked" | "form"
+    'checked' | 'name' | 'value' | 'defaultChecked' | 'form'
   >;
 
 export function Switch<
@@ -32,11 +32,11 @@ export function Switch<
     <MuiSwitch
       sx={{
         ...(error && {
-          "& .MuiSwitch-thumb": {
-            backgroundColor: "error.main",
+          '& .MuiSwitch-thumb': {
+            backgroundColor: 'error.main',
           },
-          "& .MuiSwitch-track": {
-            backgroundColor: "error.main",
+          '& .MuiSwitch-track': {
+            backgroundColor: 'error.main',
           },
         }),
       }}
@@ -52,4 +52,4 @@ export function Switch<
   );
 }
 
-Switch.displayName = "MuiReactHookFormSwitch";
+Switch.displayName = 'MuiReactHookFormSwitch';

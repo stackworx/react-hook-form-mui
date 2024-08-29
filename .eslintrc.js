@@ -13,6 +13,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
     'plugin:prettier/recommended',
+    "plugin:react/jsx-runtime",
   ],
   plugins: ['react-hooks'],
   overrides: [
@@ -40,10 +41,10 @@ module.exports = {
       env: {
         node: true,
       },
-    },
-    {
-      files: ['stories/*.story.tsx'],
-      rules: { 'react/display-name': 0 },
+      rules: {
+        // 'react/display-name': 'off',
+        '@typescript-eslint/no-explicit-any': 'off'
+      },
     },
   ],
   rules: {

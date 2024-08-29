@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 
 export interface ErrorContextType {
   required(): void;
@@ -6,6 +6,6 @@ export interface ErrorContextType {
 
 export const ErrorContext = React.createContext<ErrorContextType>({
   required() {
-    return "is required";
+    return 'is required';
   },
 });

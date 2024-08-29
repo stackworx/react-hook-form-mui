@@ -1,17 +1,19 @@
-import { StoryFn, Meta } from "@storybook/react";
-import { useForm } from "react-hook-form";
+import { StoryFn, Meta } from '@storybook/react';
+import { useForm } from 'react-hook-form';
 
-import { Radio, RadioGroup } from "../../packages/mui/src/RadioGroup";
-import { Form } from "./Form";
-import { FormControl, FormControlLabel, FormLabel } from "@mui/material";
+import { Radio, RadioGroup } from '../../packages/mui/src/RadioGroup';
+import { Form } from './Form';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 
 export default {
-  title: "Core/RadioGroup",
+  title: 'Core/RadioGroup',
   component: RadioGroup,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: "submit" } },
+  argTypes: { onSubmit: { action: 'submit' } },
 } as Meta<typeof RadioGroup>;
 
 const Template: StoryFn<typeof RadioGroup> = (args: any) => {
@@ -61,6 +63,6 @@ export const Required = {
   render: Template,
 
   args: {
-    rules: { required: "This field is required" },
+    rules: { required: 'This field is required' },
   },
 };

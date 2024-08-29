@@ -1,18 +1,18 @@
-import { StoryFn, Meta } from "@storybook/react";
-import { useForm } from "react-hook-form";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import { StoryFn, Meta } from '@storybook/react';
+import { useForm } from 'react-hook-form';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { CheckboxGroup } from "../../packages/mui/src/CheckboxGroup";
-import { Form } from "./Form";
+import { CheckboxGroup } from '../../packages/mui/src/CheckboxGroup';
+import { Form } from './Form';
 
 export default {
-  title: "Core/CheckboxGroup",
+  title: 'Core/CheckboxGroup',
   component: CheckboxGroup,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: "submit" } },
+  argTypes: { onSubmit: { action: 'submit' } },
 } as Meta<typeof CheckboxGroup>;
 
 const Template: StoryFn<typeof CheckboxGroup> = (args: any) => {
@@ -78,6 +78,6 @@ export const Default = {
 export const Required = {
   render: Template,
   args: {
-    rules: { required: "Required" },
+    rules: { required: 'Required' },
   },
 };

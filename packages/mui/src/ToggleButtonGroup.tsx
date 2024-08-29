@@ -1,19 +1,18 @@
-import * as React from "react";
 import {
   useController,
   FieldValues,
   FieldPath,
   UseControllerProps,
-} from "react-hook-form";
+} from 'react-hook-form';
 import MuiToggleButtonGroup, {
   ToggleButtonGroupProps as MuiToggleButtonGroupProps,
-} from "@mui/material/ToggleButtonGroup";
+} from '@mui/material/ToggleButtonGroup';
 
 export type ToggleButtonGroupProps<
   TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues = FieldValues,
 > = UseControllerProps<TFieldValues, TName> &
-  Omit<MuiToggleButtonGroupProps, "name" | "form" | "onChange" | "value">;
+  Omit<MuiToggleButtonGroupProps, 'name' | 'form' | 'onChange' | 'value'>;
 
 export function ToggleButtonGroup<
   TName extends FieldPath<TFieldValues>,
@@ -45,4 +44,4 @@ export function ToggleButtonGroup<
   );
 }
 
-ToggleButtonGroup.displayName = "MuiReactHookFormToggleButtonGroup";
+ToggleButtonGroup.displayName = 'MuiReactHookFormToggleButtonGroup';

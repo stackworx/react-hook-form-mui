@@ -1,18 +1,19 @@
-import { StoryFn, Meta } from "@storybook/react";
-import { useForm } from "react-hook-form";
-import { AutocompleteRenderInputParams, TextField } from "@mui/material";
+import { StoryFn, Meta } from '@storybook/react';
+import { useForm } from 'react-hook-form';
+import type { AutocompleteRenderInputParams } from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 
-import { Autocomplete } from "../../packages/mui/src/Autocomplete";
-import { Form } from "./Form";
-import { Movie, top100Films } from "./data";
+import { Autocomplete } from '../../packages/mui/src/Autocomplete';
+import { Form } from './Form';
+import { Movie, top100Films } from './data';
 
 export default {
-  title: "Core/Autocomplete",
+  title: 'Core/Autocomplete',
   component: Autocomplete,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: "submit" } },
+  argTypes: { onSubmit: { action: 'submit' } },
 } as Meta<typeof Autocomplete>;
 
 const Template: StoryFn<typeof Autocomplete> = (args: any) => {
@@ -40,9 +41,9 @@ const Template: StoryFn<typeof Autocomplete> = (args: any) => {
           <TextField
             {...params}
             name="single"
-            error={touchedFields["autocomplete"] && !!errors["autocomplete"]}
+            error={touchedFields['autocomplete'] && !!errors['autocomplete']}
             helperText={
-              errors["autocomplete"]?.message ?? args.helperText ?? " "
+              errors['autocomplete']?.message ?? args.helperText ?? ' '
             }
             label="Single"
             variant="outlined"
@@ -66,14 +67,14 @@ export const Required = {
   render: Template,
 
   args: {
-    rules: { required: "Required" },
+    rules: { required: 'Required' },
   },
 };
 
 export const WithHelperText = {
   render: Template,
   args: {
-    rules: { required: "Required" },
-    helperText: "Should be overwritten by error",
+    rules: { required: 'Required' },
+    helperText: 'Should be overwritten by error',
   },
 };

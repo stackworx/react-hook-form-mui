@@ -4,19 +4,19 @@ import {
   useController,
   FieldValues,
   useFormContext,
-} from "react-hook-form";
+} from 'react-hook-form';
 import {
-  DateTimePicker as MuiDateTimePicker,
-  DateTimePickerProps as MuiDateTimePickerProps,
-} from "@mui/x-date-pickers";
-import TextField from "@mui/material/TextField";
-import { format } from "date-fns";
+  default as MuiDateTimePicker,
+  type DateTimePickerProps as MuiDateTimePickerProps,
+} from '@mui/x-date-pickers/DatePicker';
+import TextField from '@mui/material/TextField';
+import { format } from 'date-fns';
 
 export interface DateTimePickerProps<
   TInputDate,
   TDate,
-  TFieldValues extends FieldValues = FieldValues
-> extends Omit<MuiDateTimePickerProps<TInputDate, TDate>, "value"> {
+  TFieldValues extends FieldValues = FieldValues,
+> extends Omit<MuiDateTimePickerProps<TInputDate, TDate>, 'value'> {
   name: Path<TFieldValues>;
   rules?: RegisterOptions;
 }
@@ -44,37 +44,37 @@ export function DateTimePicker<TInputDate, TDate, TFieldValues>({
       onError={(reason, value) => {
         console.log(reason, value);
         switch (reason) {
-          case "invalidDate":
-            setError(name, { type: "value", message: "" });
+          case 'invalidDate':
+            setError(name, { type: 'value', message: '' });
             break;
 
-          case "disablePast":
-            setError(name, { message: "Values in the past are not allowed" });
+          case 'disablePast':
+            setError(name, { message: 'Values in the past are not allowed' });
             break;
 
-          case "maxDate":
+          case 'maxDate':
             setError(name, {
-              type: "max",
+              type: 'max',
               message: `Date should not be after ${format(
-                // @ts-expect-error
+                // @ts-expect-error todo
                 props.maxDate,
-                "P"
+                'P'
               )}`,
             });
             break;
 
-          case "minDate":
+          case 'minDate':
             setError(name, {
-              type: "min",
+              type: 'min',
               message: `Date should not be before ${format(
-                // @ts-expect-error
+                // @ts-expect-error todo
                 props.minDate,
-                "P"
+                'P'
               )}`,
             });
             break;
 
-          case "shouldDisableDate":
+          case 'shouldDisableDate':
             // TODO
             // shouldDisableDate returned true, render custom message according to the `shouldDisableDate` logic
             // setError(name, getShouldDisableDateError(value));

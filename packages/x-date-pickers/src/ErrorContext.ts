@@ -1,6 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 
-export interface ErrorContextType<TInputValue = any> {
+export interface ErrorContextType {
   required(): void;
 }
 
@@ -10,6 +10,6 @@ export interface ErrorContextType<TInputValue = any> {
 
 export const ErrorContext = React.createContext<ErrorContextType>({
   required() {
-    return "is required";
+    return 'is required';
   },
 });

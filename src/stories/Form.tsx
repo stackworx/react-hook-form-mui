@@ -1,16 +1,15 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   UseFormReturn,
   SubmitHandler,
-  FormState,
   UseFormGetValues,
   FieldValues,
-} from "react-hook-form";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+} from 'react-hook-form';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 interface FormProps<TFieldValues extends FieldValues>
   extends UseFormReturn<TFieldValues> {
@@ -38,17 +37,8 @@ function Values<TFieldValues extends FieldValues>({
   return <pre>Values: {JSON.stringify(values, null, 2)}</pre>;
 }
 
-function Errors<TFieldValues>({
-  errors,
-}: {
-  errors: FormState<TFieldValues>["errors"];
-}) {
-  return <pre>Errors: {JSON.stringify(errors, null, 2)}</pre>;
-}
-
 export function Form<TFieldValues extends FieldValues>({
   handleSubmit,
-  formState,
   children,
   getValues,
   reset,

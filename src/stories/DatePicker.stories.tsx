@@ -1,17 +1,17 @@
-import Stack from "@mui/material/Stack";
-import { StoryFn, Meta } from "@storybook/react";
-import { useForm, FormProvider } from "react-hook-form";
+import Stack from '@mui/material/Stack';
+import { StoryFn, Meta } from '@storybook/react';
+import { useForm, FormProvider } from 'react-hook-form';
 
-import { DatePicker } from "../../packages/x-date-pickers/src/DatePicker";
-import { Form } from "./Form";
+import { DatePicker } from '../../packages/x-date-pickers/src/DatePicker';
+import { Form } from './Form';
 
 export default {
-  title: "X-Mui/DatePicker",
+  title: 'X-Mui/DatePicker',
   component: DatePicker,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: "submit" } },
+  argTypes: { onSubmit: { action: 'submit' } },
 } as Meta<typeof DatePicker>;
 
 const Template: StoryFn<typeof DatePicker> = (args: any) => {
@@ -19,7 +19,7 @@ const Template: StoryFn<typeof DatePicker> = (args: any) => {
     picker: any;
   }>({
     defaultValues: {
-      picker: "08/24/2022",
+      picker: '08/24/2022',
     },
   });
   return (
@@ -43,6 +43,6 @@ export const Default = {
   render: Template,
 
   args: {
-    label: "Default",
+    label: 'Default',
   },
 };

@@ -1,17 +1,17 @@
-import Stack from "@mui/material/Stack";
-import { StoryFn, Meta } from "@storybook/react";
-import { useForm, FormProvider } from "react-hook-form";
+import Stack from '@mui/material/Stack';
+import { StoryFn, Meta } from '@storybook/react';
+import { useForm, FormProvider } from 'react-hook-form';
 
-import { DateTimePicker } from "../../packages/x-date-pickers/src/DateTimePicker";
-import { Form } from "./Form";
+import { DateTimePicker } from '../../packages/x-date-pickers/src/DateTimePicker';
+import { Form } from './Form';
 
 export default {
-  title: "X-Mui/DateTimePicker",
+  title: 'X-Mui/DateTimePicker',
   component: DateTimePicker,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: "submit" } },
+  argTypes: { onSubmit: { action: 'submit' } },
 } as Meta<typeof DateTimePicker>;
 
 const Template: StoryFn<typeof DateTimePicker> = (args: any) => {
@@ -37,6 +37,6 @@ export const Default = {
   render: Template,
 
   args: {
-    label: "Default",
+    label: 'Default',
   },
 };
