@@ -1,5 +1,6 @@
 {
   "name": "@stackworx/react-hook-form-mui-x-date-pickers",
+  "private": true,
   "type": "module",
   "main": "./dist/main.js",
   "license": "MIT",
