@@ -6,6 +6,7 @@
     "build": "tsc && vite build",
     "typecheck": "tsc",
     "storybook": "storybook dev -p 6006",
+    "fmt": "dprint fmt",
     "build-storybook": "storybook build",
     "lint": "eslint \"./{src,packages/*/src}/**/*.{tsx,ts,js}\"",
     "lint:fix": "eslint --fix \"./{src,packages/*/src}/**/*.{tsx,ts,js}\""
@@ -42,6 +43,7 @@
     "@vitejs/plugin-react": "4.3.1",
     "babel-loader": "9.1.3",
     "date-fns": "^2.29",
+    "dprint": "^0.47.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jest": "^28.8.0",

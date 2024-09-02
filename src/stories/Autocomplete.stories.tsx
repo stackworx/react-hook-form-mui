@@ -1,11 +1,11 @@
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm } from 'react-hook-form';
-import type { AutocompleteRenderInputParams } from '@mui/material/Autocomplete';
+import type {AutocompleteRenderInputParams} from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import {Meta, StoryFn} from '@storybook/react';
+import {useForm} from 'react-hook-form';
 
-import { Autocomplete } from '../../packages/mui/src/Autocomplete';
-import { Form } from './Form';
-import { Movie, top100Films } from './data';
+import {Autocomplete} from '../../packages/mui/src/Autocomplete';
+import {Movie, top100Films} from './data';
+import {Form} from './Form';
 
 export default {
   title: 'Core/Autocomplete',
@@ -13,7 +13,7 @@ export default {
   parameters: {
     layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: 'submit' } },
+  argTypes: {onSubmit: {action: 'submit'}},
 } as Meta<typeof Autocomplete>;
 
 const Template: StoryFn<typeof Autocomplete> = (args: any) => {
@@ -25,28 +25,27 @@ const Template: StoryFn<typeof Autocomplete> = (args: any) => {
     },
   });
   const {
-    formState: { touchedFields, errors },
+    formState: {touchedFields, errors},
   } = formProps;
   return (
     <Form {...formProps} onSubmit={args.onSubmit}>
       <Autocomplete
-        name="autocomplete"
-        label="Autocoplete"
+        name='autocomplete'
+        label='Autocoplete'
         options={top100Films}
         getOptionLabel={(option: Movie) => option.title}
-        style={{ width: 300 }}
+        style={{width: 300}}
         control={formProps.control}
         errors={formProps.formState.errors}
         renderInput={(params: AutocompleteRenderInputParams) => (
           <TextField
             {...params}
-            name="single"
+            name='single'
             error={touchedFields['autocomplete'] && !!errors['autocomplete']}
-            helperText={
-              errors['autocomplete']?.message ?? args.helperText ?? ' '
-            }
-            label="Single"
-            variant="outlined"
+            helperText={errors['autocomplete']?.message ?? args.helperText
+              ?? ' '}
+            label='Single'
+            variant='outlined'
           />
         )}
         {...args}
@@ -61,20 +60,20 @@ export const Default = {
 
 export const Multiple = {
   render: Template,
-  args: { multiple: true },
+  args: {multiple: true},
 };
 export const Required = {
   render: Template,
 
   args: {
-    rules: { required: 'Required' },
+    rules: {required: 'Required'},
   },
 };
 
 export const WithHelperText = {
   render: Template,
   args: {
-    rules: { required: 'Required' },
+    rules: {required: 'Required'},
     helperText: 'Should be overwritten by error',
   },
 };

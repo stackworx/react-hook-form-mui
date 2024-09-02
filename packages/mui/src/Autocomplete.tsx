@@ -1,7 +1,7 @@
-import type { ChipTypeMap } from '@mui/material/Chip';
 import MuiAutocomplete, {
   AutocompleteProps as MuiAutocompleteProps,
 } from '@mui/material/Autocomplete';
+import type {ChipTypeMap} from '@mui/material/Chip';
 import {
   FieldPath,
   FieldValues,
@@ -17,8 +17,9 @@ export type AutocompleteProps<
   DisableClearable extends boolean | undefined,
   FreeSolo extends boolean | undefined,
   ChipComponent extends React.ElementType = ChipTypeMap['defaultComponent'],
-> = UseControllerProps<TFieldValues, TName> &
-  Omit<
+> =
+  & UseControllerProps<TFieldValues, TName>
+  & Omit<
     MuiAutocompleteProps<
       Value,
       Multiple,
@@ -52,7 +53,7 @@ export function Autocomplete<
   FreeSolo,
   ChipComponent
 >) {
-  const { field } = useController({
+  const {field} = useController({
     name,
     control,
     rules,
@@ -60,12 +61,10 @@ export function Autocomplete<
 
   return (
     <MuiAutocomplete
-      onChange={
-        onChange ??
-        function (_event, value) {
+      onChange={onChange
+        ?? function(_event, value) {
           field.onChange(value);
-        }
-      }
+        }}
       onBlur={field.onBlur}
       value={field.value}
       {...props}

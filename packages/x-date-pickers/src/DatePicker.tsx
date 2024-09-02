@@ -1,19 +1,19 @@
 import {
+  Control,
+  FieldValues,
   Path,
   RegisterOptions,
   useController,
-  FieldValues,
-  useFormContext,
-  Control,
-  UseFormSetError,
   UseFormClearErrors,
+  useFormContext,
+  UseFormSetError,
 } from 'react-hook-form';
 import {
   DatePicker as MuiDatePicker,
   type DatePickerProps as MuiDatePickerProps,
 } from '@mui/x-date-pickers/DatePicker';
-import type { PickerValidDate } from '@mui/x-date-pickers/models';
-import { format } from 'date-fns';
+import type {PickerValidDate} from '@mui/x-date-pickers/models';
+import {format} from 'date-fns';
 
 // import { ErrorContext } from "./ErrorContext";
 
@@ -40,7 +40,7 @@ export function useDatePicker<TFieldValues extends FieldValues = FieldValues>({
   clearErrors: UseFormClearErrors<TFieldValues>;
 }): MuiDatePickerProps<Date> {
   const {
-    field: { onChange, value, ref },
+    field: {onChange, value, ref},
     fieldState,
   } = useController({
     name,
@@ -59,7 +59,7 @@ export function useDatePicker<TFieldValues extends FieldValues = FieldValues>({
           break;
 
         case 'disablePast':
-          setError(name, { message: 'Values in the past are not allowed' });
+          setError(name, {message: 'Values in the past are not allowed'});
           break;
         case 'disableFuture':
           break;
@@ -78,11 +78,13 @@ export function useDatePicker<TFieldValues extends FieldValues = FieldValues>({
         case 'minDate':
           setError(name, {
             type: 'min',
-            message: `Date should not be before ${format(
-              // @ts-expect-error todo
-              '1999',
-              'P'
-            )}`,
+            message: `Date should not be before ${
+              format(
+                // @ts-expect-error todo
+                '1999',
+                'P',
+              )
+            }`,
           });
           break;
 
@@ -118,7 +120,7 @@ export function DatePicker<TInputDate, TDate, TFieldValues>({
   rules,
   ...props
 }: DatePickerProps<TInputDate, TDate, FieldValues>) {
-  const { setError, clearErrors, control } = useFormContext();
+  const {setError, clearErrors, control} = useFormContext();
 
   const transformedProps = useDatePicker<FieldValues>({
     name,
@@ -136,7 +138,7 @@ export function DatePickerProvider<TInputDate, TDate, TFieldValues>({
   rules,
   ...props
 }: DatePickerProps<TInputDate, TDate, FieldValues>) {
-  const { setError, clearErrors, control } = useFormContext();
+  const {setError, clearErrors, control} = useFormContext();
   const transformedProps = useDatePicker<FieldValues>({
     name,
     rules,

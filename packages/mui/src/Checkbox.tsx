@@ -1,18 +1,19 @@
-import {
-  useController,
-  FieldValues,
-  FieldPath,
-  UseControllerProps,
-} from 'react-hook-form';
 import MuiCheckbox, {
   CheckboxProps as MuiCheckboxProps,
 } from '@mui/material/Checkbox';
+import {
+  FieldPath,
+  FieldValues,
+  useController,
+  UseControllerProps,
+} from 'react-hook-form';
 
 export type CheckboxProps<
   TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues = FieldValues,
-> = UseControllerProps<TFieldValues, TName> &
-  Omit<
+> =
+  & UseControllerProps<TFieldValues, TName>
+  & Omit<
     MuiCheckboxProps,
     'checked' | 'name' | 'value' | 'defaultChecked' | 'form'
   >;
@@ -20,10 +21,10 @@ export type CheckboxProps<
 export function Checkbox<
   TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues,
->({ control, name, rules, ...props }: CheckboxProps<TName, TFieldValues>) {
+>({control, name, rules, ...props}: CheckboxProps<TName, TFieldValues>) {
   const {
-    fieldState: { error },
-    field: { onChange, onBlur, value, ref },
+    fieldState: {error},
+    field: {onChange, onBlur, value, ref},
   } = useController({
     name,
     control,

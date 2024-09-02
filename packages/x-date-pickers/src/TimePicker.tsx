@@ -1,16 +1,16 @@
-import {
-  Path,
-  RegisterOptions,
-  useController,
-  FieldValues,
-  useFormContext,
-} from 'react-hook-form';
+import TextField from '@mui/material/TextField';
 import {
   TimePicker as MuiTimePicker,
   type TimePickerProps as MuiTimePickerProps,
 } from '@mui/x-date-pickers/TimePicker';
-import TextField from '@mui/material/TextField';
-import { format } from 'date-fns';
+import {format} from 'date-fns';
+import {
+  FieldValues,
+  Path,
+  RegisterOptions,
+  useController,
+  useFormContext,
+} from 'react-hook-form';
 
 export interface TimePickerProps<
   TInputDate,
@@ -26,9 +26,9 @@ export function TimePicker<TInputDate, TDate, TFieldValues>({
   rules,
   ...props
 }: TimePickerProps<TInputDate, TDate, TFieldValues>) {
-  const { setError, clearErrors, control } = useFormContext();
+  const {setError, clearErrors, control} = useFormContext();
   const {
-    field: { onChange, value, ref },
+    field: {onChange, value, ref},
     fieldState,
   } = useController({
     name,
@@ -45,7 +45,7 @@ export function TimePicker<TInputDate, TDate, TFieldValues>({
         console.log(reason, value);
         switch (reason) {
           case 'invalidDate':
-            setError(name, { type: 'value', message: '' });
+            setError(name, {type: 'value', message: ''});
             break;
 
           case 'minutesStep':
@@ -55,21 +55,25 @@ export function TimePicker<TInputDate, TDate, TFieldValues>({
           case 'maxTime':
             setError(name, {
               type: 'max',
-              message: `Date should not be after ${format(
-                // @ts-expect-error todo
-                props.maxDate,
-                'P'
-              )}`,
+              message: `Date should not be after ${
+                format(
+                  // @ts-expect-error todo
+                  props.maxDate,
+                  'P',
+                )
+              }`,
             });
             break;
           case 'minTime':
             setError(name, {
               type: 'min',
-              message: `Date should not be before ${format(
-                // @ts-expect-error todo
-                props.minDate,
-                'P'
-              )}`,
+              message: `Date should not be before ${
+                format(
+                  // @ts-expect-error todo
+                  props.minDate,
+                  'P',
+                )
+              }`,
             });
             break;
 
@@ -85,7 +89,7 @@ export function TimePicker<TInputDate, TDate, TFieldValues>({
             clearErrors(name);
         }
       }}
-      renderInput={({ helperText, error, ...params }) => {
+      renderInput={({helperText, error, ...params}) => {
         console.log(helperText, error, fieldState, params);
         return (
           <TextField
@@ -93,9 +97,8 @@ export function TimePicker<TInputDate, TDate, TFieldValues>({
             inputRef={ref}
             error={error && !!fieldState.error}
             // TODO: handle required error
-            helperText={
-              helperText ?? (fieldState.isTouched && fieldState.error?.message)
-            }
+            helperText={helperText
+              ?? (fieldState.isTouched && fieldState.error?.message)}
             {...params}
           />
         );

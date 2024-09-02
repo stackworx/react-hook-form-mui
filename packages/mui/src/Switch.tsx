@@ -1,16 +1,17 @@
+import MuiSwitch, {SwitchProps as MuiSwitchProps} from '@mui/material/Switch';
 import {
-  useController,
-  FieldValues,
   FieldPath,
+  FieldValues,
+  useController,
   UseControllerProps,
 } from 'react-hook-form';
-import MuiSwitch, { SwitchProps as MuiSwitchProps } from '@mui/material/Switch';
 
 export type SwitchProps<
   TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues = FieldValues,
-> = UseControllerProps<TFieldValues, TName> &
-  Omit<
+> =
+  & UseControllerProps<TFieldValues, TName>
+  & Omit<
     MuiSwitchProps,
     'checked' | 'name' | 'value' | 'defaultChecked' | 'form'
   >;
@@ -18,10 +19,10 @@ export type SwitchProps<
 export function Switch<
   TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues,
->({ control, name, rules, ...props }: SwitchProps<TName, TFieldValues>) {
+>({control, name, rules, ...props}: SwitchProps<TName, TFieldValues>) {
   const {
-    fieldState: { error },
-    field: { onChange, onBlur, value, ref },
+    fieldState: {error},
+    field: {onChange, onBlur, value, ref},
   } = useController({
     name,
     control,

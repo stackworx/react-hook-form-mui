@@ -1,10 +1,10 @@
-import Stack from '@mui/material/Stack';
 import MenuItem from '@mui/material/MenuItem';
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm } from 'react-hook-form';
+import Stack from '@mui/material/Stack';
+import {Meta, StoryFn} from '@storybook/react';
+import {useForm} from 'react-hook-form';
 
-import { TextField } from '../../packages/mui/src/TextField';
-import { Form } from './Form';
+import {TextField} from '../../packages/mui/src/TextField';
+import {Form} from './Form';
 
 export default {
   title: 'Core/TextField',
@@ -12,7 +12,7 @@ export default {
   parameters: {
     layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: 'submit' } },
+  argTypes: {onSubmit: {action: 'submit'}},
 } as Meta<typeof TextField>;
 
 const Template: StoryFn<typeof TextField> = (args: any) => {
@@ -27,8 +27,8 @@ const Template: StoryFn<typeof TextField> = (args: any) => {
     <Form {...formProps} onSubmit={args.onSubmit}>
       <Stack>
         <TextField
-          name="text"
-          label="Text"
+          name='text'
+          label='Text'
           control={formProps.control}
           errors={formProps.formState.errors}
           {...args}
@@ -67,7 +67,7 @@ export const MinLength = {
     label: 'MinLength',
     helperText: 'Should be overriden by error',
     rules: {
-      minLength: { value: 10, message: 'Minimum length is 10 characters' },
+      minLength: {value: 10, message: 'Minimum length is 10 characters'},
     },
   },
 };
@@ -78,7 +78,7 @@ export const MaxLength = {
     label: 'MaxLength',
     helperText: 'Should be overriden by error',
     rules: {
-      maxLength: { value: 5, message: 'Max length is 5 characters' },
+      maxLength: {value: 5, message: 'Max length is 5 characters'},
     },
   },
 };
@@ -88,7 +88,7 @@ export const Required = {
 
   args: {
     label: 'Required',
-    rules: { required: true, maxLength: 5 },
+    rules: {required: true, maxLength: 5},
   },
 };
 
@@ -97,7 +97,7 @@ export const SingleSelect = {
 
   args: {
     label: 'Single Select',
-    rules: { required: 'Required' },
+    rules: {required: 'Required'},
     select: true,
     children: [
       <MenuItem key={10} value={10}>
@@ -118,9 +118,9 @@ export const MultipleSelect = {
 
   args: {
     label: 'Multiple Select',
-    rules: { required: 'Required' },
+    rules: {required: 'Required'},
     select: true,
-    SelectProps: { multiple: true },
+    SelectProps: {multiple: true},
     children: [
       <MenuItem key={10} value={10}>
         Ten

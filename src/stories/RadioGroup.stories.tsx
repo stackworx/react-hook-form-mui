@@ -1,11 +1,11 @@
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm } from 'react-hook-form';
+import {Meta, StoryFn} from '@storybook/react';
+import {useForm} from 'react-hook-form';
 
-import { Radio, RadioGroup } from '../../packages/mui/src/RadioGroup';
-import { Form } from './Form';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
+import {Radio, RadioGroup} from '../../packages/mui/src/RadioGroup';
+import {Form} from './Form';
 
 export default {
   title: 'Core/RadioGroup',
@@ -13,7 +13,7 @@ export default {
   parameters: {
     layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: 'submit' } },
+  argTypes: {onSubmit: {action: 'submit'}},
 } as Meta<typeof RadioGroup>;
 
 const Template: StoryFn<typeof RadioGroup> = (args: any) => {
@@ -27,27 +27,27 @@ const Template: StoryFn<typeof RadioGroup> = (args: any) => {
   return (
     <Form {...formProps} onSubmit={args.onSubmit}>
       <FormControl>
-        <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
+        <FormLabel id='demo-radio-buttons-group-label'>Gender</FormLabel>
         <RadioGroup
-          name="radioGroup"
+          name='radioGroup'
           control={formProps.control}
           errors={formProps.formState.errors}
           {...args}
         >
           <FormControlLabel
-            value="female"
+            value='female'
             control={<Radio control={formProps.control} />}
-            label="Female"
+            label='Female'
           />
           <FormControlLabel
-            value="male"
+            value='male'
             control={<Radio control={formProps.control} />}
-            label="Male"
+            label='Male'
           />
           <FormControlLabel
-            value="other"
+            value='other'
             control={<Radio control={formProps.control} />}
-            label="Other"
+            label='Other'
           />
         </RadioGroup>
       </FormControl>
@@ -63,6 +63,6 @@ export const Required = {
   render: Template,
 
   args: {
-    rules: { required: 'This field is required' },
+    rules: {required: 'This field is required'},
   },
 };

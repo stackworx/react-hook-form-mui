@@ -1,10 +1,10 @@
-import Stack from '@mui/material/Stack';
 import MenuItem from '@mui/material/MenuItem';
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm } from 'react-hook-form';
+import Stack from '@mui/material/Stack';
+import {Meta, StoryFn} from '@storybook/react';
+import {useForm} from 'react-hook-form';
 
-import { Select } from '../../packages/mui/src/Select';
-import { Form } from './Form';
+import {Select} from '../../packages/mui/src/Select';
+import {Form} from './Form';
 
 export default {
   title: 'Core/Select',
@@ -12,7 +12,7 @@ export default {
   parameters: {
     layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: 'submit' } },
+  argTypes: {onSubmit: {action: 'submit'}},
 } as Meta<typeof Select>;
 
 const Template: StoryFn<typeof Select> = (args: any) => {
@@ -27,8 +27,8 @@ const Template: StoryFn<typeof Select> = (args: any) => {
     <Form {...formProps} onSubmit={args.onSubmit}>
       <Stack>
         <Select
-          name="text"
-          label="Text"
+          name='text'
+          label='Text'
           control={formProps.control}
           errors={formProps.formState.errors}
           {...args}
@@ -62,7 +62,7 @@ export const Required = {
 
   args: {
     label: 'Required',
-    rules: { required: 'Required' },
+    rules: {required: 'Required'},
     children: [
       <MenuItem key={10} value={10}>
         Ten
@@ -101,7 +101,7 @@ export const MultipleSelect = {
 
   args: {
     label: 'Multiple Select',
-    SelectProps: { multiple: true },
+    SelectProps: {multiple: true},
     children: [
       <MenuItem key={10} value={10}>
         Ten

@@ -1,23 +1,24 @@
-import {
-  useController,
-  FieldValues,
-  FieldPath,
-  UseControllerProps,
-  useFormState,
-  Control,
-  FieldError,
-} from 'react-hook-form';
+import {default as MuiRadio, type RadioProps} from '@mui/material/Radio';
 import MuiRadioGroup, {
   RadioGroupProps as MuiRadioGroupProps,
   useRadioGroup,
 } from '@mui/material/RadioGroup';
-import { default as MuiRadio, type RadioProps } from '@mui/material/Radio';
+import {
+  Control,
+  FieldError,
+  FieldPath,
+  FieldValues,
+  useController,
+  UseControllerProps,
+  useFormState,
+} from 'react-hook-form';
 
 export type RadioGroupProps<
   TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues = FieldValues,
-> = UseControllerProps<TFieldValues, TName> &
-  Omit<
+> =
+  & UseControllerProps<TFieldValues, TName>
+  & Omit<
     MuiRadioGroupProps,
     'checked' | 'name' | 'value' | 'defaultChecked' | 'form'
   >;
@@ -25,9 +26,9 @@ export type RadioGroupProps<
 export function RadioGroup<
   TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues,
->({ control, name, rules, ...props }: RadioGroupProps<TName, TFieldValues>) {
+>({control, name, rules, ...props}: RadioGroupProps<TName, TFieldValues>) {
   const {
-    field: { onChange, onBlur, value },
+    field: {onChange, onBlur, value},
   } = useController({
     name,
     control,
@@ -56,7 +57,7 @@ export function Radio<T extends FieldValues>({
   ...props
 }: MyRadioProps<T>) {
   const radioGroup = useRadioGroup();
-  const { errors } = useFormState({ control });
+  const {errors} = useFormState({control});
 
   const fieldName = radioGroup?.name || props.name || '';
   const fieldError = (errors as Record<string, FieldError>)[fieldName];

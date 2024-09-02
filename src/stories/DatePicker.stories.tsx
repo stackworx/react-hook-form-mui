@@ -1,9 +1,9 @@
 import Stack from '@mui/material/Stack';
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm, FormProvider } from 'react-hook-form';
+import {Meta, StoryFn} from '@storybook/react';
+import {FormProvider, useForm} from 'react-hook-form';
 
-import { DatePicker } from '../../packages/x-date-pickers/src/DatePicker';
-import { Form } from './Form';
+import {DatePicker} from '../../packages/x-date-pickers/src/DatePicker';
+import {Form} from './Form';
 
 export default {
   title: 'X-Mui/DatePicker',
@@ -11,7 +11,7 @@ export default {
   parameters: {
     layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: 'submit' } },
+  argTypes: {onSubmit: {action: 'submit'}},
 } as Meta<typeof DatePicker>;
 
 const Template: StoryFn<typeof DatePicker> = (args: any) => {
@@ -27,9 +27,9 @@ const Template: StoryFn<typeof DatePicker> = (args: any) => {
       <Form {...formProps} onSubmit={args.onSubmit}>
         <Stack>
           <DatePicker
-            name="picker"
-            label="Date Picker"
-            rules={{ required: true }}
+            name='picker'
+            label='Date Picker'
+            rules={{required: true}}
             disablePast={true}
             {...args}
           />

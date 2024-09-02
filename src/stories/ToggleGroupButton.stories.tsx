@@ -1,13 +1,13 @@
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm } from 'react-hook-form';
-import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
 import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
-import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
+import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
 import ToggleButton from '@mui/material/ToggleButton';
+import {Meta, StoryFn} from '@storybook/react';
+import {useForm} from 'react-hook-form';
 
-import { ToggleButtonGroup } from '../../packages/mui/src/ToggleButtonGroup';
-import { Form } from './Form';
+import {ToggleButtonGroup} from '../../packages/mui/src/ToggleButtonGroup';
+import {Form} from './Form';
 
 export default {
   title: 'Core/ToggleButtonGroup',
@@ -15,7 +15,7 @@ export default {
   parameters: {
     layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: 'submit' } },
+  argTypes: {onSubmit: {action: 'submit'}},
 } as Meta<typeof ToggleButtonGroup>;
 
 const Template: StoryFn<typeof ToggleButtonGroup> = (args: any) => {
@@ -29,23 +29,23 @@ const Template: StoryFn<typeof ToggleButtonGroup> = (args: any) => {
   return (
     <Form {...formProps} onSubmit={args.onSubmit}>
       <ToggleButtonGroup
-        name="alignment"
-        value="red"
+        name='alignment'
+        value='red'
         control={formProps.control}
         setValue={formProps.setValue}
         exclusive={true}
         {...args}
       >
-        <ToggleButton value="left" aria-label="left aligned">
+        <ToggleButton value='left' aria-label='left aligned'>
           <FormatAlignLeftIcon />
         </ToggleButton>
-        <ToggleButton value="center" aria-label="centered">
+        <ToggleButton value='center' aria-label='centered'>
           <FormatAlignCenterIcon />
         </ToggleButton>
-        <ToggleButton value="right" aria-label="right aligned">
+        <ToggleButton value='right' aria-label='right aligned'>
           <FormatAlignRightIcon />
         </ToggleButton>
-        <ToggleButton value="justify" aria-label="justified" disabled>
+        <ToggleButton value='justify' aria-label='justified' disabled>
           <FormatAlignJustifyIcon />
         </ToggleButton>
       </ToggleButtonGroup>

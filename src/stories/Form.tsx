@@ -1,18 +1,19 @@
-import * as React from 'react';
-import {
-  UseFormReturn,
-  SubmitHandler,
-  UseFormGetValues,
-  FieldValues,
-} from 'react-hook-form';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
+import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
+import * as React from 'react';
+import {
+  FieldValues,
+  SubmitHandler,
+  UseFormGetValues,
+  UseFormReturn,
+} from 'react-hook-form';
 
 interface FormProps<TFieldValues extends FieldValues>
-  extends UseFormReturn<TFieldValues> {
+  extends UseFormReturn<TFieldValues>
+{
   children: React.ReactNode;
   onSubmit: SubmitHandler<TFieldValues>;
 }
@@ -47,23 +48,23 @@ export function Form<TFieldValues extends FieldValues>({
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Box sx={{ p: 2 }}>
+        <Box sx={{p: 2}}>
           <>{children}</>
           <Values getValues={getValues} />
           {/* <Errors errors={formState.errors} /> */}
-          <Stack sx={{ p: 1 }} direction="row">
+          <Stack sx={{p: 1}} direction='row'>
             <Button
-              sx={{ m: 1 }}
-              variant="contained"
-              color="primary"
-              type="submit"
+              sx={{m: 1}}
+              variant='contained'
+              color='primary'
+              type='submit'
             >
               Submit
             </Button>
             <Button
-              sx={{ m: 1 }}
-              variant="contained"
-              color="secondary"
+              sx={{m: 1}}
+              variant='contained'
+              color='secondary'
               onClick={() => reset()}
             >
               Reset

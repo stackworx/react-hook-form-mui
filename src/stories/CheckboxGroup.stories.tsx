@@ -1,10 +1,10 @@
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm } from 'react-hook-form';
-import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import {Meta, StoryFn} from '@storybook/react';
+import {useForm} from 'react-hook-form';
 
-import { CheckboxGroup } from '../../packages/mui/src/CheckboxGroup';
-import { Form } from './Form';
+import {CheckboxGroup} from '../../packages/mui/src/CheckboxGroup';
+import {Form} from './Form';
 
 export default {
   title: 'Core/CheckboxGroup',
@@ -12,7 +12,7 @@ export default {
   parameters: {
     layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: 'submit' } },
+  argTypes: {onSubmit: {action: 'submit'}},
 } as Meta<typeof CheckboxGroup>;
 
 const Template: StoryFn<typeof CheckboxGroup> = (args: any) => {
@@ -29,43 +29,46 @@ const Template: StoryFn<typeof CheckboxGroup> = (args: any) => {
         <FormControlLabel
           control={
             <CheckboxGroup
-              name="colours"
-              value="red"
+              name='colours'
+              value='red'
               control={formProps.control}
               errors={formProps.formState.errors}
               {...args}
             />
           }
-          label="Red"
-        ></FormControlLabel>
+          label='Red'
+        >
+        </FormControlLabel>
       </FormGroup>
       <FormGroup>
         <FormControlLabel
           control={
             <CheckboxGroup
-              name="colours"
-              value="green"
+              name='colours'
+              value='green'
               control={formProps.control}
               errors={formProps.formState.errors}
               {...args}
             />
           }
-          label="Green"
-        ></FormControlLabel>
+          label='Green'
+        >
+        </FormControlLabel>
       </FormGroup>
       <FormGroup>
         <FormControlLabel
           control={
             <CheckboxGroup
-              name="colours"
-              value="blue"
+              name='colours'
+              value='blue'
               control={formProps.control}
               errors={formProps.formState.errors}
               {...args}
             />
           }
-          label="Blue"
-        ></FormControlLabel>
+          label='Blue'
+        >
+        </FormControlLabel>
       </FormGroup>
     </Form>
   );
@@ -78,6 +81,6 @@ export const Default = {
 export const Required = {
   render: Template,
   args: {
-    rules: { required: 'Required' },
+    rules: {required: 'Required'},
   },
 };

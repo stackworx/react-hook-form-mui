@@ -13,7 +13,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
     'plugin:prettier/recommended',
-    "plugin:react/jsx-runtime",
+    'plugin:react/jsx-runtime',
   ],
   plugins: ['react-hooks'],
   overrides: [
@@ -43,7 +43,7 @@ module.exports = {
       },
       rules: {
         // 'react/display-name': 'off',
-        '@typescript-eslint/no-explicit-any': 'off'
+        '@typescript-eslint/no-explicit-any': 'off',
       },
     },
   ],
@@ -51,7 +51,7 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 0,
     '@typescript-eslint/no-unused-vars': [
       'error',
-      { ignoreRestSiblings: true },
+      {ignoreRestSiblings: true},
     ],
     'react/prop-types': 0,
     'no-restricted-imports': ['error', '@mui/material', '@mui/x-date-pickers'],

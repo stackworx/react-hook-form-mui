@@ -1,19 +1,19 @@
+import TextField from '@mui/material/TextField';
 import {
-  Path,
-  RegisterOptions,
+  type DatePickerProps as MuiDatePickerProps,
+  default as MuiDatePicker,
+} from '@mui/x-date-pickers/DatePicker';
+import {format} from 'date-fns';
+import {
   Control,
   FieldErrors,
-  useController,
   FieldValues,
-  UseFormSetError,
+  Path,
+  RegisterOptions,
+  useController,
   UseFormClearErrors,
+  UseFormSetError,
 } from 'react-hook-form';
-import {
-  default as MuiDatePicker,
-  type DatePickerProps as MuiDatePickerProps,
-} from '@mui/x-date-pickers/DatePicker';
-import TextField from '@mui/material/TextField';
-import { format } from 'date-fns';
 
 export interface DatePickerProps<
   TInputDate,
@@ -37,7 +37,7 @@ export function DatePicker<TInputDate, TDate, TFieldValues>({
   ...props
 }: DatePickerProps<TInputDate, TDate, TFieldValues>) {
   const {
-    field: { onChange, value, ref },
+    field: {onChange, value, ref},
     fieldState,
   } = useController({
     name,
@@ -55,33 +55,37 @@ export function DatePicker<TInputDate, TDate, TFieldValues>({
         console.log(reason, value);
         switch (reason) {
           case 'invalidDate':
-            setError(name, { type: 'value', message: '' });
+            setError(name, {type: 'value', message: ''});
             break;
 
           case 'disablePast':
-            setError(name, { message: 'Values in the past are not allowed' });
+            setError(name, {message: 'Values in the past are not allowed'});
             break;
           case 'disableFuture':
             break;
           case 'maxDate':
             setError(name, {
               type: 'max',
-              message: `Date should not be after ${format(
-                // @ts-expect-error todo
-                props.maxDate,
-                'P'
-              )}`,
+              message: `Date should not be after ${
+                format(
+                  // @ts-expect-error todo
+                  props.maxDate,
+                  'P',
+                )
+              }`,
             });
             break;
 
           case 'minDate':
             setError(name, {
               type: 'min',
-              message: `Date should not be before ${format(
-                // @ts-expect-error todo
-                props.minDate,
-                'P'
-              )}`,
+              message: `Date should not be before ${
+                format(
+                  // @ts-expect-error todo
+                  props.minDate,
+                  'P',
+                )
+              }`,
             });
             break;
 
@@ -95,7 +99,7 @@ export function DatePicker<TInputDate, TDate, TFieldValues>({
             clearErrors(name);
         }
       }}
-      renderInput={({ helperText, error, ...params }) => {
+      renderInput={({helperText, error, ...params}) => {
         console.log(helperText, error, fieldState, params);
         return (
           <TextField
@@ -103,9 +107,8 @@ export function DatePicker<TInputDate, TDate, TFieldValues>({
             inputRef={ref}
             error={error && !!fieldState.error}
             // TODO: handle required error
-            helperText={
-              helperText ?? (fieldState.isTouched && fieldState.error?.message)
-            }
+            helperText={helperText
+              ?? (fieldState.isTouched && fieldState.error?.message)}
             {...params}
           />
         );

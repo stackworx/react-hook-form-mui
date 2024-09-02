@@ -1,18 +1,19 @@
-import {
-  useController,
-  FieldValues,
-  UseControllerProps,
-  FieldPath,
-} from 'react-hook-form';
 import MuiCheckbox, {
   CheckboxProps as MuiCheckboxProps,
 } from '@mui/material/Checkbox';
+import {
+  FieldPath,
+  FieldValues,
+  useController,
+  UseControllerProps,
+} from 'react-hook-form';
 
 export type CheckboxGroupProps<
   TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues = FieldValues,
-> = UseControllerProps<TFieldValues, TName> &
-  Omit<MuiCheckboxProps, 'checked' | 'name' | 'defaultChecked' | 'form'>;
+> =
+  & UseControllerProps<TFieldValues, TName>
+  & Omit<MuiCheckboxProps, 'checked' | 'name' | 'defaultChecked' | 'form'>;
 
 export function CheckboxGroup<
   TName extends FieldPath<TFieldValues>,
@@ -26,14 +27,14 @@ export function CheckboxGroup<
 }: CheckboxGroupProps<TName, TFieldValues>) {
   const {
     field,
-    fieldState: { error },
+    fieldState: {error},
   } = useController({
     name,
     control,
     rules,
   });
 
-  const { onChange, onBlur, ref } = field;
+  const {onChange, onBlur, ref} = field;
 
   return (
     <MuiCheckbox
@@ -54,7 +55,7 @@ export function CheckboxGroup<
         } else {
           onChange(
             // @ts-expect-error must be array
-            field.value.filter((v) => v !== value)
+            field.value.filter((v) => v !== value),
           );
         }
       }}

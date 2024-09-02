@@ -1,18 +1,19 @@
-import {
-  useController,
-  FieldValues,
-  FieldPath,
-  UseControllerProps,
-} from 'react-hook-form';
 import MuiToggleButtonGroup, {
   ToggleButtonGroupProps as MuiToggleButtonGroupProps,
 } from '@mui/material/ToggleButtonGroup';
+import {
+  FieldPath,
+  FieldValues,
+  useController,
+  UseControllerProps,
+} from 'react-hook-form';
 
 export type ToggleButtonGroupProps<
   TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues = FieldValues,
-> = UseControllerProps<TFieldValues, TName> &
-  Omit<MuiToggleButtonGroupProps, 'name' | 'form' | 'onChange' | 'value'>;
+> =
+  & UseControllerProps<TFieldValues, TName>
+  & Omit<MuiToggleButtonGroupProps, 'name' | 'form' | 'onChange' | 'value'>;
 
 export function ToggleButtonGroup<
   TName extends FieldPath<TFieldValues>,
@@ -24,7 +25,7 @@ export function ToggleButtonGroup<
   children,
   ...props
 }: ToggleButtonGroupProps<TName, TFieldValues>) {
-  const { field } = useController({
+  const {field} = useController({
     name,
     control,
     rules,

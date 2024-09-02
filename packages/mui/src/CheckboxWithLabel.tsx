@@ -1,18 +1,18 @@
-import { FieldValues, FieldPath, useFormState } from 'react-hook-form';
-import { CheckboxProps, Checkbox } from './Checkbox';
+import {FieldPath, FieldValues, useFormState} from 'react-hook-form';
+import {Checkbox, CheckboxProps} from './Checkbox';
 
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 export type CheckboxPropsWithLabelProps<
   TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues = FieldValues,
-> = CheckboxProps<TName, TFieldValues> & { label: string };
+> = CheckboxProps<TName, TFieldValues> & {label: string};
 
 export function CheckboxWithLabel<
   TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues,
->({ label, ...props }: CheckboxPropsWithLabelProps<TName, TFieldValues>) {
-  const { errors } = useFormState({
+>({label, ...props}: CheckboxPropsWithLabelProps<TName, TFieldValues>) {
+  const {errors} = useFormState({
     control: props.control,
   });
 

@@ -1,29 +1,32 @@
 /// <reference types="vitest" />
-import { defineConfig } from "vite";
-import * as path from "path";
-import react from "@vitejs/plugin-react";
-import dts from "vite-plugin-dts";
+import react from '@vitejs/plugin-react';
+import * as path from 'path';
+import {defineConfig} from 'vite';
+import dts from 'vite-plugin-dts';
 
 const external = [
   /node_modules/,
-  "react",
-  "react/jsx-runtime",
-  "react-hook-form",
-  "tiny-warning",
-  "@mui/utils",
+  'react',
+  'react/jsx-runtime',
+  'react-hook-form',
+  'tiny-warning',
+  '@mui/utils',
   /@mui\/material/,
 ];
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), dts({
-    rollupTypes: true,
-    // https://github.com/qmhc/vite-plugin-dts/issues/344#issuecomment-2231355823
-    tsconfigPath: "./tsconfig.app.json",
-  })],
+  plugins: [
+    react(),
+    dts({
+      rollupTypes: true,
+      // https://github.com/qmhc/vite-plugin-dts/issues/344#issuecomment-2231355823
+      tsconfigPath: './tsconfig.app.json',
+    }),
+  ],
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/main.ts"),
+      entry: path.resolve(__dirname, 'src/main.ts'),
     },
     sourcemap: true,
     minify: false,
@@ -31,10 +34,10 @@ export default defineConfig({
       external,
       output: [
         {
-          format: "es",
-          dir: "./dist",
+          format: 'es',
+          dir: './dist',
           preserveModules: true,
-          entryFileNames: ({ name: fileName }) => {
+          entryFileNames: ({name: fileName}) => {
             return `${fileName}.js`;
           },
         },
@@ -44,5 +47,5 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./vitest-setup.js'],
-  }
+  },
 });
