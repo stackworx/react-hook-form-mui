@@ -74,8 +74,6 @@ export function DateTimePicker<
       onError={(reason) => {
         console.log({ reason });
         switch (reason) {
-          // TODO: set Error for all available reasons
-          // and set up a corresponding story component for each one in storybook
           case 'invalidDate':
             setError(name, { message: 'Invalid date' });
             break;
@@ -129,7 +127,7 @@ export function DateTimePicker<
             break;
           case 'minutesStep':
             setError(name, {
-              message: `Invalid minutes step, can only step in increments of ${props?.minutesStep ? format(props.minutesStep, 'P') : ''}`,
+              message: `Invalid minutes step, can only step in increments of ${props?.minutesStep ? format(props.minutesStep, 'P') : 'Invalid minutes step'}`,
             });
             break;
           case 'shouldDisableMonth':

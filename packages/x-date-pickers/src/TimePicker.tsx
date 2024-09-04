@@ -1,105 +1,119 @@
 import {
-  Path,
   RegisterOptions,
   useController,
   FieldValues,
   useFormContext,
+  FieldPath,
+  UseControllerProps,
 } from 'react-hook-form';
 import {
   TimePicker as MuiTimePicker,
   type TimePickerProps as MuiTimePickerProps,
 } from '@mui/x-date-pickers/TimePicker';
-import TextField from '@mui/material/TextField';
 import { format } from 'date-fns';
+import { PickerValidDate } from '@mui/x-date-pickers';
 
-export interface TimePickerProps<
-  TInputDate,
-  TDate,
-  TFieldValues extends FieldValues = FieldValues,
-> extends Omit<MuiTimePickerProps<TInputDate, TDate>, 'value'> {
-  name: Path<TFieldValues>;
-  rules?: RegisterOptions;
-}
+type TimePickerProps<
+  TDate extends PickerValidDate,
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TEnableAccessibleFieldDOMStructure extends boolean = false,
+> = Omit<
+  MuiTimePickerProps<TDate, TEnableAccessibleFieldDOMStructure>,
+  'value'
+> &
+  UseControllerProps<TFieldValues, TName>;
 
-export function TimePicker<TInputDate, TDate, TFieldValues>({
+export function TimePicker<
+  TDate extends PickerValidDate,
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TEnableAccessibleFieldDOMStructure extends boolean = false,
+>({
   name,
   rules,
   ...props
-}: TimePickerProps<TInputDate, TDate, TFieldValues>) {
+}: TimePickerProps<
+  TDate,
+  TFieldValues,
+  TName,
+  TEnableAccessibleFieldDOMStructure
+>) {
+  const { slotProps, ...otherPickerProps } = props;
+
   const { setError, clearErrors, control } = useFormContext();
+
   const {
-    field: { onChange, value, ref },
+    field: { onChange, value, ref, onBlur },
     fieldState,
   } = useController({
     name,
     control,
-    rules,
+    rules: rules as unknown as Omit<
+      RegisterOptions<FieldValues, TName>,
+      'disabled' | 'valueAsNumber' | 'valueAsDate' | 'setValueAs'
+    >,
   });
-
   return (
     <MuiTimePicker
-      {...props}
       onChange={onChange}
       value={value}
-      onError={(reason, value) => {
-        console.log(reason, value);
+      slotProps={{
+        ...slotProps,
+        textField: {
+          ...slotProps?.textField,
+          inputRef: ref,
+          error: !!fieldState.error,
+          onBlur,
+          helperText:
+            //@ts-expect-error incomplete typing
+            fieldState.error?.message ?? slotProps?.textField?.helperText,
+        },
+      }}
+      onError={(reason) => {
+        console.log({ reason });
         switch (reason) {
           case 'invalidDate':
-            setError(name, { type: 'value', message: '' });
+            setError(name, { message: 'Invalid date' });
             break;
-
-          case 'minutesStep':
-            // TODO
+          case 'disablePast':
+            setError(name, { message: 'Values in the past are not allowed' });
             break;
-
+          case 'disableFuture':
+            setError(name, { message: 'Values in the past are not allowed' });
+            break;
           case 'maxTime':
             setError(name, {
               type: 'max',
-              message: `Date should not be after ${format(
-                // @ts-expect-error todo
-                props.maxDate,
-                'P'
-              )}`,
+              message: `Time should not be after ${props?.maxTime ? format(props.maxTime, 'P') : 'Exceeded maximum time'}`,
             });
             break;
           case 'minTime':
             setError(name, {
               type: 'min',
-              message: `Date should not be before ${format(
-                // @ts-expect-error todo
-                props.minDate,
-                'P'
-              )}`,
+              message: `Time should not be after ${props?.minTime ? format(props.minTime, 'P') : 'Exceeded minimum time'}`,
             });
             break;
 
-          case 'shouldDisableTime-hours':
-          case 'shouldDisableTime-minutes':
-          case 'shouldDisableTime-seconds':
-            // TODO
-            // shouldDisableDate returned true, render custom message according to the `shouldDisableDate` logic
-            // setError(name, getShouldDisableDateError(value));
+          case 'minutesStep':
+            setError(name, {
+              message: `Invalid minutes step, can only step in increments of ${props?.minutesStep ? format(props.minutesStep, 'P') : 'Invalid minutes step'}`,
+            });
             break;
-
+          case 'shouldDisableTime-hours':
+            setError(name, { message: 'Specified hour is disabled' });
+            break;
+          case 'shouldDisableTime-minutes':
+            setError(name, { message: 'Specified minute is disabled' });
+            break;
+          case 'shouldDisableTime-seconds':
+            setError(name, { message: 'Specified second is disabled' });
+            break;
           default:
             clearErrors(name);
         }
       }}
-      renderInput={({ helperText, error, ...params }) => {
-        console.log(helperText, error, fieldState, params);
-        return (
-          <TextField
-            name={name}
-            inputRef={ref}
-            error={error && !!fieldState.error}
-            // TODO: handle required error
-            helperText={
-              helperText ?? (fieldState.isTouched && fieldState.error?.message)
-            }
-            {...params}
-          />
-        );
-      }}
+      {...otherPickerProps}
     />
   );
 }

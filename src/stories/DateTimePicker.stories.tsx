@@ -47,7 +47,7 @@ export const required = {
 
   args: {
     label: 'Required',
-    rules: { required: true },
+    rules: { required: true, message: 'This fields is required' },
   },
 };
 
