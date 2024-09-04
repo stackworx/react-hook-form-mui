@@ -3,6 +3,8 @@ import { StoryFn, Meta } from '@storybook/react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { DateTimePicker } from '../../packages/x-date-pickers/src/DateTimePicker';
 import { Form } from './Form';
+import React from 'react';
+import dayjs from 'dayjs';
 
 export default {
   title: 'X-Mui/DateTimePicker',
@@ -67,6 +69,7 @@ export const DisablePast = {
 
   args: {
     label: 'Disable Past',
+    disablePast: true,
   },
 };
 
@@ -75,6 +78,7 @@ export const DisableFuture = {
 
   args: {
     label: 'Disable Future',
+    disableFuture: true,
   },
 };
 
@@ -83,6 +87,7 @@ export const MaxDate = {
 
   args: {
     label: 'Max Date',
+    maxDate: dayjs().add(1, 'day').toDate(),
   },
 };
 
@@ -91,6 +96,7 @@ export const MinDate = {
 
   args: {
     label: 'Min Date',
+    minDate: dayjs().subtract(1, 'day').toDate(),
   },
 };
 
@@ -99,6 +105,7 @@ export const MaxDateTime = {
 
   args: {
     label: 'Max Date Time',
+    maxDateTime: dayjs().set('hour', 15).startOf('hour').toDate(),
   },
 };
 
@@ -107,14 +114,7 @@ export const MinDateTime = {
 
   args: {
     label: 'Min Date Time',
-  },
-};
-
-export const ShouldDisableDate = {
-  render: Template,
-
-  args: {
-    label: 'Should Disable Date',
+    minDateTime: dayjs().set('hour', 15).startOf('hour').toDate(),
   },
 };
 
@@ -123,6 +123,16 @@ export const MaxTime = {
 
   args: {
     label: 'Max Time',
+    maxTime: dayjs().set('hour', 9).startOf('hour').toDate(),
+  },
+};
+
+export const MinTime = {
+  render: Template,
+
+  args: {
+    label: 'Max Time',
+    minTime: dayjs().set('hour', 3).startOf('hour').toDate(),
   },
 };
 
@@ -131,6 +141,21 @@ export const MinutesStep = {
 
   args: {
     label: 'Minutes Step',
+    minutesStep: '15',
+  },
+};
+
+export const ShouldDisableDate = {
+  render: Template,
+
+  args: {
+    label: 'Should Disable Date',
+    shouldDisableDate: (dateParam) => {
+      const tomorrow = dayjs().add(1, 'day').startOf('day');
+      const selectedDate = dayjs(dateParam).startOf('day');
+
+      return selectedDate.isSame(tomorrow);
+    },
   },
 };
 
@@ -139,6 +164,12 @@ export const ShouldDisableMonth = {
 
   args: {
     label: 'Should Disable Month',
+    shouldDisableDate: (dateParam) => {
+      const month = dayjs().add(1, 'month').startOf('month');
+      const selectedMonth = dayjs(dateParam).startOf('month');
+
+      return selectedMonth.isSame(month);
+    },
   },
 };
 
@@ -147,14 +178,25 @@ export const ShouldDisableTimeHours = {
 
   args: {
     label: 'Should Disable Time Hours',
+    shouldDisableTime: (timeParam) => {
+      const disabledHour = 5;
+      const selectedHour = dayjs(timeParam).hour();
+
+      return selectedHour === disabledHour;
+    },
   },
 };
 
 export const ShouldDisableTimeMinutes = {
   render: Template,
-
   args: {
     label: 'Should Disable Time Minutes',
+    shouldDisableTime: (timeParam) => {
+      const disabledMinute = 30;
+      const selectedMinute = dayjs(timeParam).minute();
+
+      return selectedMinute === disabledMinute;
+    },
   },
 };
 
@@ -163,6 +205,16 @@ export const ShouldDisableTimeSeconds = {
 
   args: {
     label: 'Should Disable Time Seconds',
+    // Views are used to showcase all the picker options that can be changed
+    // added seconds to picker
+    views: ['year', 'day', 'hours', 'minutes', 'seconds'],
+
+    shouldDisableTime: (timeParam) => {
+      const disabledSecond = 45;
+      const selectedSecond = dayjs(timeParam).second();
+
+      return selectedSecond === disabledSecond;
+    },
   },
 };
 
@@ -171,5 +223,11 @@ export const ShouldDisableYear = {
 
   args: {
     label: 'Should Disable Year',
+    shouldDisableDate: (dateParam) => {
+      const disabledYear = 2025;
+      const selectedYear = dayjs(dateParam).year();
+
+      return selectedYear === disabledYear;
+    },
   },
 };

@@ -86,21 +86,69 @@ export function DateTimePicker<
             setError(name, { message: 'Values in the past are not allowed' });
             break;
           case 'maxDate':
+            const maxDate = props?.maxDate || props?.maxDateTime;
+
             setError(name, {
               type: 'max',
-              message: `Date should not be after ${props?.maxDate ? format(props.maxDate, 'P') : ''}`,
+              message: maxDate
+                ? `Date should not be after ${format(maxDate, 'P')}`
+                : 'Date should not be after the specified limit',
             });
+
             break;
           case 'minDate':
+            const minDate = props?.minDate || props?.minDateTime;
+
             setError(name, {
               type: 'min',
-              message: `Date should not be before ${props?.minDate ? format(props.minDate, 'P') : ''}`,
+              message: minDate
+                ? `Date should not be before ${format(minDate, 'P')}`
+                : 'Date should not be before the specified limit',
             });
             break;
+          case 'maxTime':
+            const maxTime = props?.maxTime || props?.maxDateTime;
+
+            setError(name, {
+              type: 'max',
+              message: maxTime
+                ? `Time should not be after ${format(maxTime, 'P')}`
+                : 'Time should not be after the specified limit',
+            });
+            break;
+          case 'minTime':
+            const minTime = props?.minTime || props?.minDateTime;
+
+            setError(name, {
+              type: 'min',
+              message: minTime
+                ? `Time should not be before ${format(minTime, 'P')}`
+                : 'Time should not be before the specified limit',
+            });
+
+            break;
+          case 'minutesStep':
+            setError(name, {
+              message: `Invalid minutes step, can only step in increments of ${props?.minutesStep ? format(props.minutesStep, 'P') : ''}`,
+            });
+            break;
+          case 'shouldDisableMonth':
+            setError(name, { message: 'Month is not allowed' });
+            break;
+          case 'shouldDisableYear':
+            setError(name, { message: 'Year is not allowed' });
+            break;
           case 'shouldDisableDate':
-            // TODO
-            // shouldDisableDate returned true, render custom message according to the `shouldDisableDate` logic
-            // setError(name, getShouldDisableDateError(value));
+            setError(name, { message: 'Date is not allowed' });
+            break;
+          case 'shouldDisableTime-hours':
+            setError(name, { message: 'Specified hour is disabled' });
+            break;
+          case 'shouldDisableTime-minutes':
+            setError(name, { message: 'Specified minute is disabled' });
+            break;
+          case 'shouldDisableTime-seconds':
+            setError(name, { message: 'Specified second is disabled' });
             break;
           default:
             clearErrors(name);
