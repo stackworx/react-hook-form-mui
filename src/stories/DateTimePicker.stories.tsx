@@ -1,152 +1,137 @@
-import Stack from '@mui/material/Stack';
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm, FormProvider } from 'react-hook-form';
+import { Meta } from '@storybook/react';
 import { DateTimePicker } from '../../packages/x-date-pickers/src/DateTimePicker';
-import { Form } from './Form';
-import React from 'react';
 import dayjs from 'dayjs';
+import { FormDecorator } from '../decorators/FormDecorator';
+import { UseFormProps } from 'react-hook-form/dist/types';
+import { ComponentProps } from 'react';
 
 export default {
-  title: 'X-Mui/DateTimePicker',
+  title: 'MUI-X/DateTimePicker',
+  decorators: [
+    (Story, context) => {
+      return (
+        <FormDecorator formProps={context.args.form}>
+          <Story />
+        </FormDecorator>
+      );
+    },
+  ],
   component: DateTimePicker,
   parameters: {
     layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: 'submit' } },
-} as Meta<typeof DateTimePicker>;
-
-const Template: StoryFn<typeof DateTimePicker> = (args: any) => {
-  console.log({ args });
-  const formProps = useForm<{
-    picker: any;
-  }>({
-    defaultValues: {
-      picker: args.defaultValue || null,
+  args: {
+    name: 'picker',
+    form: {
+      defaultValues: { picker: dayjs().toDate() },
     },
-  });
-  return (
-    <FormProvider {...formProps}>
-      <Form {...formProps} onSubmit={args.onSubmit}>
-        <Stack>
-          <DateTimePicker name="picker" label="Date Picker" {...args} />
-        </Stack>
-      </Form>
-    </FormProvider>
-  );
-};
+  },
+  actions: {
+    onSubmit: 'submit',
+  },
+  argTypes: { onSubmit: { action: 'submit' } },
+} as Meta<ComponentProps<typeof DateTimePicker> & { form: UseFormProps }>;
 
 export const Default = {
-  render: Template,
-
   args: {
     label: 'Default',
   },
 };
 
-export const required = {
-  render: Template,
-
+export const Required = {
   args: {
     label: 'Required',
-    rules: { required: true, message: 'This fields is required' },
+    rules: { required: true },
+    form: {
+      defaultValues: { picker: undefined },
+    },
   },
 };
 
-export const InvalidDate = {
-  render: Template,
-
+export const WithHelperText = {
   args: {
-    label: 'Invalid Date',
+    label: 'With Helper Text',
+    rules: { required: 'This field is required' },
     slotProps: {
       textField: {
-        helperText: 'Start typing to show error...',
+        helperText: 'Will be replaced with error message...',
       },
     },
   },
 };
 
-export const DisablePast = {
-  render: Template,
+//
+export const InvalidDate = {
   args: {
-    defaultValue: dayjs().subtract(1, 'day').toDate(),
+    label: 'Invalid Date',
+    form: {
+      defaultValues: { picker: '2025' },
+    },
+  },
+};
+
+export const DisablePast = {
+  args: {
+    form: {
+      defaultValues: { picker: dayjs().subtract(1, 'day').toDate() },
+    },
     label: 'Disable Past',
     disablePast: true,
   },
 };
 
 export const DisableFuture = {
-  render: Template,
-
   args: {
-    defaultValue: dayjs().add(1, 'day').toDate(),
+    form: {
+      defaultValues: { picker: dayjs().add(1, 'day').toDate() },
+    },
     label: 'Disable Future',
     disableFuture: true,
   },
 };
 
 export const MaxDate = {
-  render: Template,
-
   args: {
-    defaultValue: dayjs().add(2, 'day').toDate(),
     label: 'Max Date',
-    maxDate: dayjs().add(1, 'day').toDate(),
+    maxDate: dayjs().subtract(1, 'day').toDate(),
   },
 };
-
 export const MinDate = {
-  render: Template,
-
   args: {
-    defaultValue: dayjs().subtract(2, 'day').toDate(),
     label: 'Min Date',
-    minDate: dayjs().subtract(1, 'day').toDate(),
+    minDate: dayjs().add(1, 'day').toDate(),
   },
 };
 
 export const MaxDateTime = {
-  render: Template,
-
   args: {
-    defaultValue: dayjs().set('hour', 7).startOf('hour').toDate(),
     label: 'Max Date Time',
-    maxDateTime: dayjs().set('hour', 6).startOf('hour').toDate(),
+    maxDateTime: dayjs().subtract(1, 'hour').toDate(),
   },
 };
 
 export const MinDateTime = {
-  render: Template,
-
   args: {
-    defaultValue: dayjs().set('hour', 5).startOf('hour').toDate(),
     label: 'Min Date Time',
-    minDateTime: dayjs().set('hour', 6).startOf('hour').toDate(),
+    minDateTime: dayjs().add(1, 'hour').toDate(),
   },
 };
 
 export const MaxTime = {
-  render: Template,
-
   args: {
-    defaultValue: dayjs().set('hour', 6).startOf('hour').toDate(),
     label: 'Max Time',
-    maxTime: dayjs().set('hour', 5).startOf('hour').toDate(),
+    maxTime: dayjs().subtract(1, 'hour').toDate(),
   },
 };
 
 export const MinTime = {
-  render: Template,
-
   args: {
-    defaultValue: dayjs().set('hour', 2).startOf('hour').toDate(),
     label: 'Max Time',
-    minTime: dayjs().set('hour', 3).startOf('hour').toDate(),
+    minTime: dayjs().add(1, 'hour').toDate(),
   },
 };
 
 export const MinutesStep = {
-  render: Template,
-
   args: {
     label: 'Minutes Step',
     minutesStep: '15',
@@ -154,11 +139,9 @@ export const MinutesStep = {
 };
 
 export const ShouldDisableDate = {
-  render: Template,
-
   args: {
-    label: 'Should Disable Date',
-    defaultValue: dayjs().add(1, 'day').toDate(),
+    label: 'Should Disable Date - (Tomorrow not allowed)',
+    form: { defaultValues: { picker: dayjs().add(1, 'day').toDate() } },
     shouldDisableDate: (dateParam) => {
       const tomorrow = dayjs().add(1, 'day').startOf('day');
       const selectedDate = dayjs(dateParam).startOf('day');
@@ -169,12 +152,11 @@ export const ShouldDisableDate = {
 };
 
 export const ShouldDisableMonth = {
-  render: Template,
-
   args: {
-    label: 'Should Disable Month',
-    defaultValue: dayjs().add(1, 'month').toDate(),
-    shouldDisableDate: (dateParam) => {
+    label: 'Should Disable Month (Next month not allowed)',
+    // defaultValue: dayjs().add(1, 'month').toDate(),
+    form: { defaultValues: { picker: dayjs().add(1, 'month').toDate() } },
+    shouldDisableMonth: (dateParam) => {
       const month = dayjs().add(1, 'month').startOf('month');
       const selectedMonth = dayjs(dateParam).startOf('month');
 
@@ -184,11 +166,11 @@ export const ShouldDisableMonth = {
 };
 
 export const ShouldDisableTimeHours = {
-  render: Template,
-
   args: {
-    label: 'Should Disable Time Hours',
-    defaultValue: dayjs().hour(5).minute(0).second(0).toDate(),
+    label: 'Should Disable Time Hours (5AM not allowed)',
+    form: {
+      defaultValues: { picker: dayjs().hour(5).minute(0).second(0).toDate() },
+    },
     shouldDisableTime: (timeParam) => {
       const disabledHour = 5;
       const selectedHour = dayjs(timeParam).hour();
@@ -197,12 +179,13 @@ export const ShouldDisableTimeHours = {
     },
   },
 };
-
+//
 export const ShouldDisableTimeMinutes = {
-  render: Template,
   args: {
-    label: 'Should Disable Time Minutes',
-    defaultValue: dayjs().minute(30).second(0).toDate(),
+    label: 'Should Disable Time Minutes (Half hour not allowed)',
+    form: {
+      defaultValues: { picker: dayjs().hour(5).minute(30).second(0).toDate() },
+    },
     shouldDisableTime: (timeParam) => {
       const disabledMinute = 30;
       const selectedMinute = dayjs(timeParam).minute();
@@ -213,15 +196,13 @@ export const ShouldDisableTimeMinutes = {
 };
 
 export const ShouldDisableTimeSeconds = {
-  render: Template,
-
   args: {
-    label: 'Should Disable Time Seconds',
-    defaultValue: dayjs().minute(0).second(45).toDate(),
-    // Views are used to showcase all the picker options that can be changed
-    // added seconds to picker
+    label: 'Should Disable Time Seconds (45 seconds not allowed)',
+    // defaultValue: dayjs().minute(0).second(45).toDate(),
+    form: {
+      defaultValues: { picker: dayjs().minute(0).second(45).toDate() },
+    },
     views: ['year', 'day', 'hours', 'minutes', 'seconds'],
-
     shouldDisableTime: (timeParam) => {
       const disabledSecond = 45;
       const selectedSecond = dayjs(timeParam).second();
@@ -232,12 +213,13 @@ export const ShouldDisableTimeSeconds = {
 };
 
 export const ShouldDisableYear = {
-  render: Template,
-
   args: {
-    label: 'Should Disable Year',
-    defaultValue: dayjs().year(2025).month(0).date(1).toDate(),
-    shouldDisableDate: (dateParam) => {
+    label: 'Should Disable Year (2025 not allowed)',
+    // defaultValue: dayjs().year(2025).month(0).date(1).toDate(),
+    form: {
+      defaultValues: { picker: dayjs().year(2025).month(0).date(1).toDate() },
+    },
+    shouldDisableYear: (dateParam) => {
       const disabledYear = 2025;
       const selectedYear = dayjs(dateParam).year();
 

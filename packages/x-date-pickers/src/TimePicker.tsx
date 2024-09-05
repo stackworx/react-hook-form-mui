@@ -11,7 +11,7 @@ import {
   type TimePickerProps as MuiTimePickerProps,
 } from '@mui/x-date-pickers/TimePicker';
 import { format } from 'date-fns';
-import { PickerValidDate } from '@mui/x-date-pickers';
+import { PickerValidDate } from '@mui/x-date-pickers/models';
 
 type TimePickerProps<
   TDate extends PickerValidDate,

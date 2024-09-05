@@ -3,11 +3,10 @@ import { StoryFn, Meta } from '@storybook/react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { DatePicker } from '../../packages/x-date-pickers/src/DatePicker';
 import { Form } from './Form';
-import React from 'react';
 import dayjs from 'dayjs';
 
 export default {
-  title: 'X-Mui/DatePicker',
+  title: 'MUI-X/DatePicker',
   component: DatePicker,
   parameters: {
     layout: 'fullscreen',

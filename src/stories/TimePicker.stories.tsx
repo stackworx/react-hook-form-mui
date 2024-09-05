@@ -1,13 +1,12 @@
 import Stack from '@mui/material/Stack';
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm, FormProvider } from 'react-hook-form';
+import { Meta, StoryFn } from '@storybook/react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { TimePicker } from '../../packages/x-date-pickers/src/TimePicker';
 import { Form } from './Form';
-import React from 'react';
 import dayjs from 'dayjs';
 
 export default {
-  title: 'X-Mui/TimePicker',
+  title: 'MUI-X/TimePicker',
   component: TimePicker,
   parameters: {
     layout: 'fullscreen',
