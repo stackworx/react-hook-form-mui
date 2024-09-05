@@ -72,7 +72,6 @@ export function DatePicker<
         },
       }}
       onError={(reason) => {
-        console.log({ reason });
         switch (reason) {
           case 'shouldDisableMonth':
             setError(name, { message: 'Month is not allowed' });

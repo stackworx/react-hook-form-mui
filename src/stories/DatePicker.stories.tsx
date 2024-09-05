@@ -20,7 +20,7 @@ const Template: StoryFn<typeof DatePicker> = (args: any) => {
     picker: any;
   }>({
     defaultValues: {
-      picker: null,
+      picker: args.defaultValue || null,
     },
   });
   return (
@@ -67,6 +67,7 @@ export const DisableFuture = {
   render: Template,
 
   args: {
+    defaultValue: dayjs().add(1, 'day').toDate(),
     label: 'Disable Future',
     disableFuture: true,
   },
@@ -76,6 +77,7 @@ export const DisablePast = {
   render: Template,
 
   args: {
+    defaultValue: dayjs().subtract(1, 'day').toDate(),
     label: 'Disable Past',
     disablePast: true,
   },
@@ -85,6 +87,7 @@ export const MaxDate = {
   render: Template,
 
   args: {
+    defaultValue: dayjs().add(2, 'day').toDate(),
     label: 'Max Date',
     maxDate: dayjs().add(1, 'day').toDate(),
   },
@@ -94,6 +97,7 @@ export const MinDate = {
   render: Template,
 
   args: {
+    defaultValue: dayjs().subtract(2, 'day').toDate(),
     label: 'Min Date',
     minDate: dayjs().subtract(1, 'day').toDate(),
   },
@@ -104,6 +108,7 @@ export const ShouldDisableMonth = {
 
   args: {
     label: 'Should Disable Month',
+    defaultValue: dayjs().add(1, 'month').toDate(),
     shouldDisableDate: (dateParam) => {
       const month = dayjs().add(1, 'month').startOf('month');
       const selectedMonth = dayjs(dateParam).startOf('month');
@@ -118,6 +123,7 @@ export const ShouldDisableDate = {
 
   args: {
     label: 'Should Disable Date',
+    defaultValue: dayjs().add(1, 'day').toDate(),
     shouldDisableDate: (dateParam) => {
       const tomorrow = dayjs().add(1, 'day').startOf('day');
       const selectedDate = dayjs(dateParam).startOf('day');
@@ -132,6 +138,7 @@ export const ShouldDisableYear = {
 
   args: {
     label: 'Should Disable Year',
+    defaultValue: dayjs().year(2025).month(0).date(1).toDate(),
     shouldDisableDate: (dateParam) => {
       const disabledYear = 2025;
       const selectedYear = dayjs(dateParam).year();

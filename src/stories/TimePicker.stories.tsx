@@ -20,7 +20,7 @@ const Template: StoryFn<typeof TimePicker> = (args: any) => {
     picker: any;
   }>({
     defaultValues: {
-      picker: null,
+      picker: args.defaultValue || null,
     },
   });
   return (
@@ -68,6 +68,7 @@ export const DisablePast = {
   render: Template,
 
   args: {
+    defaultValue: dayjs().subtract(1, 'day').toDate(),
     label: 'Disable Past',
     disablePast: true,
   },
@@ -77,6 +78,7 @@ export const DisableFuture = {
   render: Template,
 
   args: {
+    defaultValue: dayjs().add(1, 'day').toDate(),
     label: 'Disable Future',
     disableFuture: true,
   },
@@ -86,8 +88,9 @@ export const MaxTime = {
   render: Template,
 
   args: {
+    defaultValue: dayjs().set('hour', 6).startOf('hour').toDate(),
     label: 'Max Time',
-    maxTime: dayjs().set('hour', 9).startOf('hour').toDate(),
+    maxTime: dayjs().set('hour', 5).startOf('hour').toDate(),
   },
 };
 
@@ -95,6 +98,7 @@ export const MinTime = {
   render: Template,
 
   args: {
+    defaultValue: dayjs().set('hour', 2).startOf('hour').toDate(),
     label: 'Max Time',
     minTime: dayjs().set('hour', 3).startOf('hour').toDate(),
   },
@@ -114,6 +118,7 @@ export const ShouldDisableTimeHours = {
 
   args: {
     label: 'Should Disable Time Hours',
+    defaultValue: dayjs().hour(5).minute(0).second(0).toDate(),
     shouldDisableTime: (timeParam) => {
       const disabledHour = 5;
       const selectedHour = dayjs(timeParam).hour();
@@ -127,6 +132,7 @@ export const ShouldDisableTimeMinutes = {
   render: Template,
   args: {
     label: 'Should Disable Time Minutes',
+    defaultValue: dayjs().minute(30).second(0).toDate(),
     shouldDisableTime: (timeParam) => {
       const disabledMinute = 30;
       const selectedMinute = dayjs(timeParam).minute();
@@ -141,6 +147,7 @@ export const ShouldDisableTimeSeconds = {
 
   args: {
     label: 'Should Disable Time Seconds',
+    defaultValue: dayjs().minute(0).second(45).toDate(),
     // Views are used to showcase all the picker options that can be changed
     // added seconds to picker
     views: ['year', 'day', 'hours', 'minutes', 'seconds'],

@@ -72,7 +72,6 @@ export function DateTimePicker<
         },
       }}
       onError={(reason) => {
-        console.log({ reason });
         switch (reason) {
           case 'invalidDate':
             setError(name, { message: 'Invalid date' });
