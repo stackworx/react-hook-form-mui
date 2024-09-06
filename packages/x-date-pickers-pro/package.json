@@ -2,6 +2,7 @@
   "name": "@stackworx/react-hook-form-mui-x-date-pickers-pro",
   "type": "module",
   "main": "./dist/main.js",
+  "typings": "dist/main.d.ts",
   "license": "MIT",
   "version": "0.0.1-alpha.1",
   "scripts": {
