@@ -60,7 +60,6 @@ export const WithHelperText = {
   },
 };
 
-//
 export const InvalidDate = {
   args: {
     label: 'Invalid Date',
@@ -96,6 +95,7 @@ export const MaxDate = {
     maxDate: dayjs().subtract(1, 'day').toDate(),
   },
 };
+
 export const MinDate = {
   args: {
     label: 'Min Date',
@@ -154,13 +154,28 @@ export const ShouldDisableDate = {
 export const ShouldDisableMonth = {
   args: {
     label: 'Should Disable Month (Next month not allowed)',
-    // defaultValue: dayjs().add(1, 'month').toDate(),
     form: { defaultValues: { picker: dayjs().add(1, 'month').toDate() } },
     shouldDisableMonth: (dateParam) => {
       const month = dayjs().add(1, 'month').startOf('month');
       const selectedMonth = dayjs(dateParam).startOf('month');
 
       return selectedMonth.isSame(month);
+    },
+  },
+};
+
+export const ShouldDisableYear = {
+  args: {
+    label: 'Should Disable Year (2025 not allowed)',
+    // defaultValue: dayjs().year(2025).month(0).date(1).toDate(),
+    form: {
+      defaultValues: { picker: dayjs().year(2025).month(0).date(1).toDate() },
+    },
+    shouldDisableYear: (dateParam) => {
+      const disabledYear = 2025;
+      const selectedYear = dayjs(dateParam).year();
+
+      return selectedYear === disabledYear;
     },
   },
 };
@@ -179,7 +194,7 @@ export const ShouldDisableTimeHours = {
     },
   },
 };
-//
+
 export const ShouldDisableTimeMinutes = {
   args: {
     label: 'Should Disable Time Minutes (Half hour not allowed)',
@@ -208,22 +223,6 @@ export const ShouldDisableTimeSeconds = {
       const selectedSecond = dayjs(timeParam).second();
 
       return selectedSecond === disabledSecond;
-    },
-  },
-};
-
-export const ShouldDisableYear = {
-  args: {
-    label: 'Should Disable Year (2025 not allowed)',
-    // defaultValue: dayjs().year(2025).month(0).date(1).toDate(),
-    form: {
-      defaultValues: { picker: dayjs().year(2025).month(0).date(1).toDate() },
-    },
-    shouldDisableYear: (dateParam) => {
-      const disabledYear = 2025;
-      const selectedYear = dayjs(dateParam).year();
-
-      return selectedYear === disabledYear;
     },
   },
 };
