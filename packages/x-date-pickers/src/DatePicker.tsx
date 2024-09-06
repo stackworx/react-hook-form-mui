@@ -1,148 +1,103 @@
 import {
-  Path,
-  RegisterOptions,
-  useController,
+  FieldPath,
   FieldValues,
-  useFormContext,
-  Control,
-  UseFormSetError,
-  UseFormClearErrors,
+  useController,
+  UseControllerProps,
 } from 'react-hook-form';
 import {
   DatePicker as MuiDatePicker,
   type DatePickerProps as MuiDatePickerProps,
 } from '@mui/x-date-pickers/DatePicker';
 import type { PickerValidDate } from '@mui/x-date-pickers/models';
-import { format } from 'date-fns';
+import {
+  useLocalizationContext,
+  useUtils,
+  validateDate,
+} from '@mui/x-date-pickers/internals';
+import { mapDatePickerValidationErrorMessage } from './utils/DatePickerValidationErrorsToMessage.ts';
 
-// import { ErrorContext } from "./ErrorContext";
+type DatePickerProps<
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
+  TDate extends PickerValidDate,
+  TEnableAccessibleFieldDOMStructure extends boolean = false,
+> = Omit<
+  MuiDatePickerProps<TDate, TEnableAccessibleFieldDOMStructure>,
+  'value' | 'name'
+> &
+  UseControllerProps<TFieldValues, TName>;
 
-export interface DatePickerProps<
-  TInputDate,
-  TDate,
-  TFieldValues extends FieldValues = FieldValues,
-> extends Omit<MuiDatePickerProps<PickerValidDate>, 'value'> {
-  name: Path<TFieldValues>;
-  rules?: RegisterOptions;
-}
-
-export function useDatePicker<TFieldValues extends FieldValues = FieldValues>({
+export function DatePicker<
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
+  TDate extends PickerValidDate,
+  TEnableAccessibleFieldDOMStructure extends boolean = false,
+>({
   name,
   rules,
-  setError,
-  clearErrors,
   control,
-}: {
-  name: Path<TFieldValues>;
-  rules?: RegisterOptions;
-  control: Control<TFieldValues>;
-  setError: UseFormSetError<TFieldValues>;
-  clearErrors: UseFormClearErrors<TFieldValues>;
-}): MuiDatePickerProps<Date> {
+  ...props
+}: DatePickerProps<
+  TFieldValues,
+  TName,
+  TDate,
+  TEnableAccessibleFieldDOMStructure
+>) {
+  const { slotProps, ...otherPickerProps } = props;
+
+  const { getTimezone } = useUtils();
+  const adapter = useLocalizationContext<TDate>();
+
   const {
-    field: { onChange, value, ref },
+    field: { onChange, value, ref, onBlur },
     fieldState,
   } = useController({
     name,
     control,
-    rules,
-  });
-
-  return {
-    onChange: onChange,
-    value: value,
-    onError: (reason, value) => {
-      // console.log(reason, value);
-      switch (reason) {
-        case 'invalidDate':
-          // setError(name, { type: "value", message: "Test" });
-          break;
-
-        case 'disablePast':
-          setError(name, { message: 'Values in the past are not allowed' });
-          break;
-        case 'disableFuture':
-          break;
-        case 'maxDate':
-          console.log('Hello world');
-          setError(name, {
-            type: 'max',
-            message: 'Hello',
-            // message: `Date should not be after ${format(
-            //   "2050",
-            //   "P",
-            // )}`,
+    rules: {
+      ...rules,
+      validate: {
+        ...rules?.validate,
+        internalMuiError: () => {
+          const muiValidationError = validateDate({
+            value,
+            props: {
+              ...props,
+              disableFuture: !!props.disableFuture,
+              disablePast: !!props.disablePast,
+              minDate: props.minDate,
+              maxDate: props.maxDate,
+              timezone: getTimezone(value),
+            },
+            adapter,
           });
-          break;
 
-        case 'minDate':
-          setError(name, {
-            type: 'min',
-            message: `Date should not be before ${format(
-              // @ts-expect-error todo
-              '1999',
-              'P'
-            )}`,
-          });
-          break;
-
-        case 'shouldDisableDate':
-          // TODO
-          // shouldDisableDate returned true, render custom message according to the `shouldDisableDate` logic
-          // setError(name, getShouldDisableDateError(value));
-          break;
-
-        default:
-          clearErrors(name);
-      }
+          return (
+            mapDatePickerValidationErrorMessage(muiValidationError, props) ??
+            true
+          );
+        },
+      },
     },
-    // renderInput: ({ helperText, error, ...params }) => {
-    //   // console.log(helperText, error, fieldState);
-    //   return (
-    //     <TextField
-    //       name={name}
-    //       inputRef={ref}
-    //       error={error && !!fieldState.error}
-    //       helperText={
-    //         helperText ?? (fieldState.isTouched && fieldState.error?.message)
-    //       }
-    //       {...params}
-    //     />
-    //   );
-    // },
-  };
-}
-
-export function DatePicker<TInputDate, TDate, TFieldValues>({
-  name,
-  rules,
-  ...props
-}: DatePickerProps<TInputDate, TDate, FieldValues>) {
-  const { setError, clearErrors, control } = useFormContext();
-
-  const transformedProps = useDatePicker<FieldValues>({
-    name,
-    rules,
-    setError,
-    clearErrors,
-    control,
   });
 
-  return <MuiDatePicker {...transformedProps} {...props} />;
-}
-
-export function DatePickerProvider<TInputDate, TDate, TFieldValues>({
-  name,
-  rules,
-  ...props
-}: DatePickerProps<TInputDate, TDate, FieldValues>) {
-  const { setError, clearErrors, control } = useFormContext();
-  const transformedProps = useDatePicker<FieldValues>({
-    name,
-    rules,
-    setError,
-    clearErrors,
-    control,
-  });
-  return <MuiDatePicker {...transformedProps} {...props} />;
+  return (
+    <MuiDatePicker
+      onChange={onChange}
+      value={value}
+      slotProps={{
+        ...slotProps,
+        textField: {
+          ...slotProps?.textField,
+          inputRef: ref,
+          error: !!fieldState.error,
+          onBlur,
+          helperText:
+            //@ts-expect-error incomplete typing
+            fieldState.error?.message ?? slotProps?.textField?.helperText,
+        },
+      }}
+      {...otherPickerProps}
+    />
+  );
 }

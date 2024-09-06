@@ -1,105 +1,102 @@
 import {
-  Path,
-  RegisterOptions,
-  useController,
+  FieldPath,
   FieldValues,
-  useFormContext,
+  useController,
+  UseControllerProps,
 } from 'react-hook-form';
 import {
   TimePicker as MuiTimePicker,
   type TimePickerProps as MuiTimePickerProps,
 } from '@mui/x-date-pickers/TimePicker';
-import TextField from '@mui/material/TextField';
-import { format } from 'date-fns';
+import { PickerValidDate } from '@mui/x-date-pickers/models';
+import {
+  useLocalizationContext,
+  useUtils,
+  validateTime,
+} from '@mui/x-date-pickers/internals';
+import { mapTimePickerValidationErrorMessage } from './utils/DatePickerValidationErrorsToMessage.ts';
 
-export interface TimePickerProps<
-  TInputDate,
-  TDate,
-  TFieldValues extends FieldValues = FieldValues,
-> extends Omit<MuiTimePickerProps<TInputDate, TDate>, 'value'> {
-  name: Path<TFieldValues>;
-  rules?: RegisterOptions;
-}
+type TimePickerProps<
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
+  TDate extends PickerValidDate,
+  TEnableAccessibleFieldDOMStructure extends boolean = false,
+> = Omit<
+  MuiTimePickerProps<TDate, TEnableAccessibleFieldDOMStructure>,
+  'value'
+> &
+  UseControllerProps<TFieldValues, TName>;
 
-export function TimePicker<TInputDate, TDate, TFieldValues>({
+export function TimePicker<
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
+  TDate extends PickerValidDate,
+  TEnableAccessibleFieldDOMStructure extends boolean = false,
+>({
   name,
   rules,
+  control,
   ...props
-}: TimePickerProps<TInputDate, TDate, TFieldValues>) {
-  const { setError, clearErrors, control } = useFormContext();
+}: TimePickerProps<
+  TFieldValues,
+  TName,
+  TDate,
+  TEnableAccessibleFieldDOMStructure
+>) {
+  const { slotProps, ...otherPickerProps } = props;
+
+  const { getTimezone } = useUtils();
+  const adapter = useLocalizationContext<TDate>();
+
   const {
-    field: { onChange, value, ref },
+    field: { onChange, value, ref, onBlur },
     fieldState,
   } = useController({
     name,
     control,
-    rules,
-  });
+    rules: {
+      ...rules,
+      validate: {
+        ...rules?.validate,
+        internalMuiError: () => {
+          const muiValidationError = validateTime({
+            value,
+            props: {
+              ...props,
+              disableFuture: !!props.disableFuture,
+              disablePast: !!props.disablePast,
+              minTime: props.minTime,
+              maxTime: props.maxTime,
+              timezone: getTimezone(value),
+            },
+            adapter,
+          });
 
+          return (
+            mapTimePickerValidationErrorMessage(muiValidationError, props) ??
+            true
+          );
+        },
+      },
+    },
+  });
   return (
     <MuiTimePicker
-      {...props}
       onChange={onChange}
       value={value}
-      onError={(reason, value) => {
-        console.log(reason, value);
-        switch (reason) {
-          case 'invalidDate':
-            setError(name, { type: 'value', message: '' });
-            break;
-
-          case 'minutesStep':
-            // TODO
-            break;
-
-          case 'maxTime':
-            setError(name, {
-              type: 'max',
-              message: `Date should not be after ${format(
-                // @ts-expect-error todo
-                props.maxDate,
-                'P'
-              )}`,
-            });
-            break;
-          case 'minTime':
-            setError(name, {
-              type: 'min',
-              message: `Date should not be before ${format(
-                // @ts-expect-error todo
-                props.minDate,
-                'P'
-              )}`,
-            });
-            break;
-
-          case 'shouldDisableTime-hours':
-          case 'shouldDisableTime-minutes':
-          case 'shouldDisableTime-seconds':
-            // TODO
-            // shouldDisableDate returned true, render custom message according to the `shouldDisableDate` logic
-            // setError(name, getShouldDisableDateError(value));
-            break;
-
-          default:
-            clearErrors(name);
-        }
+      slotProps={{
+        ...slotProps,
+        textField: {
+          ...slotProps?.textField,
+          inputRef: ref,
+          error: !!fieldState.error,
+          onBlur,
+          helperText:
+            //@ts-expect-error incomplete typing
+            fieldState.error?.message ?? slotProps?.textField?.helperText,
+        },
       }}
-      renderInput={({ helperText, error, ...params }) => {
-        console.log(helperText, error, fieldState, params);
-        return (
-          <TextField
-            name={name}
-            inputRef={ref}
-            error={error && !!fieldState.error}
-            // TODO: handle required error
-            helperText={
-              helperText ?? (fieldState.isTouched && fieldState.error?.message)
-            }
-            {...params}
-          />
-        );
-      }}
+      {...otherPickerProps}
     />
   );
 }
