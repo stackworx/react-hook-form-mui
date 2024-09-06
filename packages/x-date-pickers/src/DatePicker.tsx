@@ -1,47 +1,52 @@
 import {
-  RegisterOptions,
-  useController,
-  FieldValues,
-  useFormContext,
-  UseControllerProps,
   FieldPath,
+  FieldValues,
+  useController,
+  UseControllerProps,
 } from 'react-hook-form';
 import {
   DatePicker as MuiDatePicker,
   type DatePickerProps as MuiDatePickerProps,
 } from '@mui/x-date-pickers/DatePicker';
 import type { PickerValidDate } from '@mui/x-date-pickers/models';
-import { format } from 'date-fns';
+import {
+  useLocalizationContext,
+  useUtils,
+  validateDate,
+} from '@mui/x-date-pickers/internals';
+import { mapDatePickerValidationErrorMessage } from './utils/DatePickerValidationErrorsToMessage.ts';
 
 type DatePickerProps<
-  TDate extends PickerValidDate,
   TFieldValues extends FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TName extends FieldPath<TFieldValues>,
+  TDate extends PickerValidDate,
   TEnableAccessibleFieldDOMStructure extends boolean = false,
 > = Omit<
   MuiDatePickerProps<TDate, TEnableAccessibleFieldDOMStructure>,
-  'value'
+  'value' | 'name'
 > &
   UseControllerProps<TFieldValues, TName>;
 
 export function DatePicker<
-  TDate extends PickerValidDate,
   TFieldValues extends FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TName extends FieldPath<TFieldValues>,
+  TDate extends PickerValidDate,
   TEnableAccessibleFieldDOMStructure extends boolean = false,
 >({
   name,
   rules,
+  control,
   ...props
 }: DatePickerProps<
-  TDate,
   TFieldValues,
   TName,
+  TDate,
   TEnableAccessibleFieldDOMStructure
 >) {
   const { slotProps, ...otherPickerProps } = props;
 
-  const { setError, clearErrors, control } = useFormContext();
+  const { getTimezone } = useUtils();
+  const adapter = useLocalizationContext<TDate>();
 
   const {
     field: { onChange, value, ref, onBlur },
@@ -49,10 +54,31 @@ export function DatePicker<
   } = useController({
     name,
     control,
-    rules: rules as unknown as Omit<
-      RegisterOptions<FieldValues, TName>,
-      'disabled' | 'valueAsNumber' | 'valueAsDate' | 'setValueAs'
-    >,
+    rules: {
+      ...rules,
+      validate: {
+        ...rules?.validate,
+        internalMuiError: () => {
+          const muiValidationError = validateDate({
+            value,
+            props: {
+              ...props,
+              disableFuture: !!props.disableFuture,
+              disablePast: !!props.disablePast,
+              minDate: props.minDate,
+              maxDate: props.maxDate,
+              timezone: getTimezone(value),
+            },
+            adapter,
+          });
+
+          return (
+            mapDatePickerValidationErrorMessage(muiValidationError, props) ??
+            true
+          );
+        },
+      },
+    },
   });
 
   return (
@@ -70,42 +96,6 @@ export function DatePicker<
             //@ts-expect-error incomplete typing
             fieldState.error?.message ?? slotProps?.textField?.helperText,
         },
-      }}
-      onError={(reason) => {
-        switch (reason) {
-          case 'shouldDisableMonth':
-            setError(name, { message: 'Month is not allowed' });
-            break;
-          case 'shouldDisableYear':
-            setError(name, { message: 'Year is not allowed' });
-            break;
-          case 'shouldDisableDate':
-            setError(name, { message: 'Date is not allowed' });
-            break;
-          case 'disableFuture':
-            setError(name, { message: 'Values in the past are not allowed' });
-            break;
-          case 'minDate':
-            setError(name, {
-              type: 'min',
-              message: `Date should not be before ${props?.minDate ? format(props.minDate, 'P') : 'Exceeded minimum date'}`,
-            });
-            break;
-          case 'maxDate':
-            setError(name, {
-              type: 'max',
-              message: `Date should not be after ${props?.maxDate ? format(props.maxDate, 'P') : 'Exceeded maximum date'}`,
-            });
-            break;
-          case 'disablePast':
-            setError(name, { message: 'Values in the past are not allowed' });
-            break;
-          case 'invalidDate':
-            setError(name, { message: 'Invalid date' });
-            break;
-          default:
-            clearErrors(name);
-        }
       }}
       {...otherPickerProps}
     />

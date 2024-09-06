@@ -18,8 +18,8 @@ import { mapDateTimePickerValidationErrorMessage } from './utils/DatePickerValid
 import { TextFieldProps } from '@mui/material/TextField';
 
 type DateTimePickerProps<
-  TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
   TDate extends PickerValidDate,
   TEnableAccessibleFieldDOMStructure extends boolean = false,
 > = UseControllerProps<TFieldValues, TName> &
@@ -29,8 +29,8 @@ type DateTimePickerProps<
   >;
 
 export function DateTimePicker<
-  TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
   TDate extends PickerValidDate,
   TEnableAccessibleFieldDOMStructure extends boolean = false,
 >({
@@ -39,8 +39,8 @@ export function DateTimePicker<
   control,
   ...props
 }: DateTimePickerProps<
-  TName,
   TFieldValues,
+  TName,
   TDate,
   TEnableAccessibleFieldDOMStructure
 >) {
