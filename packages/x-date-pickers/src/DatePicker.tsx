@@ -16,7 +16,7 @@ import {
 } from '@mui/x-date-pickers/internals';
 import { mapDatePickerValidationErrorMessage } from './utils/DatePickerValidationErrorsToMessage.ts';
 
-type DatePickerProps<
+export type DatePickerProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
   TDate extends PickerValidDate,

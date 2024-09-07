@@ -2,11 +2,12 @@
   "name": "@stackworx/react-hook-form-mui",
   "type": "module",
   "main": "./dist/main.js",
+  "typings": "dist/main.d.ts",
   "license": "MIT",
   "version": "0.0.2",
   "scripts": {
-    "build": "tsc && vite build",
-    "typecheck": "tsc",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b",
     "test": "vitest",
     "prepublishOnly": "npm run build"
   },
