@@ -1,115 +1,69 @@
 import {
-  Path,
-  RegisterOptions,
-  Control,
-  FieldErrors,
-  useController,
+  FieldPath,
   FieldValues,
-  UseFormSetError,
-  UseFormClearErrors,
+  useController,
+  UseControllerProps,
 } from 'react-hook-form';
-import {
-  default as MuiDatePicker,
-  type DatePickerProps as MuiDatePickerProps,
-} from '@mui/x-date-pickers/DatePicker';
-import TextField from '@mui/material/TextField';
-import { format } from 'date-fns';
+import { type DateRangePickerProps as MuiDateRangePickerProps } from '@mui/x-date-pickers-pro/DateRangePicker';
+import type { PickerValidDate } from '@mui/x-date-pickers/models';
 
-export interface DatePickerProps<
-  TInputDate,
-  TDate,
-  TFieldValues extends FieldValues = FieldValues,
-> extends Omit<MuiDatePickerProps<TInputDate, TDate>, 'value'> {
-  name: Path<TFieldValues>;
-  rules?: RegisterOptions;
-  control: Control<TFieldValues>;
-  setError: UseFormSetError<TFieldValues>;
-  clearErrors: UseFormClearErrors<TFieldValues>;
-  errors: FieldErrors<TFieldValues>;
-}
+export type DateRangePickerProps<
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
+  TDate extends PickerValidDate,
+  TEnableAccessibleFieldDOMStructure extends boolean,
+> = Omit<
+  MuiDateRangePickerProps<TDate, TEnableAccessibleFieldDOMStructure>,
+  'value' | 'name'
+> &
+  UseControllerProps<TFieldValues, TName>;
 
-export function DatePicker<TInputDate, TDate, TFieldValues>({
-  control,
+export function DateRangePicker<
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
+  TDate extends PickerValidDate,
+  TEnableAccessibleFieldDOMStructure extends boolean,
+>({
   name,
+  control,
   rules,
-  setError,
-  clearErrors,
   ...props
-}: DatePickerProps<TInputDate, TDate, TFieldValues>) {
+}: DateRangePickerProps<
+  TFieldValues,
+  TName,
+  TDate,
+  TEnableAccessibleFieldDOMStructure
+>) {
+  const { slotProps, ...otherPickerProps } = props;
+
   const {
-    field: { onChange, value, ref },
+    field: { onChange, ref, onBlur },
     fieldState,
   } = useController({
     name,
     control,
-    rules,
+    rules: {
+      ...rules,
+    },
   });
 
   return (
-    <MuiDatePicker
-      {...props}
+    <DateRangePicker
+      name={name}
       onChange={onChange}
-      // @ts-expect-error todo
-      value={value}
-      onError={(reason, value) => {
-        console.log(reason, value);
-        switch (reason) {
-          case 'invalidDate':
-            setError(name, { type: 'value', message: '' });
-            break;
-
-          case 'disablePast':
-            setError(name, { message: 'Values in the past are not allowed' });
-            break;
-          case 'disableFuture':
-            break;
-          case 'maxDate':
-            setError(name, {
-              type: 'max',
-              message: `Date should not be after ${format(
-                // @ts-expect-error todo
-                props.maxDate,
-                'P'
-              )}`,
-            });
-            break;
-
-          case 'minDate':
-            setError(name, {
-              type: 'min',
-              message: `Date should not be before ${format(
-                // @ts-expect-error todo
-                props.minDate,
-                'P'
-              )}`,
-            });
-            break;
-
-          case 'shouldDisableDate':
-            // TODO
-            // shouldDisableDate returned true, render custom message according to the `shouldDisableDate` logic
-            // setError(name, getShouldDisableDateError(value));
-            break;
-
-          default:
-            clearErrors(name);
-        }
+      slotProps={{
+        ...slotProps,
+        textField: {
+          ...slotProps?.textField,
+          inputRef: ref,
+          error: !!fieldState.error,
+          onBlur,
+          helperText:
+            //@ts-expect-error incomplete typing
+            fieldState.error?.message ?? slotProps?.textField?.helperText,
+        },
       }}
-      renderInput={({ helperText, error, ...params }) => {
-        console.log(helperText, error, fieldState, params);
-        return (
-          <TextField
-            name={name}
-            inputRef={ref}
-            error={error && !!fieldState.error}
-            // TODO: handle required error
-            helperText={
-              helperText ?? (fieldState.isTouched && fieldState.error?.message)
-            }
-            {...params}
-          />
-        );
-      }}
+      {...otherPickerProps}
     />
   );
 }
