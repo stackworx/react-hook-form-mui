@@ -3,8 +3,6 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "build": "tsc && vite build",
-    "typecheck": "tsc",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "lint": "eslint \"./{src,packages/*/src}/**/*.{tsx,ts,js}\"",

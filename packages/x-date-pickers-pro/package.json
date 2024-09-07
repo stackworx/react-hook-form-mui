@@ -6,8 +6,8 @@
   "license": "MIT",
   "version": "0.0.1-alpha.1",
   "scripts": {
-    "build": "tsc && vite build",
-    "typecheck": "tsc",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b",
     "test": "vitest",
     "prepublishOnly": "npm run build"
   },
