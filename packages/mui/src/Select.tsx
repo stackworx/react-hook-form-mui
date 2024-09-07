@@ -8,7 +8,7 @@ import MuiTextField, {
   TextFieldProps as MuiTextFieldProps,
 } from '@mui/material/TextField';
 
-export type TextFieldProps<
+export type SelectProps<
   TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues = FieldValues,
 > = UseControllerProps<TFieldValues, TName> &
@@ -17,7 +17,7 @@ export type TextFieldProps<
 export function Select<
   TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues,
->({ control, name, rules, ...props }: TextFieldProps<TName, TFieldValues>) {
+>({ control, name, rules, ...props }: SelectProps<TName, TFieldValues>) {
   const {
     field: { onChange, onBlur, value, ref },
     fieldState: { error },
