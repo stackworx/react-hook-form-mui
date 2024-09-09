@@ -1,5 +1,6 @@
 export * from './Autocomplete';
 export * from './Checkbox';
+export * from './CheckboxWithLabel';
 export * from './CheckboxGroup';
 export * from './RadioGroup';
 export * from './Select';
