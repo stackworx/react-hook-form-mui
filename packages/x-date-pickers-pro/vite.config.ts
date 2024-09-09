@@ -12,6 +12,8 @@ const external = [
   "tiny-warning",
   "@mui/utils",
   /@mui\/material/,
+  /@mui\/x-date-pickers/,
+  /@mui\/x-date-pickers-pro/,
 ];
 
 // https://vitejs.dev/config/
