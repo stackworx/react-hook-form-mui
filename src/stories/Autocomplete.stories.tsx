@@ -1,79 +1,101 @@
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm } from 'react-hook-form';
-import type { AutocompleteRenderInputParams } from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
-
+import { Meta } from '@storybook/react';
 import { Autocomplete } from '../../packages/mui/src/Autocomplete';
-import { Form } from './Form';
+import { FormDecorator } from '../decorators/FormDecorator';
+import { UseFormProps } from 'react-hook-form/dist/types';
 import { Movie, top100Films } from './data';
+import { ComponentProps } from 'react';
+import TextField from '@mui/material/TextField';
+import { useFormState } from 'react-hook-form';
 
 export default {
   title: 'Core/Autocomplete',
-  component: Autocomplete,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  argTypes: { onSubmit: { action: 'submit' } },
-} as Meta<typeof Autocomplete>;
-
-const Template: StoryFn<typeof Autocomplete> = (args: any) => {
-  const formProps = useForm<{
-    autocomplete: any;
-  }>({
-    defaultValues: {
-      autocomplete: args.multiple ? [] : top100Films[0],
+  decorators: [
+    (Story, context) => {
+      return (
+        <FormDecorator formProps={context.args.form}>
+          <Story />
+        </FormDecorator>
+      );
     },
-  });
-  const {
-    formState: { touchedFields, errors },
-  } = formProps;
-  return (
-    <Form {...formProps} onSubmit={args.onSubmit}>
+  ],
+  render: ({
+    name,
+    control,
+    rules,
+    label,
+    helperText,
+    ...autocompleteProps
+  }) => {
+    const { touchedFields, errors } = useFormState();
+
+    return (
       <Autocomplete
-        name="autocomplete"
-        label="Autocoplete"
-        options={top100Films}
-        getOptionLabel={(option: Movie) => option.title}
-        style={{ width: 300 }}
-        control={formProps.control}
-        errors={formProps.formState.errors}
-        renderInput={(params: AutocompleteRenderInputParams) => (
+        {...autocompleteProps}
+        name={name}
+        control={control}
+        rules={rules}
+        renderInput={(params) => (
           <TextField
             {...params}
-            name="single"
-            error={touchedFields['autocomplete'] && !!errors['autocomplete']}
-            helperText={
-              errors['autocomplete']?.message ?? args.helperText ?? ' '
-            }
-            label="Single"
+            name={name}
+            label={label}
+            error={touchedFields[name] && !!errors[name]}
+            helperText={(errors[name]?.message as string) ?? helperText ?? ' '}
             variant="outlined"
           />
         )}
-        {...args}
       />
-    </Form>
-  );
-};
+    );
+  },
+  parameters: {
+    layout: 'fullscreen',
+  },
+  args: {
+    name: 'autocomplete',
+    options: top100Films,
+    getOptionLabel: (option: Movie) => option.title,
+    form: {
+      defaultValues: { autocomplete: top100Films[0] },
+    },
+  },
+  actions: {
+    onSubmit: 'submit',
+  },
+  argTypes: { onSubmit: { action: 'submit' } },
+} as Meta<
+  ComponentProps<typeof Autocomplete> & {
+    form: UseFormProps;
+    label: string;
+    helperText: string;
+  }
+>;
 
 export const Default = {
-  render: Template,
+  args: {
+    label: 'Default',
+  },
 };
 
 export const Multiple = {
-  render: Template,
-  args: { multiple: true },
-};
-export const Required = {
-  render: Template,
-
   args: {
+    form: {
+      defaultValues: { autocomplete: [top100Films[0], top100Films[1]] },
+    },
+    label: 'Multiple',
+    multiple: true,
+  },
+};
+
+export const Required = {
+  args: {
+    label: 'Required',
     rules: { required: 'Required' },
   },
 };
 
 export const WithHelperText = {
-  render: Template,
   args: {
+    label: 'With Helper Text',
     rules: { required: 'Required' },
     helperText: 'Should be overwritten by error',
   },
