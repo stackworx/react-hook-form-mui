@@ -1,3 +1,6 @@
+export {AsyncAutocomplete} from './AsyncAutocomplete.js';
+export type {AsyncAutocompleteProps} from './AsyncAutocomplete.js';
+export type {OptionsSource} from './asyncAutocomplete/OptionsSource.js';
 export {Autocomplete} from './Autocomplete.js';
 export type {
   AutocompleteFieldValue,
