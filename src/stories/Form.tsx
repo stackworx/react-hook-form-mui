@@ -8,11 +8,12 @@ import {
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
+import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 
 interface FormProps<TFieldValues extends FieldValues>
-  extends FormProviderProps<TFieldValues> {
+  extends FormProviderProps<TFieldValues>
+{
   children: React.ReactNode;
   onSubmit: SubmitHandler<TFieldValues>;
 }
@@ -26,21 +27,21 @@ export function Form<TFieldValues extends FieldValues>({
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <FormProvider {...props}>
         <form onSubmit={props.handleSubmit(onSubmit)}>
-          <Box sx={{ p: 2 }}>
+          <Box sx={{p: 2}}>
             {children}
-            <Stack sx={{ p: 1 }} direction="row">
+            <Stack sx={{p: 1}} direction='row'>
               <Button
-                sx={{ m: 1 }}
-                variant="contained"
-                color="primary"
-                type="submit"
+                sx={{m: 1}}
+                variant='contained'
+                color='primary'
+                type='submit'
               >
                 Submit
               </Button>
               <Button
-                sx={{ m: 1 }}
-                variant="contained"
-                color="secondary"
+                sx={{m: 1}}
+                variant='contained'
+                color='secondary'
                 onClick={() => props.reset()}
               >
                 Reset

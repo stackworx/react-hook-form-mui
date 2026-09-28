@@ -1,9 +1,9 @@
-import { Meta } from '@storybook/react';
-import { TimePicker } from '../../packages/x-date-pickers/src/TimePicker';
+import {Meta} from '@storybook/react';
+import {TimePicker} from '../../packages/x-date-pickers/src/TimePicker';
 import dayjs from 'dayjs';
-import { FormDecorator } from '../decorators/FormDecorator';
-import { ComponentProps } from 'react';
-import { UseFormProps } from 'react-hook-form/dist/types';
+import {FormDecorator} from '../decorators/FormDecorator';
+import {ComponentProps} from 'react';
+import {UseFormProps} from 'react-hook-form/dist/types';
 
 export default {
   title: 'MUI-X/TimePicker',
@@ -23,11 +23,11 @@ export default {
   args: {
     name: 'picker',
     form: {
-      defaultValues: { picker: dayjs().toDate() },
+      defaultValues: {picker: dayjs().toDate()},
     },
   },
-  argTypes: { onSubmit: { action: 'submit' } },
-} as Meta<ComponentProps<typeof TimePicker> & { form: UseFormProps }>;
+  argTypes: {onSubmit: {action: 'submit'}},
+} as Meta<ComponentProps<typeof TimePicker> & {form: UseFormProps}>;
 
 export const Default = {
   args: {
@@ -38,9 +38,9 @@ export const Default = {
 export const Required = {
   args: {
     label: 'Required',
-    rules: { required: true, message: 'This fields is required' },
+    rules: {required: true, message: 'This fields is required'},
     form: {
-      defaultValues: { picker: undefined },
+      defaultValues: {picker: undefined},
     },
   },
 };
@@ -48,7 +48,7 @@ export const Required = {
 export const WithHelperText = {
   args: {
     label: 'With Helper Text',
-    rules: { required: 'This field is required' },
+    rules: {required: 'This field is required'},
     slotProps: {
       textField: {
         helperText: 'Will be replaced with error message...',
@@ -61,7 +61,7 @@ export const InvalidTime = {
   args: {
     label: 'Invalid Date',
     form: {
-      defaultValues: { picker: '25:00' },
+      defaultValues: {picker: '25:00'},
     },
   },
 };
@@ -69,7 +69,7 @@ export const InvalidTime = {
 export const DisablePast = {
   args: {
     form: {
-      defaultValues: { picker: dayjs().subtract(1, 'hour').toDate() },
+      defaultValues: {picker: dayjs().subtract(1, 'hour').toDate()},
     },
     label: 'Disable Past',
     disablePast: true,
@@ -79,7 +79,7 @@ export const DisablePast = {
 export const DisableFuture = {
   args: {
     form: {
-      defaultValues: { picker: dayjs().add(1, 'hour').toDate() },
+      defaultValues: {picker: dayjs().add(1, 'hour').toDate()},
     },
     label: 'Disable Future',
     disableFuture: true,
@@ -111,7 +111,7 @@ export const ShouldDisableTimeHours = {
   args: {
     label: 'Should Disable Time Hours (5AM not allowed)',
     form: {
-      defaultValues: { picker: dayjs().hour(5).minute(0).second(0).toDate() },
+      defaultValues: {picker: dayjs().hour(5).minute(0).second(0).toDate()},
     },
     shouldDisableTime: (timeParam) => {
       const disabledHour = 5;
@@ -126,7 +126,7 @@ export const ShouldDisableTimeMinutes = {
   args: {
     label: 'Should Disable Time Minutes (Half hour not allowed)',
     form: {
-      defaultValues: { picker: dayjs().hour(5).minute(30).second(0).toDate() },
+      defaultValues: {picker: dayjs().hour(5).minute(30).second(0).toDate()},
     },
     shouldDisableTime: (timeParam) => {
       const disabledMinute = 30;
@@ -142,7 +142,7 @@ export const ShouldDisableTimeSeconds = {
     label: 'Should Disable Time Seconds (45 seconds not allowed)',
     // defaultValue: dayjs().minute(0).second(45).toDate(),
     form: {
-      defaultValues: { picker: dayjs().minute(0).second(45).toDate() },
+      defaultValues: {picker: dayjs().minute(0).second(45).toDate()},
     },
     views: ['year', 'day', 'hours', 'minutes', 'seconds'],
     shouldDisableTime: (timeParam) => {

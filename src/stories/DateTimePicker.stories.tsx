@@ -1,9 +1,9 @@
-import { Meta } from '@storybook/react';
-import { DateTimePicker } from '../../packages/x-date-pickers/src/DateTimePicker';
+import {Meta} from '@storybook/react';
+import {DateTimePicker} from '../../packages/x-date-pickers/src/DateTimePicker';
 import dayjs from 'dayjs';
-import { FormDecorator } from '../decorators/FormDecorator';
-import { UseFormProps } from 'react-hook-form/dist/types';
-import { ComponentProps } from 'react';
+import {FormDecorator} from '../decorators/FormDecorator';
+import {UseFormProps} from 'react-hook-form/dist/types';
+import {ComponentProps} from 'react';
 
 export default {
   title: 'MUI-X/DateTimePicker',
@@ -23,14 +23,14 @@ export default {
   args: {
     name: 'picker',
     form: {
-      defaultValues: { picker: dayjs().toDate() },
+      defaultValues: {picker: dayjs().toDate()},
     },
   },
   actions: {
     onSubmit: 'submit',
   },
-  argTypes: { onSubmit: { action: 'submit' } },
-} as Meta<ComponentProps<typeof DateTimePicker> & { form: UseFormProps }>;
+  argTypes: {onSubmit: {action: 'submit'}},
+} as Meta<ComponentProps<typeof DateTimePicker> & {form: UseFormProps}>;
 
 export const Default = {
   args: {
@@ -41,9 +41,9 @@ export const Default = {
 export const Required = {
   args: {
     label: 'Required',
-    rules: { required: true },
+    rules: {required: true},
     form: {
-      defaultValues: { picker: undefined },
+      defaultValues: {picker: undefined},
     },
   },
 };
@@ -51,7 +51,7 @@ export const Required = {
 export const WithHelperText = {
   args: {
     label: 'With Helper Text',
-    rules: { required: 'This field is required' },
+    rules: {required: 'This field is required'},
     slotProps: {
       textField: {
         helperText: 'Will be replaced with error message...',
@@ -64,7 +64,7 @@ export const InvalidDate = {
   args: {
     label: 'Invalid Date',
     form: {
-      defaultValues: { picker: '2025' },
+      defaultValues: {picker: '2025'},
     },
   },
 };
@@ -72,7 +72,7 @@ export const InvalidDate = {
 export const DisablePast = {
   args: {
     form: {
-      defaultValues: { picker: dayjs().subtract(1, 'day').toDate() },
+      defaultValues: {picker: dayjs().subtract(1, 'day').toDate()},
     },
     label: 'Disable Past',
     disablePast: true,
@@ -82,7 +82,7 @@ export const DisablePast = {
 export const DisableFuture = {
   args: {
     form: {
-      defaultValues: { picker: dayjs().add(1, 'day').toDate() },
+      defaultValues: {picker: dayjs().add(1, 'day').toDate()},
     },
     label: 'Disable Future',
     disableFuture: true,
@@ -141,7 +141,7 @@ export const MinutesStep = {
 export const ShouldDisableDate = {
   args: {
     label: 'Should Disable Date - (Tomorrow not allowed)',
-    form: { defaultValues: { picker: dayjs().add(1, 'day').toDate() } },
+    form: {defaultValues: {picker: dayjs().add(1, 'day').toDate()}},
     shouldDisableDate: (dateParam) => {
       const tomorrow = dayjs().add(1, 'day').startOf('day');
       const selectedDate = dayjs(dateParam).startOf('day');
@@ -154,7 +154,7 @@ export const ShouldDisableDate = {
 export const ShouldDisableMonth = {
   args: {
     label: 'Should Disable Month (Next month not allowed)',
-    form: { defaultValues: { picker: dayjs().add(1, 'month').toDate() } },
+    form: {defaultValues: {picker: dayjs().add(1, 'month').toDate()}},
     shouldDisableMonth: (dateParam) => {
       const month = dayjs().add(1, 'month').startOf('month');
       const selectedMonth = dayjs(dateParam).startOf('month');
@@ -169,7 +169,7 @@ export const ShouldDisableYear = {
     label: 'Should Disable Year (2025 not allowed)',
     // defaultValue: dayjs().year(2025).month(0).date(1).toDate(),
     form: {
-      defaultValues: { picker: dayjs().year(2025).month(0).date(1).toDate() },
+      defaultValues: {picker: dayjs().year(2025).month(0).date(1).toDate()},
     },
     shouldDisableYear: (dateParam) => {
       const disabledYear = 2025;
@@ -184,7 +184,7 @@ export const ShouldDisableTimeHours = {
   args: {
     label: 'Should Disable Time Hours (5AM not allowed)',
     form: {
-      defaultValues: { picker: dayjs().hour(5).minute(0).second(0).toDate() },
+      defaultValues: {picker: dayjs().hour(5).minute(0).second(0).toDate()},
     },
     shouldDisableTime: (timeParam) => {
       const disabledHour = 5;
@@ -199,7 +199,7 @@ export const ShouldDisableTimeMinutes = {
   args: {
     label: 'Should Disable Time Minutes (Half hour not allowed)',
     form: {
-      defaultValues: { picker: dayjs().hour(5).minute(30).second(0).toDate() },
+      defaultValues: {picker: dayjs().hour(5).minute(30).second(0).toDate()},
     },
     shouldDisableTime: (timeParam) => {
       const disabledMinute = 30;
@@ -215,7 +215,7 @@ export const ShouldDisableTimeSeconds = {
     label: 'Should Disable Time Seconds (45 seconds not allowed)',
     // defaultValue: dayjs().minute(0).second(45).toDate(),
     form: {
-      defaultValues: { picker: dayjs().minute(0).second(45).toDate() },
+      defaultValues: {picker: dayjs().minute(0).second(45).toDate()},
     },
     views: ['year', 'day', 'hours', 'minutes', 'seconds'],
     shouldDisableTime: (timeParam) => {

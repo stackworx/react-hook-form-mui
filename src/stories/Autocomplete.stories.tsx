@@ -1,11 +1,11 @@
-import { Meta } from '@storybook/react';
-import { Autocomplete } from '../../packages/mui/src/Autocomplete';
-import { FormDecorator } from '../decorators/FormDecorator';
-import { UseFormProps } from 'react-hook-form/dist/types';
-import { Movie, top100Films } from './data';
-import { ComponentProps } from 'react';
+import {Meta} from '@storybook/react';
+import {Autocomplete} from '../../packages/mui/src/Autocomplete';
+import {FormDecorator} from '../decorators/FormDecorator';
+import {UseFormProps} from 'react-hook-form/dist/types';
+import {Movie, top100Films} from './data';
+import {ComponentProps} from 'react';
 import TextField from '@mui/material/TextField';
-import { useFormState } from 'react-hook-form';
+import {useFormState} from 'react-hook-form';
 
 export default {
   title: 'Core/Autocomplete',
@@ -26,7 +26,7 @@ export default {
     helperText,
     ...autocompleteProps
   }) => {
-    const { touchedFields, errors } = useFormState();
+    const {touchedFields, errors} = useFormState();
 
     return (
       <Autocomplete
@@ -41,7 +41,7 @@ export default {
             label={label}
             error={touchedFields[name] && !!errors[name]}
             helperText={(errors[name]?.message as string) ?? helperText ?? ' '}
-            variant="outlined"
+            variant='outlined'
           />
         )}
       />
@@ -55,13 +55,13 @@ export default {
     options: top100Films,
     getOptionLabel: (option: Movie) => option.title,
     form: {
-      defaultValues: { autocomplete: top100Films[0] },
+      defaultValues: {autocomplete: top100Films[0]},
     },
   },
   actions: {
     onSubmit: 'submit',
   },
-  argTypes: { onSubmit: { action: 'submit' } },
+  argTypes: {onSubmit: {action: 'submit'}},
 } as Meta<
   ComponentProps<typeof Autocomplete> & {
     form: UseFormProps;
@@ -79,7 +79,7 @@ export const Default = {
 export const Multiple = {
   args: {
     form: {
-      defaultValues: { autocomplete: [top100Films[0], top100Films[1]] },
+      defaultValues: {autocomplete: [top100Films[0], top100Films[1]]},
     },
     label: 'Multiple',
     multiple: true,
@@ -89,14 +89,14 @@ export const Multiple = {
 export const Required = {
   args: {
     label: 'Required',
-    rules: { required: 'Required' },
+    rules: {required: 'Required'},
   },
 };
 
 export const WithHelperText = {
   args: {
     label: 'With Helper Text',
-    rules: { required: 'Required' },
+    rules: {required: 'Required'},
     helperText: 'Should be overwritten by error',
   },
 };

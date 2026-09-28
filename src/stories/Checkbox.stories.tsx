@@ -1,9 +1,9 @@
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm } from 'react-hook-form';
+import {Meta, StoryFn} from '@storybook/react';
+import {useForm} from 'react-hook-form';
 
-import { Checkbox } from '../../packages/mui/src/Checkbox';
-import { CheckboxWithLabel } from '../../packages/mui/src/CheckboxWithLabel';
-import { Form } from './Form';
+import {Checkbox} from '../../packages/mui/src/Checkbox';
+import {CheckboxWithLabel} from '../../packages/mui/src/CheckboxWithLabel';
+import {Form} from './Form';
 
 export default {
   title: 'Core/Checkbox',
@@ -11,7 +11,7 @@ export default {
   parameters: {
     layout: 'fullscreen',
   },
-  argTypes: { onSubmit: { action: 'submit' } },
+  argTypes: {onSubmit: {action: 'submit'}},
 } as Meta<typeof Checkbox>;
 
 const WithFormControlLabel: StoryFn<typeof Checkbox> = (args: any) => {
@@ -25,8 +25,8 @@ const WithFormControlLabel: StoryFn<typeof Checkbox> = (args: any) => {
   return (
     <Form {...formProps} onSubmit={args.onSubmit}>
       <CheckboxWithLabel
-        name="checkbox"
-        label="checkbox"
+        name='checkbox'
+        label='checkbox'
         control={formProps.control}
         errors={formProps.formState.errors}
         {...args}
@@ -46,7 +46,7 @@ const Template: StoryFn<typeof Checkbox> = (args: any) => {
   return (
     <Form {...formProps} onSubmit={args.onSubmit}>
       <Checkbox
-        name="checkbox"
+        name='checkbox'
         control={formProps.control}
         errors={formProps.formState.errors}
         {...args}
@@ -63,13 +63,13 @@ export const Required = {
   render: Template,
 
   args: {
-    rules: { required: 'Required' },
+    rules: {required: 'Required'},
   },
 };
 
 export const WithFormLabel = {
   render: WithFormControlLabel,
   args: {
-    rules: { required: 'Required' },
+    rules: {required: 'Required'},
   },
 };

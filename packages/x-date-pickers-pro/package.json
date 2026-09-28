@@ -1,23 +1,37 @@
 {
   "name": "@stackworx/react-hook-form-mui-x-date-pickers-pro",
-  "type": "module",
-  "main": "./dist/main.js",
-  "typings": "dist/main.d.ts",
-  "license": "MIT",
   "version": "0.0.1-alpha.5",
+  "description": "React Hook Form bindings for MUI X Pro date range pickers",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stackworx/react-hook-form-mui.git",
+    "directory": "packages/x-date-pickers-pro"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "@stackworx/source": "./src/main.ts",
+      "types": "./dist/main.d.ts",
+      "import": "./dist/main.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc -b && vite build",
-    "typecheck": "tsc -b",
-    "test": "vitest",
+    "build": "vite build",
     "prepublishOnly": "npm run build"
   },
-  "prettier": {
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
   "peerDependencies": {
-    "@mui/material": ">=5.6.0 || >=6.0.0",
-    "@mui/x-date-pickers-pro": ">7.0.0",
-    "react-hook-form": ">7.0.0"
+    "@mui/material": "^9.0.0",
+    "@mui/x-date-pickers": "^9.0.0",
+    "@mui/x-date-pickers-pro": "^9.0.0",
+    "react": "^19.0.0",
+    "react-hook-form": ">=7.62.0 <8"
+  },
+  "engines": {
+    "node": "^24.15.0 || >=26.0.0"
   }
 }
