@@ -5,7 +5,7 @@ import {forceSlotProps} from './forceSlotProps.js';
 import type {PickerController} from './usePickerController.js';
 
 /** The value, change, error, ref, name and disabled props every picker and field takes. */
-export function valueBinding<TValue, TError>(
+export function pickerValueProps<TValue, TError>(
   picker: PickerController<TValue, TError>,
   onError: ((error: TError, value: TValue) => void) | undefined,
 ) {
@@ -27,7 +27,7 @@ type TextFieldSlotProps = Partial<
 >;
 
 /** A picker's `slotProps.textField` with the RHF error, helper text and blur merged in. */
-export function textFieldSlotProps<
+export function pickerTextFieldSlotProps<
   TProps extends TextFieldSlotProps,
   TOwnerState,
 >(

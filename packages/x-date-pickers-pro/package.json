@@ -24,6 +24,9 @@
     "build": "vite build",
     "prepublishOnly": "npm run build"
   },
+  "dependencies": {
+    "@stackworx/react-hook-form-mui-x-date-pickers": "0.0.1-alpha.6"
+  },
   "peerDependencies": {
     "@mui/material": "^9.0.0",
     "@mui/x-date-pickers": "^9.0.0",

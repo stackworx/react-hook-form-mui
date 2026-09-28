@@ -6,7 +6,10 @@ import type {
 } from '@mui/x-date-pickers/models';
 import type {ReactNode} from 'react';
 import type {FieldPath, FieldValues} from 'react-hook-form';
-import {textFieldSlotProps, valueBinding} from './internal/bindings.js';
+import {
+  pickerTextFieldSlotProps,
+  pickerValueProps,
+} from './internal/bindings.js';
 import {
   splitPickerProps,
   usePickerController,
@@ -55,10 +58,10 @@ export function DatePicker<
   return (
     <MuiDatePicker
       {...rest}
-      {...valueBinding(picker, onError)}
+      {...pickerValueProps(picker, onError)}
       slotProps={{
         ...slotProps,
-        textField: textFieldSlotProps(
+        textField: pickerTextFieldSlotProps(
           picker,
           slotProps?.textField,
           helperText,

@@ -7,6 +7,10 @@ export type {DateTimeFieldProps} from './DateTimeField.js';
 export {DateTimePicker} from './DateTimePicker.js';
 export type {DateTimePickerProps} from './DateTimePicker.js';
 export {
+  pickerTextFieldSlotProps,
+  pickerValueProps,
+} from './internal/bindings.js';
+export {
   splitPickerProps,
   usePickerController,
 } from './internal/usePickerController.js';
