@@ -2,9 +2,9 @@ import MenuItem from '@mui/material/MenuItem';
 import TextFieldBase from '@mui/material/TextField';
 import type {TextFieldProps as MuiTextFieldProps} from '@mui/material/TextField';
 import {useForkRef} from '@mui/material/utils';
-import type {ReactNode} from 'react';
 import type {FieldPath, FieldValues} from 'react-hook-form';
 import {composeHandlers} from './internal/composeHandlers.js';
+import type {FieldOption} from './internal/FieldOption.js';
 import {forceSlotProps} from './internal/forceSlotProps.js';
 import type {DistributiveOmit} from './internal/types.js';
 import {
@@ -12,12 +12,6 @@ import {
   useFieldController,
 } from './internal/useFieldController.js';
 import type {FieldControllerProps} from './internal/useFieldController.js';
-
-export interface SelectOption<TValue> {
-  value: TValue;
-  label: ReactNode;
-  disabled?: boolean;
-}
 
 export type SelectProps<
   TFieldValues extends FieldValues,
@@ -31,7 +25,7 @@ export type SelectProps<
     'select' | 'value' | 'name' | 'defaultValue' | 'disabled' | 'children'
   >
   & {
-    options: readonly SelectOption<TValue>[];
+    options: readonly FieldOption<TValue>[];
     /** Stores `TValue[]` instead of `TValue | null`. */
     multiple?: boolean;
   };
