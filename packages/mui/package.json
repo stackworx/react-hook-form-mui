@@ -1,6 +1,6 @@
 {
   "name": "@stackworx/react-hook-form-mui",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "React Hook Form bindings for MUI (Material UI) inputs",
   "repository": {
     "type": "git",

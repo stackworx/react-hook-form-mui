@@ -10,9 +10,13 @@
   },
   "include": [
     "eslint.config.ts",
+    "vite.config.ts",
     "vitest.config.ts",
     "vite.library.ts",
     "packages/*/vite.config.ts",
-    "test"
+    "test",
+    "src",
+    ".storybook/*.ts",
+    ".storybook/*.tsx"
   ]
 }

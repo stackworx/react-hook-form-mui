@@ -1,68 +1,23 @@
-import {Meta, StoryFn} from '@storybook/react';
-import {useForm} from 'react-hook-form';
+import {RadioGroup} from '@stackworx/react-hook-form-mui';
+import type {Meta, StoryObj} from '@storybook/react-vite';
+import {FormStory} from './FormStory';
 
-import {Radio, RadioGroup} from '../../packages/mui/src/RadioGroup';
-import {Form} from './Form';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
+const meta = {title: 'Core/RadioGroup'} satisfies Meta;
+export default meta;
 
-export default {
-  title: 'Core/RadioGroup',
-  component: RadioGroup,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  argTypes: {onSubmit: {action: 'submit'}},
-} as Meta<typeof RadioGroup>;
-
-const Template: StoryFn<typeof RadioGroup> = (args: any) => {
-  const formProps = useForm<{
-    radioGroup: any;
-  }>({
-    defaultValues: {
-      radioGroup: false,
-    },
-  });
-  return (
-    <Form {...formProps} onSubmit={args.onSubmit}>
-      <FormControl>
-        <FormLabel id='demo-radio-buttons-group-label'>Gender</FormLabel>
+export const Default: StoryObj = {
+  render: () => (
+    <FormStory<{overtime: boolean | null}> defaultValues={{overtime: null}}>
+      {(control) => (
         <RadioGroup
-          name='radioGroup'
-          control={formProps.control}
-          errors={formProps.formState.errors}
-          {...args}
-        >
-          <FormControlLabel
-            value='female'
-            control={<Radio control={formProps.control} />}
-            label='Female'
-          />
-          <FormControlLabel
-            value='male'
-            control={<Radio control={formProps.control} />}
-            label='Male'
-          />
-          <FormControlLabel
-            value='other'
-            control={<Radio control={formProps.control} />}
-            label='Other'
-          />
-        </RadioGroup>
-      </FormControl>
-    </Form>
-  );
-};
-
-export const Default = {
-  render: Template,
-};
-
-export const Required = {
-  render: Template,
-
-  args: {
-    rules: {required: 'This field is required'},
-  },
+          name='overtime'
+          control={control}
+          label='Eligible for overtime'
+          row
+          options={[{value: true, label: 'Yes'}, {value: false, label: 'No'}]}
+          rules={{validate: (value) => value !== null || 'Choose one'}}
+        />
+      )}
+    </FormStory>
+  ),
 };

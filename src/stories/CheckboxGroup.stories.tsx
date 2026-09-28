@@ -1,86 +1,31 @@
-import {Meta, StoryFn} from '@storybook/react';
-import {useForm} from 'react-hook-form';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import {CheckboxGroup} from '@stackworx/react-hook-form-mui';
+import type {Meta, StoryObj} from '@storybook/react-vite';
+import {FormStory} from './FormStory';
 
-import {CheckboxGroup} from '../../packages/mui/src/CheckboxGroup';
-import {Form} from './Form';
+const meta = {title: 'Core/CheckboxGroup'} satisfies Meta;
+export default meta;
 
-export default {
-  title: 'Core/CheckboxGroup',
-  component: CheckboxGroup,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  argTypes: {onSubmit: {action: 'submit'}},
-} as Meta<typeof CheckboxGroup>;
-
-const Template: StoryFn<typeof CheckboxGroup> = (args: any) => {
-  const formProps = useForm<{
-    colours: any;
-  }>({
-    defaultValues: {
-      colours: [],
-    },
-  });
-  return (
-    <Form {...formProps} onSubmit={args.onSubmit}>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <CheckboxGroup
-              name='colours'
-              value='red'
-              control={formProps.control}
-              errors={formProps.formState.errors}
-              {...args}
-            />
-          }
-          label='Red'
-        >
-        </FormControlLabel>
-      </FormGroup>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <CheckboxGroup
-              name='colours'
-              value='green'
-              control={formProps.control}
-              errors={formProps.formState.errors}
-              {...args}
-            />
-          }
-          label='Green'
-        >
-        </FormControlLabel>
-      </FormGroup>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <CheckboxGroup
-              name='colours'
-              value='blue'
-              control={formProps.control}
-              errors={formProps.formState.errors}
-              {...args}
-            />
-          }
-          label='Blue'
-        >
-        </FormControlLabel>
-      </FormGroup>
-    </Form>
-  );
-};
-
-export const Default = {
-  render: Template,
-};
-
-export const Required = {
-  render: Template,
-  args: {
-    rules: {required: 'Required'},
-  },
+export const Default: StoryObj = {
+  render: () => (
+    <FormStory<{days: number[]}> defaultValues={{days: [1, 2, 3, 4, 5]}}>
+      {(control) => (
+        <CheckboxGroup
+          name='days'
+          control={control}
+          label='Working days'
+          row
+          options={[
+            {value: 1, label: 'Mon'},
+            {value: 2, label: 'Tue'},
+            {value: 3, label: 'Wed'},
+            {value: 4, label: 'Thu'},
+            {value: 5, label: 'Fri'},
+            {value: 6, label: 'Sat'},
+            {value: 7, label: 'Sun', disabled: true},
+          ]}
+          rules={{required: 'Pick at least one day'}}
+        />
+      )}
+    </FormStory>
+  ),
 };

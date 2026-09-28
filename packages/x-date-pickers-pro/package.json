@@ -1,6 +1,6 @@
 {
   "name": "@stackworx/react-hook-form-mui-x-date-pickers-pro",
-  "version": "0.0.1-alpha.5",
+  "version": "0.1.0",
   "description": "React Hook Form bindings for MUI X Pro date range pickers",
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@stackworx/react-hook-form-mui-x-date-pickers": "0.0.1-alpha.6"
+    "@stackworx/react-hook-form-mui-x-date-pickers": "^0.1.0"
   },
   "peerDependencies": {
     "@mui/material": "^9.0.0",

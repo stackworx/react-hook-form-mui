@@ -1,14 +1,13 @@
-import react from '@vitejs/plugin-react';
-import {defaultClientConditions} from 'vite';
-import {defineConfig} from 'vitest/config';
+import {defineConfig, mergeConfig} from 'vitest/config';
+import viteConfig from './vite.config.ts';
 
-export default defineConfig({
-  plugins: [react()],
-  resolve: {conditions: ['@stackworx/source', ...defaultClientConditions]},
-  test: {
-    environment: 'jsdom',
-    include: ['packages/*/src/**/*.test.{ts,tsx}'],
-    exclude: ['**/node_modules/**', '**/legacy/**'],
-    setupFiles: ['./test/setup.ts'],
-  },
-});
+export default mergeConfig(
+  viteConfig,
+  defineConfig({
+    test: {
+      environment: 'jsdom',
+      include: ['packages/*/src/**/*.test.{ts,tsx}'],
+      setupFiles: ['./test/setup.ts'],
+    },
+  }),
+);

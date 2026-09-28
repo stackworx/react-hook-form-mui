@@ -19,8 +19,7 @@
     "**/*-lock.json",
     "**/dist",
     "storybook-static",
-    "docs",
-    "packages/*/src/legacy"
+    "docs"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.96.1.wasm",

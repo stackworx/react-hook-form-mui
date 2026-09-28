@@ -1,75 +1,22 @@
-import {Meta, StoryFn} from '@storybook/react';
-import {useForm} from 'react-hook-form';
+import {Checkbox} from '@stackworx/react-hook-form-mui';
+import type {Meta, StoryObj} from '@storybook/react-vite';
+import {FormStory} from './FormStory';
 
-import {Checkbox} from '../../packages/mui/src/Checkbox';
-import {CheckboxWithLabel} from '../../packages/mui/src/CheckboxWithLabel';
-import {Form} from './Form';
+const meta = {title: 'Core/Checkbox'} satisfies Meta;
+export default meta;
 
-export default {
-  title: 'Core/Checkbox',
-  component: Checkbox,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  argTypes: {onSubmit: {action: 'submit'}},
-} as Meta<typeof Checkbox>;
-
-const WithFormControlLabel: StoryFn<typeof Checkbox> = (args: any) => {
-  const formProps = useForm<{
-    checkbox: any;
-  }>({
-    defaultValues: {
-      checkbox: false,
-    },
-  });
-  return (
-    <Form {...formProps} onSubmit={args.onSubmit}>
-      <CheckboxWithLabel
-        name='checkbox'
-        label='checkbox'
-        control={formProps.control}
-        errors={formProps.formState.errors}
-        {...args}
-      />
-    </Form>
-  );
-};
-
-const Template: StoryFn<typeof Checkbox> = (args: any) => {
-  const formProps = useForm<{
-    checkbox: any;
-  }>({
-    defaultValues: {
-      checkbox: false,
-    },
-  });
-  return (
-    <Form {...formProps} onSubmit={args.onSubmit}>
-      <Checkbox
-        name='checkbox'
-        control={formProps.control}
-        errors={formProps.formState.errors}
-        {...args}
-      />
-    </Form>
-  );
-};
-
-export const Default = {
-  render: Template,
-};
-
-export const Required = {
-  render: Template,
-
-  args: {
-    rules: {required: 'Required'},
-  },
-};
-
-export const WithFormLabel = {
-  render: WithFormControlLabel,
-  args: {
-    rules: {required: 'Required'},
-  },
+export const Default: StoryObj = {
+  render: () => (
+    <FormStory<{accept: boolean}> defaultValues={{accept: false}}>
+      {(control) => (
+        <Checkbox
+          name='accept'
+          control={control}
+          label='I accept the terms'
+          helperText='Required to continue'
+          rules={{validate: (value) => value || 'Please accept the terms'}}
+        />
+      )}
+    </FormStory>
+  ),
 };

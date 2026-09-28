@@ -1,6 +1,6 @@
 {
   "name": "@stackworx/react-hook-form-mui-x-date-pickers",
-  "version": "0.0.1-alpha.6",
+  "version": "0.1.0",
   "description": "React Hook Form bindings for MUI X date and time pickers",
   "repository": {
     "type": "git",

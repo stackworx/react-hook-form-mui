@@ -1,102 +1,83 @@
-import {Meta} from '@storybook/react';
-import {Autocomplete} from '../../packages/mui/src/Autocomplete';
-import {FormDecorator} from '../decorators/FormDecorator';
-import {UseFormProps} from 'react-hook-form/dist/types';
-import {Movie, top100Films} from './data';
-import {ComponentProps} from 'react';
-import TextField from '@mui/material/TextField';
-import {useFormState} from 'react-hook-form';
+import {Autocomplete} from '@stackworx/react-hook-form-mui';
+import type {Meta, StoryObj} from '@storybook/react-vite';
+import {FormStory} from './FormStory';
+import {locations} from './locations';
+import type {Location} from './locations';
 
-export default {
-  title: 'Core/Autocomplete',
-  decorators: [
-    (Story, context) => {
-      return (
-        <FormDecorator formProps={context.args.form}>
-          <Story />
-        </FormDecorator>
-      );
-    },
-  ],
-  render: ({
-    name,
-    control,
-    rules,
-    label,
-    helperText,
-    ...autocompleteProps
-  }) => {
-    const {touchedFields, errors} = useFormState();
+const meta = {title: 'Core/Autocomplete'} satisfies Meta;
+export default meta;
 
-    return (
-      <Autocomplete
-        {...autocompleteProps}
-        name={name}
-        control={control}
-        rules={rules}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            name={name}
-            label={label}
-            error={touchedFields[name] && !!errors[name]}
-            helperText={(errors[name]?.message as string) ?? helperText ?? ' '}
-            variant='outlined'
+const getOptionKey = (location: Location) => location.id;
+const getOptionLabel = (location: Location) => location.name;
+const byId = (id: string) => locations.filter((location) => location.id === id);
+
+export const StoresTheOption: StoryObj = {
+  name: 'Stores the option',
+  render: () => (
+    <FormStory<{home: Location | null; workplaces: Location[]}>
+      defaultValues={{
+        home: byId('L1')[0] ?? null,
+        workplaces: [...byId('L2'), ...byId('L12')],
+      }}
+    >
+      {(control) => (
+        <>
+          <Autocomplete
+            name='home'
+            control={control}
+            label='Home location'
+            options={locations}
+            getOptionKey={getOptionKey}
+            getOptionLabel={getOptionLabel}
+            groupBy={(location) => location.region}
+            rules={{required: 'Pick a home location'}}
           />
-        )}
-      />
-    );
-  },
-  parameters: {
-    layout: 'fullscreen',
-  },
-  args: {
-    name: 'autocomplete',
-    options: top100Films,
-    getOptionLabel: (option: Movie) => option.title,
-    form: {
-      defaultValues: {autocomplete: top100Films[0]},
-    },
-  },
-  actions: {
-    onSubmit: 'submit',
-  },
-  argTypes: {onSubmit: {action: 'submit'}},
-} as Meta<
-  ComponentProps<typeof Autocomplete> & {
-    form: UseFormProps;
-    label: string;
-    helperText: string;
-  }
->;
-
-export const Default = {
-  args: {
-    label: 'Default',
-  },
+          <Autocomplete
+            name='workplaces'
+            control={control}
+            label='Can work at'
+            options={locations}
+            getOptionKey={getOptionKey}
+            getOptionLabel={getOptionLabel}
+            multiple
+          />
+        </>
+      )}
+    </FormStory>
+  ),
 };
 
-export const Multiple = {
-  args: {
-    form: {
-      defaultValues: {autocomplete: [top100Films[0], top100Films[1]]},
-    },
-    label: 'Multiple',
-    multiple: true,
-  },
-};
-
-export const Required = {
-  args: {
-    label: 'Required',
-    rules: {required: 'Required'},
-  },
-};
-
-export const WithHelperText = {
-  args: {
-    label: 'With Helper Text',
-    rules: {required: 'Required'},
-    helperText: 'Should be overwritten by error',
-  },
+export const StoresAnId: StoryObj = {
+  name: 'Stores an id (getOptionValue)',
+  render: () => (
+    <FormStory<{homeId: string | null; locationIds: string[]}>
+      defaultValues={{homeId: 'L1', locationIds: ['L2', 'L12']}}
+    >
+      {(control) => (
+        <>
+          <Autocomplete
+            name='homeId'
+            control={control}
+            label='Home location'
+            options={locations}
+            getOptionKey={getOptionKey}
+            getOptionLabel={getOptionLabel}
+            getOptionValue={(location) => location.id}
+            groupBy={(location) => location.region}
+            rules={{required: 'Pick a home location'}}
+          />
+          <Autocomplete
+            name='locationIds'
+            control={control}
+            label='Can work at'
+            options={locations}
+            getOptionKey={getOptionKey}
+            getOptionLabel={getOptionLabel}
+            getOptionValue={(location) => location.id}
+            multiple
+          />
+        </>
+      )}
+    </FormStory>
+  ),
 };
