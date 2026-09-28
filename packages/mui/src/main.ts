@@ -1,3 +1,8 @@
+export {Autocomplete} from './Autocomplete.js';
+export type {
+  AutocompleteFieldValue,
+  AutocompleteProps,
+} from './Autocomplete.js';
 export {Checkbox} from './Checkbox.js';
 export type {CheckboxProps} from './Checkbox.js';
 export {CheckboxGroup} from './CheckboxGroup.js';
