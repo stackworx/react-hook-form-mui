@@ -5,8 +5,8 @@ import type {
   FieldValues,
   UseControllerProps,
 } from 'react-hook-form';
-import {useFormErrorMessages} from './FormErrorMessages';
-import type {FormErrorMessages} from './FormErrorMessages';
+import {useFormErrorMessages} from './FormErrorMessages.js';
+import type {FormErrorMessages} from './FormErrorMessages.js';
 
 type ControllerKey =
   | 'name'

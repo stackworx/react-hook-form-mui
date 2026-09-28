@@ -49,4 +49,27 @@ export default defineConfig(
       ],
     },
   },
+  {
+    // Emitted declarations keep these specifiers; node16/nodenext consumers need the extension.
+    files: ['packages/*/src/**/*.{ts,tsx}'],
+    ignores: ['**/*.test.{ts,tsx}'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'ExportDefaultDeclaration',
+          message: 'Use named exports.',
+        },
+        {
+          selector: 'ExportSpecifier[exported.name="default"]',
+          message: 'Use named exports.',
+        },
+        {
+          selector:
+            ':matches(ImportDeclaration, ExportNamedDeclaration, ExportAllDeclaration)[source.value=/^\\.\\.?\\/(?!.*\\.js$)/]',
+          message: 'Relative imports in shipped files end in .js.',
+        },
+      ],
+    },
+  },
 );
