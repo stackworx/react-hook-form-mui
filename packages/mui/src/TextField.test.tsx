@@ -1,4 +1,4 @@
-import {act, screen} from '@testing-library/react';
+import {act, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {expect, test, vi} from 'vitest';
 import {renderWithForm} from '../../../test/renderWithForm';
@@ -32,10 +32,19 @@ test('binds value, composes onChange and shows required error', async () => {
   await userEvent.type(input, 'Ada');
   expect(form.getValues('name')).toBe('Ada');
   expect(onChange).toHaveBeenCalled();
-  act(() => {
-    form.setFocus('name');
+});
+
+test('setFocus focuses the input', async () => {
+  const {form} = renderWithForm<{name: string}>(
+    (control) => <TextField name='name' control={control} label='Name' />,
+    {defaultValues: {name: ''}},
+  );
+  const input = screen.getByLabelText('Name');
+  expect(input).not.toHaveFocus();
+  form.setFocus('name');
+  await waitFor(() => {
+    expect(input).toHaveFocus();
   });
-  expect(input).toHaveFocus();
 });
 
 test('transform maps between form value and text', async () => {

@@ -15,6 +15,11 @@
       "@stackworx/source": "./src/main.ts",
       "types": "./dist/main.d.ts",
       "import": "./dist/main.js"
+    },
+    "./number-field": {
+      "@stackworx/source": "./src/NumberField.tsx",
+      "types": "./dist/NumberField.d.ts",
+      "import": "./dist/NumberField.js"
     }
   },
   "files": [
