@@ -15,21 +15,26 @@ import {ListboxWithFooter} from './asyncAutocomplete/ListboxWithFooter.js';
 import type {ListboxWithFooterProps} from './asyncAutocomplete/ListboxWithFooter.js';
 import type {OptionsSource} from './asyncAutocomplete/OptionsSource.js';
 import type {
+  AutocompleteChangeArgs,
+  AutocompleteHandlerProps,
   AutocompleteStoredValue,
   OptionKeyProps,
   OptionLabelProps,
   OptionValueProps,
 } from './Autocomplete.js';
 import {composeHandlers} from './internal/composeHandlers.js';
+import {changeHandler} from './internal/fieldHandlers.js';
 import {forceSlotProps} from './internal/forceSlotProps.js';
 import {
   asList,
   defaultOptionKey,
   defaultOptionLabel,
   indexOptions,
+  inputTextFor,
   optionMapping,
   optionsForValues,
   storedValues,
+  useSelectionText,
   useStableSelection,
   valuesForOptions,
 } from './internal/optionSelection.js';
@@ -74,12 +79,14 @@ export type AsyncAutocompleteProps<
     TOption,
     AutocompleteStoredValue<TFieldValues, TName, TMultiple>
   >
+  & AutocompleteHandlerProps<TOption, TMultiple>
   & Omit<
     MuiProps<TOption, TMultiple>,
     | 'options'
     | 'value'
     | 'defaultValue'
     | 'onChange'
+    | 'onBlur'
     | 'renderInput'
     | 'multiple'
     | 'getOptionLabel'
@@ -129,7 +136,10 @@ export function AsyncAutocomplete<
       knownOptions = [],
       loadMoreText = 'Load more',
       countText = defaultCountText,
-      onBlur,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
+      inputValue: inputValueProp,
       onInputChange,
       onOpen,
       slotProps,
@@ -187,6 +197,15 @@ export function AsyncAutocomplete<
     keyOf,
     getOptionLabel,
   );
+  const {inputText, setInputText, resyncText} = useSelectionText(
+    inputTextFor(value, getOptionLabel, rest.renderValue !== undefined),
+  );
+  const change = changeHandler<AutocompleteChangeArgs<TOption, TMultiple>>((
+    _event,
+    next,
+  ) => {
+    field.onChange(valuesForOptions(next, mapping.toValue));
+  }, {handleChange, suppressFormChange});
   const sourceKeys = new Set(source.options.map(keyOf));
   const options = [
     ...source.options,
@@ -285,15 +304,17 @@ export function AsyncAutocomplete<
         boolean | undefined,
         false
       >}
-      onChange={(_event, next) => {
+      onChange={(event, next, reason, details) => {
         remember(asList<TOption>(next));
-        field.onChange(valuesForOptions(next, mapping.toValue));
+        if (suppressFormChange) resyncText();
+        change(event, next, reason, details);
       }}
-      onBlur={composeHandlers<Parameters<NonNullable<typeof onBlur>>>(
-        field.onBlur,
-        onBlur,
-      )}
+      onBlur={composeHandlers<
+        Parameters<NonNullable<MuiProps<TOption, TMultiple>['onBlur']>>
+      >(field.onBlur, handleBlur)}
+      inputValue={inputValueProp ?? inputText}
       onInputChange={(event, inputValue, reason) => {
+        setInputText(inputValue);
         onInputChange?.(event, inputValue, reason);
         if (reason !== 'input' && reason !== 'clear') {
           inputWasResetRef.current = true;

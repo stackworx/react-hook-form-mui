@@ -77,3 +77,26 @@ test('setFocus focuses the first checkbox', async () => {
     expect(screen.getByRole('checkbox', {name: 'Monday'})).toHaveFocus();
   });
 });
+
+test('with suppressFormChange, handleChange gets the new values and stores what it keeps', async () => {
+  const {form} = renderWithForm<{days: number[]}>(
+    (control) => (
+      <CheckboxGroup
+        name='days'
+        control={control}
+        label='Days'
+        options={days}
+        suppressFormChange
+        handleChange={(_event, values) => {
+          if (values.length <= 1) form.setValue('days', values);
+        }}
+      />
+    ),
+    {defaultValues: {days: [2]}},
+  );
+  await userEvent.click(screen.getByRole('checkbox', {name: 'Monday'}));
+  expect(form.getValues('days')).toEqual([2]);
+  expect(screen.getByRole('checkbox', {name: 'Monday'})).not.toBeChecked();
+  await userEvent.click(screen.getByRole('checkbox', {name: 'Tuesday'}));
+  expect(form.getValues('days')).toEqual([]);
+});

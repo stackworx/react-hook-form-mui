@@ -15,6 +15,8 @@ import {
   usePickerController,
 } from './internal/usePickerController.js';
 import type {PickerControllerProps} from './internal/usePickerController.js';
+import type {PickersTextFieldProps} from '@mui/x-date-pickers/PickersTextField';
+import type {FieldHandlerProps} from '@stackworx/react-hook-form-mui';
 
 export type DateTimePickerProps<
   TFieldValues extends FieldValues,
@@ -26,6 +28,10 @@ export type DateTimePickerProps<
     TName,
     PickerValidDate | null,
     TTransformedValues
+  >
+  & FieldHandlerProps<
+    Parameters<NonNullable<MuiDateTimePickerProps['onChange']>>,
+    Parameters<NonNullable<PickersTextFieldProps['onBlur']>>
   >
   & Omit<
     MuiDateTimePickerProps,
@@ -39,14 +45,24 @@ export function DateTimePicker<
   TName extends FieldPath<TFieldValues>,
   TTransformedValues = TFieldValues,
 >(props: DateTimePickerProps<TFieldValues, TName, TTransformedValues>) {
-  const [controllerProps, {helperText, onError, slotProps, ...rest}] =
-    splitPickerProps<
-      TFieldValues,
-      TName,
-      PickerValidDate | null,
-      DateTimePickerProps<TFieldValues, TName, TTransformedValues>,
-      TTransformedValues
-    >(props);
+  const [
+    controllerProps,
+    {
+      helperText,
+      onError,
+      slotProps,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
+      ...rest
+    },
+  ] = splitPickerProps<
+    TFieldValues,
+    TName,
+    PickerValidDate | null,
+    DateTimePickerProps<TFieldValues, TName, TTransformedValues>,
+    TTransformedValues
+  >(props);
   const picker = usePickerController<
     TFieldValues,
     TName,
@@ -58,13 +74,17 @@ export function DateTimePicker<
   return (
     <MuiDateTimePicker
       {...rest}
-      {...pickerValueProps(picker, onError)}
+      {...pickerValueProps(picker, onError, {
+        handleChange,
+        suppressFormChange,
+      })}
       slotProps={{
         ...slotProps,
         textField: pickerTextFieldSlotProps(
           picker,
           slotProps?.textField,
           helperText,
+          handleBlur,
         ),
       }}
     />

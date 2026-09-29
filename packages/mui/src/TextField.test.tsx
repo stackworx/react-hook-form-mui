@@ -4,9 +4,9 @@ import {expect, test, vi} from 'vitest';
 import {renderWithForm} from '../../../test/renderWithForm';
 import {TextField} from './TextField';
 
-test('binds value, composes onChange and shows required error', async () => {
-  const onChange = vi.fn();
-  const onBlur = vi.fn();
+test('binds value, runs handleChange and handleBlur, and shows required error', async () => {
+  const handleChange = vi.fn();
+  const handleBlur = vi.fn();
   const {form} = renderWithForm<{name: string}>(
     (control) => (
       <TextField
@@ -14,8 +14,8 @@ test('binds value, composes onChange and shows required error', async () => {
         control={control}
         label='Name'
         rules={{required: 'Name is required'}}
-        onChange={onChange}
-        onBlur={onBlur}
+        handleChange={handleChange}
+        handleBlur={handleBlur}
         helperText='Your full name'
       />
     ),
@@ -28,10 +28,10 @@ test('binds value, composes onChange and shows required error', async () => {
   expect(await screen.findByText('Name is required')).toBeInTheDocument();
   expect(screen.queryByText('Your full name')).not.toBeInTheDocument();
   expect(input).toHaveAttribute('aria-invalid', 'true');
-  expect(onBlur).toHaveBeenCalled();
+  expect(handleBlur).toHaveBeenCalled();
   await userEvent.type(input, 'Ada');
   expect(form.getValues('name')).toBe('Ada');
-  expect(onChange).toHaveBeenCalled();
+  expect(handleChange).toHaveBeenCalled();
 });
 
 test('setFocus focuses the input', async () => {
@@ -102,4 +102,66 @@ test('disabled is forwarded to the input and to RHF', async () => {
     valid = await form.trigger('name');
   });
   expect(valid).toBe(true);
+});
+
+test('handleChange runs after the form stores the change', async () => {
+  const stored: string[] = [];
+  const {form} = renderWithForm<{name: string}>(
+    (control) => (
+      <TextField
+        name='name'
+        control={control}
+        label='Name'
+        handleChange={() => {
+          stored.push(form.getValues('name'));
+        }}
+      />
+    ),
+    {defaultValues: {name: ''}},
+  );
+  await userEvent.type(screen.getByLabelText('Name'), 'Ada');
+  expect(stored).toEqual(['A', 'Ad', 'Ada']);
+});
+
+test('handleBlur runs after the form marks the field touched', async () => {
+  const touched: boolean[] = [];
+  const {form} = renderWithForm<{name: string}>(
+    (control) => (
+      <TextField
+        name='name'
+        control={control}
+        label='Name'
+        handleBlur={() => {
+          touched.push(form.getFieldState('name').isTouched);
+        }}
+      />
+    ),
+    {defaultValues: {name: ''}},
+  );
+  await userEvent.click(screen.getByLabelText('Name'));
+  await userEvent.tab();
+  expect(touched).toEqual([true]);
+});
+
+test('with suppressFormChange, only what handleChange stores reaches the form', async () => {
+  const {form} = renderWithForm<{code: string}>(
+    (control) => (
+      <TextField
+        name='code'
+        control={control}
+        label='Code'
+        suppressFormChange
+        handleChange={(event) => {
+          if (/^\d*$/.test(event.target.value)) {
+            form.setValue('code', event.target.value);
+          }
+        }}
+      />
+    ),
+    {defaultValues: {code: ''}},
+  );
+  const input = screen.getByLabelText('Code');
+  await userEvent.type(input, '1a2');
+  expect(form.getValues('code')).toBe('12');
+  expect(input).toHaveValue('12');
 });

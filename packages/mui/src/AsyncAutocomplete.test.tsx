@@ -403,3 +403,30 @@ test('string options need no getOptionKey or getOptionLabel', async () => {
   await userEvent.click(screen.getByRole('option', {name: 'Medium'}));
   expect(form.getValues('size')).toBe('Medium');
 });
+
+test('with suppressFormChange, a pick handleChange does not store is ignored and the input shows the stored option', async () => {
+  const handleChange = vi.fn();
+  const {form} = renderWithForm<{locationId: string | null}>(
+    (control) => (
+      <AsyncAutocomplete
+        name='locationId'
+        control={control}
+        label='Location'
+        source={fakeSource()}
+        getOptionKey={getOptionKey}
+        getOptionValue={storeId}
+        getOptionLabel={getOptionLabel}
+        suppressFormChange
+        handleChange={handleChange}
+      />
+    ),
+    {defaultValues: {locationId: 'L1'}},
+  );
+  const input = screen.getByRole('combobox', {name: 'Location'});
+  expect(input).toHaveValue('Head Office');
+  await userEvent.click(screen.getByRole('button', {name: 'Open'}));
+  await userEvent.click(screen.getByRole('option', {name: 'Warehouse'}));
+  expect(handleChange).toHaveBeenCalled();
+  expect(form.getValues('locationId')).toBe('L1');
+  expect(input).toHaveValue('Head Office');
+});

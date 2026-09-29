@@ -3,6 +3,8 @@ import type {TextFieldProps as MuiTextFieldProps} from '@mui/material/TextField'
 import {useForkRef} from '@mui/material/utils';
 import type {FieldPath, FieldPathValue, FieldValues} from 'react-hook-form';
 import {composeHandlers} from './internal/composeHandlers.js';
+import {changeHandler} from './internal/fieldHandlers.js';
+import type {FieldHandlerProps} from './internal/fieldHandlers.js';
 import type {DistributiveOmit} from './internal/types.js';
 import {
   splitControllerProps,
@@ -18,6 +20,9 @@ export interface TextFieldTransform<TValue> {
   output: (text: string) => TValue;
 }
 
+type MuiChangeArgs = Parameters<NonNullable<MuiTextFieldProps['onChange']>>;
+type MuiBlurArgs = Parameters<NonNullable<MuiTextFieldProps['onBlur']>>;
+
 export type TextFieldProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
@@ -25,9 +30,10 @@ export type TextFieldProps<
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
   & ReserveHelperTextProps
+  & FieldHandlerProps<MuiChangeArgs, MuiBlurArgs>
   & DistributiveOmit<
     MuiTextFieldProps,
-    'name' | 'value' | 'defaultValue' | 'disabled'
+    'name' | 'value' | 'defaultValue' | 'disabled' | 'onChange' | 'onBlur'
   >
   & {transform?: TextFieldTransform<FieldPathValue<TFieldValues, TName>>};
 
@@ -41,8 +47,9 @@ export function TextField<
     controllerProps,
     {
       transform,
-      onChange,
-      onBlur,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
       inputRef,
       error,
       helperText,
@@ -64,16 +71,12 @@ export function TextField<
       {...rest}
       name={field.name}
       value={transform ? transform.input(field.value) : (field.value ?? '')}
-      onChange={(event) => {
+      onChange={changeHandler<MuiChangeArgs>((event) => {
         field.onChange(
           transform ? transform.output(event.target.value) : event.target.value,
         );
-        onChange?.(event);
-      }}
-      onBlur={composeHandlers<Parameters<NonNullable<typeof onBlur>>>(
-        field.onBlur,
-        onBlur,
-      )}
+      }, {handleChange, suppressFormChange})}
+      onBlur={composeHandlers<MuiBlurArgs>(field.onBlur, handleBlur)}
       inputRef={ref}
       disabled={field.disabled}
       error={hasError || error}

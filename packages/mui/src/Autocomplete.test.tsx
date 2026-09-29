@@ -401,3 +401,60 @@ test('the option type decides whether getOptionKey and getOptionLabel are needed
   ];
   expect(elements).toHaveLength(4);
 });
+
+test('handleChange runs after the form stores the pick, and handleBlur after it marks the field touched', async () => {
+  const seen: unknown[] = [];
+  const {form} = renderWithForm<{locationId: string | null}>(
+    (control) => (
+      <Autocomplete
+        name='locationId'
+        control={control}
+        label='Location'
+        options={locations}
+        getOptionKey={getOptionKey}
+        getOptionValue={storeId}
+        getOptionLabel={getOptionLabel}
+        handleChange={(_event, location) => {
+          seen.push([location?.id, form.getValues('locationId')]);
+        }}
+        handleBlur={() => {
+          seen.push(form.getFieldState('locationId').isTouched);
+        }}
+      />
+    ),
+    {defaultValues: {locationId: null}},
+  );
+  await userEvent.click(screen.getByRole('combobox', {name: 'Location'}));
+  await userEvent.click(screen.getByRole('option', {name: 'Warehouse'}));
+  await userEvent.click(document.body);
+  expect(seen).toEqual([['L2', 'L2'], true]);
+});
+
+test('with suppressFormChange, a pick handleChange does not store is ignored and the input shows the stored option', async () => {
+  const {form} = renderWithForm<{location: Location | null}>(
+    (control) => (
+      <Autocomplete
+        name='location'
+        control={control}
+        label='Location'
+        options={locations}
+        getOptionKey={getOptionKey}
+        getOptionLabel={getOptionLabel}
+        suppressFormChange
+        handleChange={(_event, location) => {
+          if (location?.id !== 'L2') form.setValue('location', location);
+        }}
+      />
+    ),
+    {defaultValues: {location: {id: 'L1', name: 'Head Office'}}},
+  );
+  const input = screen.getByRole('combobox', {name: 'Location'});
+  await userEvent.click(screen.getByRole('button', {name: 'Open'}));
+  await userEvent.click(screen.getByRole('option', {name: 'Warehouse'}));
+  expect(form.getValues('location')).toEqual({id: 'L1', name: 'Head Office'});
+  expect(input).toHaveValue('Head Office');
+  await userEvent.click(screen.getByRole('button', {name: 'Open'}));
+  await userEvent.click(screen.getByRole('option', {name: 'Depot'}));
+  expect(form.getValues('location')).toEqual({id: 'L3', name: 'Depot'});
+  expect(input).toHaveValue('Depot');
+});

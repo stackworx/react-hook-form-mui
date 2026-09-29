@@ -105,3 +105,34 @@ test('setFocus focuses the first button', async () => {
     expect(screen.getByRole('button', {name: 'Small'})).toHaveFocus();
   });
 });
+
+test('with suppressFormChange, handleChange gets the typed value and stores what it keeps', async () => {
+  const seen: unknown[] = [];
+  const {form} = renderWithForm<{size: number | null}>(
+    (control) => (
+      <ToggleButtonGroup
+        name='size'
+        control={control}
+        label='Size'
+        options={sizes}
+        suppressFormChange
+        handleChange={(_event, value) => {
+          seen.push(value);
+          if (!Array.isArray(value) && value !== 3) {
+            form.setValue('size', value);
+          }
+        }}
+      />
+    ),
+    {defaultValues: {size: 1}},
+  );
+  await userEvent.click(screen.getByRole('button', {name: 'Large'}));
+  expect(seen).toEqual([3]);
+  expect(form.getValues('size')).toBe(1);
+  expect(screen.getByRole('button', {name: 'Large'})).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  );
+  await userEvent.click(screen.getByRole('button', {name: 'Medium'}));
+  expect(form.getValues('size')).toBe(2);
+});

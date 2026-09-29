@@ -105,3 +105,46 @@ test('boolean options store booleans', async () => {
   await userEvent.click(screen.getByRole('radio', {name: 'Yes'}));
   expect(form.getValues('overtime')).toBe(true);
 });
+
+test('handleChange gets the typed value after the form stores it', async () => {
+  const seen: [number | null, number | null][] = [];
+  const {form} = renderWithForm<{level: number | null}>(
+    (control) => (
+      <RadioGroup
+        name='level'
+        control={control}
+        label='Level'
+        options={levels}
+        handleChange={(_event, value) => {
+          seen.push([value, form.getValues('level')]);
+        }}
+      />
+    ),
+    {defaultValues: {level: null}},
+  );
+  await userEvent.click(screen.getByRole('radio', {name: 'High'}));
+  expect(seen).toEqual([[3, 3]]);
+});
+
+test('with suppressFormChange, a choice handleChange does not store is ignored', async () => {
+  const {form} = renderWithForm<{level: number | null}>(
+    (control) => (
+      <RadioGroup
+        name='level'
+        control={control}
+        label='Level'
+        options={levels}
+        suppressFormChange
+        handleChange={(_event, value) => {
+          if (value !== 3) form.setValue('level', value);
+        }}
+      />
+    ),
+    {defaultValues: {level: 1}},
+  );
+  await userEvent.click(screen.getByRole('radio', {name: 'High'}));
+  expect(form.getValues('level')).toBe(1);
+  expect(screen.getByRole('radio', {name: 'Low'})).toBeChecked();
+  await userEvent.click(screen.getByRole('radio', {name: 'Medium'}));
+  expect(form.getValues('level')).toBe(2);
+});

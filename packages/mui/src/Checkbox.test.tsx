@@ -5,15 +5,15 @@ import {expect, test, vi} from 'vitest';
 import {renderWithForm} from '../../../test/renderWithForm';
 import {Checkbox} from './Checkbox';
 
-test('clicking toggles the boolean and composes onChange', async () => {
-  const onChange = vi.fn();
+test('clicking toggles the boolean and runs handleChange', async () => {
+  const handleChange = vi.fn();
   const {form} = renderWithForm<{accept: boolean}>(
     (control) => (
       <Checkbox
         name='accept'
         control={control}
         label='Accept terms'
-        onChange={onChange}
+        handleChange={handleChange}
       />
     ),
     {defaultValues: {accept: false}},
@@ -23,7 +23,7 @@ test('clicking toggles the boolean and composes onChange', async () => {
   await userEvent.click(input);
   expect(form.getValues('accept')).toBe(true);
   expect(input).toBeChecked();
-  expect(onChange).toHaveBeenCalledWith(expect.anything(), true);
+  expect(handleChange).toHaveBeenCalledWith(expect.anything(), true);
   await userEvent.click(screen.getByText('Accept terms'));
   expect(form.getValues('accept')).toBe(false);
 });
@@ -92,4 +92,25 @@ test('disabled disables the input and is forwarded to RHF', async () => {
     valid = await form.trigger('accept');
   });
   expect(valid).toBe(true);
+});
+
+test('with suppressFormChange, a click handleChange does not store is ignored', async () => {
+  const handleChange = vi.fn();
+  const {form} = renderWithForm<{accept: boolean}>(
+    (control) => (
+      <Checkbox
+        name='accept'
+        control={control}
+        label='Accept terms'
+        suppressFormChange
+        handleChange={handleChange}
+      />
+    ),
+    {defaultValues: {accept: false}},
+  );
+  const input = screen.getByRole('checkbox', {name: 'Accept terms'});
+  await userEvent.click(input);
+  expect(handleChange).toHaveBeenCalledWith(expect.anything(), true);
+  expect(form.getValues('accept')).toBe(false);
+  expect(input).not.toBeChecked();
 });

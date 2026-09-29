@@ -132,3 +132,35 @@ export function useStableSelection<TOption>(
   setStable(next);
   return next;
 }
+
+/** The text MUI's input shows for a selection. */
+export function inputTextFor<TOption>(
+  selection: Selection<TOption>,
+  getOptionLabel: (option: TOption) => string,
+  rendersValue: boolean,
+): string {
+  if (Array.isArray(selection) || selection === null || rendersValue) {
+    return '';
+  }
+  return getOptionLabel(selection);
+}
+
+/**
+ * MUI's input text, held here so it can follow the stored selection again after a change the form
+ * doesn't store: MUI writes a picked option's name into the input before it calls `onChange`.
+ */
+export function useSelectionText(text: string) {
+  const [inputText, setInputText] = useState(text);
+  const [resyncing, setResyncing] = useState(false);
+  if (resyncing) {
+    setResyncing(false);
+    if (inputText !== text) setInputText(text);
+  }
+  return {
+    inputText,
+    setInputText,
+    resyncText: () => {
+      setResyncing(true);
+    },
+  };
+}

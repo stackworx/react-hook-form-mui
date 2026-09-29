@@ -31,3 +31,28 @@ test('keyboard entry of both dates stores the range', async () => {
     form.getValues('period').map((date) => date?.toISODate()),
   ).toEqual(['2026-09-01', '2026-09-30']);
 });
+
+test('handleBlur runs after the form marks the field touched', async () => {
+  const touched: boolean[] = [];
+  const {form} = renderWithForm<{period: DateRange<PickerValidDate>}>(
+    (control) =>
+      withLuxon(
+        <SingleInputDateRangeField
+          name='period'
+          control={control}
+          label='Period'
+          handleBlur={() => {
+            touched.push(form.getFieldState('period').isTouched);
+          }}
+        />,
+      ),
+    {defaultValues: {period: [null, null]}},
+  );
+  const [startMonth] = within(screen.getByRole('group', {name: 'Period'}))
+    .getAllByRole('spinbutton');
+  if (!startMonth) throw new Error('no start month');
+  await userEvent.click(startMonth);
+  await userEvent.click(document.body);
+  expect(touched.length).toBeGreaterThan(0);
+  expect(touched.every(Boolean)).toBe(true);
+});

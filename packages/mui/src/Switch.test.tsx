@@ -5,15 +5,15 @@ import {expect, test, vi} from 'vitest';
 import {renderWithForm} from '../../../test/renderWithForm';
 import {Switch} from './Switch';
 
-test('clicking toggles the boolean and composes onChange', async () => {
-  const onChange = vi.fn();
+test('clicking toggles the boolean and runs handleChange', async () => {
+  const handleChange = vi.fn();
   const {form} = renderWithForm<{accept: boolean}>(
     (control) => (
       <Switch
         name='accept'
         control={control}
         label='Accept terms'
-        onChange={onChange}
+        handleChange={handleChange}
       />
     ),
     {defaultValues: {accept: false}},
@@ -23,7 +23,7 @@ test('clicking toggles the boolean and composes onChange', async () => {
   await userEvent.click(input);
   expect(form.getValues('accept')).toBe(true);
   expect(input).toBeChecked();
-  expect(onChange).toHaveBeenCalledWith(expect.anything(), true);
+  expect(handleChange).toHaveBeenCalledWith(expect.anything(), true);
   await userEvent.click(screen.getByText('Accept terms'));
   expect(form.getValues('accept')).toBe(false);
 });

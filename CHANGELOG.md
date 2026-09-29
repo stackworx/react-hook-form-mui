@@ -24,7 +24,15 @@ and `@stackworx/react-hook-form-mui-x-date-pickers-pro`.
 - Only `name`, `control`, `rules`, `defaultValue`, `shouldUnregister` and `disabled` go to
   `useController`; they no longer leak onto MUI or the DOM. `disabled` now reaches React Hook Form,
   so a disabled field is not validated.
-- Your `onChange`/`onBlur` run alongside the form binding instead of replacing it.
+- Your handlers are `handleChange` and `handleBlur`, on every component; MUI's `onChange` and
+  `onBlur` are no longer accepted. `handleChange` runs after the form stores each change, and takes
+  the MUI component's `onChange` arguments (the option groups pass the typed option value, and
+  `NumberField` Base UI's `(value, eventDetails)`). `handleBlur` runs after the form's blur handler.
+  `suppressFormChange` leaves storing to `handleChange`, which can refuse a change.
+  - In 0.0.x, `TextField`, `Select`, `Checkbox`, `Switch`, `RadioGroup` and `CheckboxGroup` accepted
+    `onChange` and `onBlur` but never called them. `Autocomplete`'s and the pickers' `onChange`
+    replaced the form's, and so did `Autocomplete`'s `onBlur`; the pickers' `onBlur` was never
+    called. `ToggleButtonGroup` took no `onChange`.
 - `helperText` shows the error message, else your `helperText`.
 - An `undefined` value renders as empty instead of switching from uncontrolled to controlled.
 

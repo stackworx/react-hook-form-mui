@@ -9,6 +9,9 @@ import {createSvgIcon} from '@mui/material/utils';
 import {useId} from 'react';
 import type {ReactNode} from 'react';
 import type {FieldPathByValue, FieldValues} from 'react-hook-form';
+import {composeHandlers} from './internal/composeHandlers.js';
+import {changeHandler} from './internal/fieldHandlers.js';
+import type {FieldHandlerProps} from './internal/fieldHandlers.js';
 import {
   splitControllerProps,
   useFieldController,
@@ -32,6 +35,13 @@ function SSRInitialFilled(_props: {value: number | null | undefined}) {
 }
 SSRInitialFilled.muiName = 'Input';
 
+type BaseChangeArgs = Parameters<
+  NonNullable<BaseNumberField.Root.Props['onValueChange']>
+>;
+type BaseBlurArgs = Parameters<
+  NonNullable<BaseNumberField.Input.Props['onBlur']>
+>;
+
 export type NumberFieldProps<
   TFieldValues extends FieldValues,
   TName extends FieldPathByValue<TFieldValues, number | null | undefined>,
@@ -39,6 +49,7 @@ export type NumberFieldProps<
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
   & ReserveHelperTextProps
+  & FieldHandlerProps<BaseChangeArgs, BaseBlurArgs>
   & Pick<
     BaseNumberField.Root.Props,
     | 'min'
@@ -76,6 +87,9 @@ export function NumberField<
       size = 'medium',
       fullWidth,
       id: idProp,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
       ...rootProps
     },
   ] = splitControllerProps<
@@ -101,9 +115,9 @@ export function NumberField<
       {...rootProps}
       name={name}
       value={value ?? null}
-      onValueChange={(next) => {
+      onValueChange={changeHandler<BaseChangeArgs>((next) => {
         onChange(next);
-      }}
+      }, {handleChange, suppressFormChange})}
       disabled={disabled}
       render={(renderProps, state) => (
         <FormControl
@@ -124,7 +138,7 @@ export function NumberField<
       <BaseNumberField.Input
         id={id}
         ref={ref}
-        onBlur={onBlur}
+        onBlur={composeHandlers<BaseBlurArgs>(onBlur, handleBlur)}
         render={(inputProps, state) => (
           <OutlinedInput
             label={label}

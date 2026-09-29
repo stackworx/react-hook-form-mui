@@ -1,7 +1,7 @@
 import {act, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {DateTime} from 'luxon';
-import {expect, test} from 'vitest';
+import {expect, test, vi} from 'vitest';
 import {renderWithForm} from '../../../test/renderWithForm';
 import {withLuxon} from '../../../test/withLuxon';
 import {DatePicker} from './DatePicker';
@@ -202,4 +202,49 @@ test('a function-form slotProps.textField keeps working under the error text', a
   await act(() => form.trigger('start'));
   expect(screen.getByText('Pick a start date')).toBeInTheDocument();
   expect(screen.queryByText('From the slot')).not.toBeInTheDocument();
+});
+
+test('handleChange runs after the form stores the date', async () => {
+  const stored: unknown[] = [];
+  const {form} = renderWithForm<{start: DateTime | null}>(
+    (control) =>
+      withLuxon(
+        <DatePicker
+          name='start'
+          control={control}
+          label='Start'
+          referenceDate={september}
+          handleChange={() => {
+            stored.push(form.getValues('start')?.toISODate());
+          }}
+        />,
+      ),
+    {defaultValues: {start: null}},
+  );
+  await pickDay('28');
+  expect(stored).toEqual(['2026-09-28']);
+});
+
+test('with suppressFormChange, a date handleChange does not store is ignored', async () => {
+  const handleChange = vi.fn();
+  const {form} = renderWithForm<{start: DateTime | null}>(
+    (control) =>
+      withLuxon(
+        <DatePicker
+          name='start'
+          control={control}
+          label='Start'
+          referenceDate={september}
+          suppressFormChange
+          handleChange={handleChange}
+        />,
+      ),
+    {defaultValues: {start: null}},
+  );
+  await pickDay('28');
+  expect(handleChange).toHaveBeenCalled();
+  expect(form.getValues('start')).toBeNull();
+  expect(screen.getByRole('group', {name: 'Start'})).toHaveTextContent(
+    'MM/DD/YYYY',
+  );
 });

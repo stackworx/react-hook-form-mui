@@ -6,8 +6,11 @@ import Radio from '@mui/material/Radio';
 import type {RadioProps as MuiRadioProps} from '@mui/material/Radio';
 import RadioGroupBase from '@mui/material/RadioGroup';
 import {useId} from 'react';
-import type {ReactNode} from 'react';
+import type {ChangeEvent, FocusEvent, ReactNode} from 'react';
 import type {FieldPath, FieldValues} from 'react-hook-form';
+import {composeHandlers} from './internal/composeHandlers.js';
+import {changeHandler} from './internal/fieldHandlers.js';
+import type {FieldHandlerProps} from './internal/fieldHandlers.js';
 import {focusTargetIndex} from './internal/FieldOption.js';
 import type {FieldOption, OptionValue} from './internal/FieldOption.js';
 import {
@@ -26,6 +29,10 @@ export type RadioGroupProps<
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
   & ReserveHelperTextProps
+  & FieldHandlerProps<
+    [event: ChangeEvent<HTMLInputElement>, value: TValue | null],
+    [event: FocusEvent<HTMLDivElement>]
+  >
   & {
     options: readonly FieldOption<TValue>[];
     label?: ReactNode;
@@ -45,7 +52,19 @@ export function RadioGroup<
 >(props: RadioGroupProps<TFieldValues, TName, TValue, TTransformedValues>) {
   const [
     controllerProps,
-    {options, label, helperText, reserveHelperText, row, required, size, color},
+    {
+      options,
+      label,
+      helperText,
+      reserveHelperText,
+      row,
+      required,
+      size,
+      color,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
+    },
   ] = splitControllerProps<
     TFieldValues,
     TName,
@@ -69,6 +88,11 @@ export function RadioGroup<
     options,
     (value) => Object.is(value, current),
   );
+  const change = changeHandler<
+    [event: ChangeEvent<HTMLInputElement>, value: TValue | null]
+  >((_event, value) => {
+    onChange(value);
+  }, {handleChange, suppressFormChange});
 
   return (
     <FormControl error={hasError} disabled={disabled} required={required}>
@@ -80,10 +104,13 @@ export function RadioGroup<
         aria-describedby={describes ? helperId : undefined}
         // MUI reports the radio's string value; the index maps it back to the typed option value.
         value={selectedIndex >= 0 ? String(selectedIndex) : ''}
-        onChange={(_event, value) => {
-          onChange(options[Number(value)]?.value ?? null);
+        onChange={(event, value) => {
+          change(event, options[Number(value)]?.value ?? null);
         }}
-        onBlur={onBlur}
+        onBlur={composeHandlers<[event: FocusEvent<HTMLDivElement>]>(
+          onBlur,
+          handleBlur,
+        )}
       >
         {options.map((option, index) => (
           <FormControlLabel

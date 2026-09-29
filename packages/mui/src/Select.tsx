@@ -4,6 +4,8 @@ import type {TextFieldProps as MuiTextFieldProps} from '@mui/material/TextField'
 import {useForkRef} from '@mui/material/utils';
 import type {FieldPath, FieldValues} from 'react-hook-form';
 import {composeHandlers} from './internal/composeHandlers.js';
+import {changeHandler} from './internal/fieldHandlers.js';
+import type {FieldHandlerProps} from './internal/fieldHandlers.js';
 import type {FieldOption} from './internal/FieldOption.js';
 import {forceSlotProps} from './internal/forceSlotProps.js';
 import type {DistributiveOmit} from './internal/types.js';
@@ -15,6 +17,9 @@ import type {FieldControllerProps} from './internal/useFieldController.js';
 import {useHelperText} from './internal/HelperText.js';
 import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
+type MuiChangeArgs = Parameters<NonNullable<MuiTextFieldProps['onChange']>>;
+type MuiBlurArgs = Parameters<NonNullable<MuiTextFieldProps['onBlur']>>;
+
 export type SelectProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
@@ -23,9 +28,17 @@ export type SelectProps<
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
   & ReserveHelperTextProps
+  & FieldHandlerProps<MuiChangeArgs, MuiBlurArgs>
   & DistributiveOmit<
     MuiTextFieldProps,
-    'select' | 'value' | 'name' | 'defaultValue' | 'disabled' | 'children'
+    | 'select'
+    | 'value'
+    | 'name'
+    | 'defaultValue'
+    | 'disabled'
+    | 'children'
+    | 'onChange'
+    | 'onBlur'
   >
   & {
     options: readonly FieldOption<TValue>[];
@@ -45,8 +58,9 @@ export function Select<
     {
       options,
       multiple = false,
-      onChange,
-      onBlur,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
       inputRef,
       error,
       helperText,
@@ -80,7 +94,7 @@ export function Select<
       select
       name={field.name}
       value={value}
-      onChange={(event) => {
+      onChange={changeHandler<MuiChangeArgs>((event) => {
         const raw: unknown = event.target.value;
         if (multiple) {
           const list: unknown[] = typeof raw === 'string'
@@ -94,12 +108,8 @@ export function Select<
         } else {
           field.onChange(toOptionValue(raw) ?? null);
         }
-        onChange?.(event);
-      }}
-      onBlur={composeHandlers<Parameters<NonNullable<typeof onBlur>>>(
-        field.onBlur,
-        onBlur,
-      )}
+      }, {handleChange, suppressFormChange})}
+      onBlur={composeHandlers<MuiBlurArgs>(field.onBlur, handleBlur)}
       inputRef={ref}
       disabled={field.disabled}
       error={hasError || error}

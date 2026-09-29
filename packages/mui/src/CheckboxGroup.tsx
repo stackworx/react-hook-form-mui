@@ -6,8 +6,11 @@ import FormGroup from '@mui/material/FormGroup';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormLabel from '@mui/material/FormLabel';
 import {useId} from 'react';
-import type {ReactNode} from 'react';
+import type {ChangeEvent, ReactNode} from 'react';
 import type {FieldPath, FieldValues} from 'react-hook-form';
+import {composeHandlers} from './internal/composeHandlers.js';
+import {changeHandler} from './internal/fieldHandlers.js';
+import type {FieldHandlerProps} from './internal/fieldHandlers.js';
 import {focusTargetIndex} from './internal/FieldOption.js';
 import type {FieldOption, OptionValue} from './internal/FieldOption.js';
 import {
@@ -18,6 +21,8 @@ import type {FieldControllerProps} from './internal/useFieldController.js';
 import {useHelperText} from './internal/HelperText.js';
 import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
+type MuiBlurArgs = Parameters<NonNullable<MuiCheckboxProps['onBlur']>>;
+
 export type CheckboxGroupProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
@@ -26,6 +31,10 @@ export type CheckboxGroupProps<
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
   & ReserveHelperTextProps
+  & FieldHandlerProps<
+    [event: ChangeEvent<HTMLInputElement>, values: TValue[]],
+    MuiBlurArgs
+  >
   & {
     options: readonly FieldOption<TValue>[];
     label?: ReactNode;
@@ -45,7 +54,19 @@ export function CheckboxGroup<
 >(props: CheckboxGroupProps<TFieldValues, TName, TValue, TTransformedValues>) {
   const [
     controllerProps,
-    {options, label, helperText, reserveHelperText, row, required, size, color},
+    {
+      options,
+      label,
+      helperText,
+      reserveHelperText,
+      row,
+      required,
+      size,
+      color,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
+    },
   ] = splitControllerProps<
     TFieldValues,
     TName,
@@ -65,6 +86,11 @@ export function CheckboxGroup<
   const isSelected = (value: TValue) =>
     selected.some((item) => Object.is(item, value));
   const focusIndex = focusTargetIndex(options, isSelected);
+  const change = changeHandler<
+    [event: ChangeEvent<HTMLInputElement>, values: TValue[]]
+  >((_event, values) => {
+    onChange(values);
+  }, {handleChange, suppressFormChange});
 
   return (
     <FormControl
@@ -88,13 +114,13 @@ export function CheckboxGroup<
                 size={size}
                 color={color}
                 checked={isSelected(option.value)}
-                onChange={(_event, checked) => {
+                onChange={(event, checked) => {
                   const without = selected.filter((item) =>
                     !Object.is(item, option.value)
-                  );
-                  onChange(checked ? [...without, option.value] : without);
+                  ) as TValue[];
+                  change(event, checked ? [...without, option.value] : without);
                 }}
-                onBlur={onBlur}
+                onBlur={composeHandlers<MuiBlurArgs>(onBlur, handleBlur)}
                 slotProps={{
                   input: {ref: index === focusIndex ? ref : undefined},
                 }}

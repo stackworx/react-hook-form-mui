@@ -5,8 +5,11 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroupBase from '@mui/material/ToggleButtonGroup';
 import type {ToggleButtonGroupProps as MuiToggleButtonGroupProps} from '@mui/material/ToggleButtonGroup';
 import {useId} from 'react';
-import type {ReactNode} from 'react';
+import type {FocusEvent, MouseEvent, ReactNode} from 'react';
 import type {FieldPath, FieldValues} from 'react-hook-form';
+import {composeHandlers} from './internal/composeHandlers.js';
+import {changeHandler} from './internal/fieldHandlers.js';
+import type {FieldHandlerProps} from './internal/fieldHandlers.js';
 import {focusTargetIndex} from './internal/FieldOption.js';
 import type {FieldOption, OptionValue} from './internal/FieldOption.js';
 import {
@@ -17,6 +20,11 @@ import type {FieldControllerProps} from './internal/useFieldController.js';
 import {useHelperText} from './internal/HelperText.js';
 import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
+type ChangeArgs<TValue> = [
+  event: MouseEvent<HTMLElement>,
+  value: TValue | TValue[] | null,
+];
+
 export type ToggleButtonGroupProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
@@ -25,6 +33,7 @@ export type ToggleButtonGroupProps<
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
   & ReserveHelperTextProps
+  & FieldHandlerProps<ChangeArgs<TValue>, [event: FocusEvent<HTMLDivElement>]>
   & {
     options: readonly FieldOption<TValue>[];
     label?: ReactNode;
@@ -69,6 +78,9 @@ export function ToggleButtonGroup<
       size,
       color,
       fullWidth,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
     },
   ] = splitControllerProps<
     TFieldValues,
@@ -93,6 +105,9 @@ export function ToggleButtonGroup<
     options,
     (value) => selected.some((item) => Object.is(item, value)),
   );
+  const change = changeHandler<ChangeArgs<TValue>>((_event, value) => {
+    onChange(value);
+  }, {handleChange, suppressFormChange});
 
   return (
     <FormControl
@@ -112,14 +127,17 @@ export function ToggleButtonGroup<
         color={color}
         fullWidth={fullWidth}
         disabled={disabled}
-        onChange={(_event, next: unknown) => {
+        onChange={(event, next: TValue | TValue[] | null) => {
           const cleared = exclusive
             ? next === null
             : Array.isArray(next) && next.length === 0;
           if (enforceValue && cleared) return;
-          onChange(next);
+          change(event, next);
         }}
-        onBlur={onBlur}
+        onBlur={composeHandlers<[event: FocusEvent<HTMLDivElement>]>(
+          onBlur,
+          handleBlur,
+        )}
       >
         {options.map((option, index) => (
           <ToggleButton

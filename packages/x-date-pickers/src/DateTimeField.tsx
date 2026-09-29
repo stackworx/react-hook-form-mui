@@ -12,6 +12,7 @@ import {
   usePickerController,
 } from './internal/usePickerController.js';
 import type {PickerControllerProps} from './internal/usePickerController.js';
+import type {FieldHandlerProps} from '@stackworx/react-hook-form-mui';
 
 export type DateTimeFieldProps<
   TFieldValues extends FieldValues,
@@ -24,9 +25,19 @@ export type DateTimeFieldProps<
     PickerValidDate | null,
     TTransformedValues
   >
+  & FieldHandlerProps<
+    Parameters<NonNullable<MuiDateTimeFieldProps['onChange']>>,
+    Parameters<NonNullable<MuiDateTimeFieldProps['onBlur']>>
+  >
   & Omit<
     MuiDateTimeFieldProps,
-    'value' | 'defaultValue' | 'onChange' | 'name' | 'disabled' | 'inputRef'
+    | 'value'
+    | 'defaultValue'
+    | 'onChange'
+    | 'onBlur'
+    | 'name'
+    | 'disabled'
+    | 'inputRef'
   >;
 
 /** MUI X DateTimeField (keyboard entry, no popup) bound to RHF. */
@@ -35,14 +46,24 @@ export function DateTimeField<
   TName extends FieldPath<TFieldValues>,
   TTransformedValues = TFieldValues,
 >(props: DateTimeFieldProps<TFieldValues, TName, TTransformedValues>) {
-  const [controllerProps, {helperText, error, onError, onBlur, ...rest}] =
-    splitPickerProps<
-      TFieldValues,
-      TName,
-      PickerValidDate | null,
-      DateTimeFieldProps<TFieldValues, TName, TTransformedValues>,
-      TTransformedValues
-    >(props);
+  const [
+    controllerProps,
+    {
+      helperText,
+      error,
+      onError,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
+      ...rest
+    },
+  ] = splitPickerProps<
+    TFieldValues,
+    TName,
+    PickerValidDate | null,
+    DateTimeFieldProps<TFieldValues, TName, TTransformedValues>,
+    TTransformedValues
+  >(props);
   const picker = usePickerController<
     TFieldValues,
     TName,
@@ -54,12 +75,15 @@ export function DateTimeField<
   return (
     <MuiDateTimeField
       {...rest}
-      {...pickerValueProps(picker, onError)}
+      {...pickerValueProps(picker, onError, {
+        handleChange,
+        suppressFormChange,
+      })}
       error={picker.error || error}
       helperText={pickerHelperText(picker, helperText)}
-      onBlur={composeHandlers<Parameters<NonNullable<typeof onBlur>>>(
+      onBlur={composeHandlers<Parameters<NonNullable<typeof handleBlur>>>(
         picker.onBlur,
-        onBlur,
+        handleBlur,
       )}
     />
   );

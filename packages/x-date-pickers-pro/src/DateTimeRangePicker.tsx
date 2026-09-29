@@ -15,6 +15,8 @@ import type {PickerControllerProps} from '@stackworx/react-hook-form-mui-x-date-
 import type {ReactNode} from 'react';
 import type {FieldPath, FieldValues} from 'react-hook-form';
 import {emptyRange} from './internal/emptyRange.js';
+import type {PickersTextFieldProps} from '@mui/x-date-pickers/PickersTextField';
+import type {FieldHandlerProps} from '@stackworx/react-hook-form-mui';
 
 export type DateTimeRangePickerProps<
   TFieldValues extends FieldValues,
@@ -26,6 +28,10 @@ export type DateTimeRangePickerProps<
     TName,
     DateRange<PickerValidDate>,
     TTransformedValues
+  >
+  & FieldHandlerProps<
+    Parameters<NonNullable<MuiDateTimeRangePickerProps['onChange']>>,
+    Parameters<NonNullable<PickersTextFieldProps['onBlur']>>
   >
   & Omit<
     MuiDateTimeRangePickerProps,
@@ -39,14 +45,24 @@ export function DateTimeRangePicker<
   TName extends FieldPath<TFieldValues>,
   TTransformedValues = TFieldValues,
 >(props: DateTimeRangePickerProps<TFieldValues, TName, TTransformedValues>) {
-  const [controllerProps, {helperText, onError, slotProps, ...rest}] =
-    splitPickerProps<
-      TFieldValues,
-      TName,
-      DateRange<PickerValidDate>,
-      DateTimeRangePickerProps<TFieldValues, TName, TTransformedValues>,
-      TTransformedValues
-    >(props);
+  const [
+    controllerProps,
+    {
+      helperText,
+      onError,
+      slotProps,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
+      ...rest
+    },
+  ] = splitPickerProps<
+    TFieldValues,
+    TName,
+    DateRange<PickerValidDate>,
+    DateTimeRangePickerProps<TFieldValues, TName, TTransformedValues>,
+    TTransformedValues
+  >(props);
   const picker = usePickerController<
     TFieldValues,
     TName,
@@ -58,13 +74,17 @@ export function DateTimeRangePicker<
   return (
     <MuiDateTimeRangePicker
       {...rest}
-      {...pickerValueProps(picker, onError)}
+      {...pickerValueProps(picker, onError, {
+        handleChange,
+        suppressFormChange,
+      })}
       slotProps={{
         ...slotProps,
         textField: pickerTextFieldSlotProps(
           picker,
           slotProps?.textField,
           helperText,
+          handleBlur,
         ),
       }}
     />

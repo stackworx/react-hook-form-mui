@@ -2,7 +2,7 @@
 
 [React Hook Form](https://react-hook-form.com) bindings for [MUI](https://mui.com) 9 and MUI X 9.
 Each component is the MUI component you already know, wired to `useController`: the value, the
-error text, `setFocus`, `disabled` and your own `onChange`/`onBlur` all behave the same way.
+error text, `setFocus` and `disabled` all behave the same way.
 
 | Package                                             | Components                                                                                                                                          |
 | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -37,10 +37,33 @@ npm install @stackworx/react-hook-form-mui-x-date-pickers-pro @mui/x-date-picker
 - An empty helper line keeps its space, so an error appearing doesn't move the fields below it.
   `reserveHelperText={false}` turns that off for one field, and `HelperTextProvider` for a form or
   section; a field's own setting wins.
-- Your `onChange` and `onBlur` run after the form binding instead of replacing it.
+- Your handlers are `handleChange` and `handleBlur`; MUI's own `onChange` and `onBlur` aren't
+  accepted. `handleChange` runs after the form stores each change, and takes the MUI component's
+  `onChange` arguments: the option groups pass the typed option value, and `NumberField` Base UI's
+  `(value, eventDetails)`. `handleBlur` runs after the form's blur handler marks the field touched.
+- With `suppressFormChange`, the form stores nothing: `handleChange` stores the changes it keeps with
+  `setValue`, and ignores the rest. Autocomplete and the pickers then show the stored value again.
+  `NumberField` shows the text until it loses focus, and a date field keeps the text that was typed.
 - `form.setFocus(name)` focuses the input.
 - An `undefined` value renders as empty (`''`, `null` or `[]`), so there are no
   uncontrolled-to-controlled warnings.
+
+```tsx
+// Only products that are available can be picked.
+<Autocomplete
+  name='product'
+  control={control}
+  label='Product'
+  options={products}
+  getOptionKey={(product) => product.id}
+  getOptionLabel={(product) => product.name}
+  suppressFormChange
+  handleChange={(_event, product) => {
+    if (product && !isAvailable(product)) return;
+    setValue('product', product, {shouldDirty: true, shouldValidate: true});
+  }}
+/>;
+```
 
 ```tsx
 import {FormErrorMessagesProvider} from '@stackworx/react-hook-form-mui';

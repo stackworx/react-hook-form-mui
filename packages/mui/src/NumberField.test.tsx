@@ -104,3 +104,27 @@ test('disabled disables the input and skips validation', async () => {
   });
   expect(valid).toBe(true);
 });
+
+test('with suppressFormChange, only what handleChange stores reaches the form', async () => {
+  const {form} = renderWithForm<{hours: number | null}>(
+    (control) => (
+      <NumberField
+        name='hours'
+        control={control}
+        label='Hours'
+        suppressFormChange
+        handleChange={(value) => {
+          if (value === null || value <= 12) form.setValue('hours', value);
+        }}
+      />
+    ),
+    {defaultValues: {hours: null}},
+  );
+  const input = screen.getByLabelText('Hours');
+  await userEvent.type(input, '12');
+  expect(form.getValues('hours')).toBe(12);
+  await userEvent.type(input, '3');
+  expect(form.getValues('hours')).toBe(12);
+  await userEvent.tab();
+  expect(input).toHaveValue('12');
+});

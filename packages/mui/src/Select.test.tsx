@@ -2,7 +2,7 @@ import {act, screen, waitFor, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {useState} from 'react';
 import type {Control} from 'react-hook-form';
-import {expect, test} from 'vitest';
+import {expect, test, vi} from 'vitest';
 import {renderWithForm} from '../../../test/renderWithForm';
 import {Select} from './Select';
 
@@ -129,4 +129,25 @@ test('setFocus focuses the select', async () => {
   await waitFor(() => {
     expect(combobox).toHaveFocus();
   });
+});
+
+test('with suppressFormChange, a choice handleChange does not store is ignored', async () => {
+  const handleChange = vi.fn();
+  const {form} = renderWithForm<{size: number | null}>(
+    (control) => (
+      <Select
+        name='size'
+        control={control}
+        label='Size'
+        options={numbers}
+        suppressFormChange
+        handleChange={handleChange}
+      />
+    ),
+    {defaultValues: {size: 10}},
+  );
+  await choose('Size', 'Twenty');
+  expect(handleChange).toHaveBeenCalled();
+  expect(form.getValues('size')).toBe(10);
+  expect(screen.getByRole('combobox', {name: 'Size'})).toHaveTextContent('Ten');
 });
