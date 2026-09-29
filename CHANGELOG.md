@@ -9,7 +9,7 @@ and `@stackworx/react-hook-form-mui-x-date-pickers-pro`.
 
 #### Peers and packaging
 
-- Peers are now `react ^19.0.0`, `react-hook-form >=7.62.0 <8` and `@mui/material ^9.0.0`. The
+- Peers are now `react ^18.0.0 || ^19.0.0`, `react-hook-form >=7.62.0 <8` and `@mui/material ^9.0.0`. The
   pickers also need `@mui/x-date-pickers ^9.0.0`, and the Pro package `@mui/x-date-pickers-pro ^9.0.0`.
   `@base-ui/react` is an optional peer, needed only for `NumberField`.
 - ESM only, through an `exports` map. `NumberField` has its own entry point,

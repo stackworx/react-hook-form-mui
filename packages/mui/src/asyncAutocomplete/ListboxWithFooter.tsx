@@ -1,11 +1,11 @@
-import type {HTMLAttributes, ReactNode, Ref} from 'react';
+import {forwardRef} from 'react';
+import type {HTMLAttributes, ReactNode} from 'react';
 
 const reachEndThresholdPx = 48;
 
 export interface ListboxWithFooterProps
   extends HTMLAttributes<HTMLUListElement>
 {
-  ref?: Ref<HTMLUListElement>;
   /** Called when the list is scrolled to within 48px of its end. */
   onReachEnd: () => void;
   /** Rendered below the list, outside the listbox, so it is never an option. */
@@ -13,13 +13,14 @@ export interface ListboxWithFooterProps
 }
 
 /** Autocomplete listbox slot that reports reaching the end and shows a footer below the options. */
-export function ListboxWithFooter({
+// forwardRef, not a ref prop: React 18 doesn't pass `ref` to function components.
+export const ListboxWithFooter = forwardRef<
+  HTMLUListElement,
+  ListboxWithFooterProps
+>(function ListboxWithFooter(
+  {onReachEnd, footer, onScroll, ...listboxProps},
   ref,
-  onReachEnd,
-  footer,
-  onScroll,
-  ...listboxProps
-}: ListboxWithFooterProps) {
+) {
   return (
     <>
       <ul
@@ -36,4 +37,4 @@ export function ListboxWithFooter({
       {footer}
     </>
   );
-}
+});

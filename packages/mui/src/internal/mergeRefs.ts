@@ -5,7 +5,8 @@ export function mergeRefs<T>(...refs: (Ref<T> | undefined)[]): RefCallback<T> {
   return (value) => {
     for (const ref of refs) {
       if (typeof ref === 'function') ref(value);
-      else if (ref) ref.current = value;
+      // React 18's types make a RefObject's `current` read-only.
+      else if (ref) (ref as {current: T | null}).current = value;
     }
   };
 }

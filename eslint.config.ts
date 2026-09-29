@@ -52,6 +52,8 @@ export default defineConfig(
   {
     ...typeCheckedReact,
     files: ['packages/*/src/**/*.{ts,tsx}', 'test/**/*.{ts,tsx}'],
+    // The oldest React the packages support, so lint doesn't suggest React 19-only APIs.
+    settings: {'react-x': {version: '18.3.1'}},
     rules: {
       ...typeCheckedReact.rules,
       'no-restricted-syntax': [

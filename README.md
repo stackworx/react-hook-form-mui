@@ -12,7 +12,7 @@ error text, `setFocus`, `disabled` and your own `onChange`/`onBlur` all behave t
 
 ## Install
 
-The packages are ESM only and need React 19, MUI 9 and react-hook-form 7.62 or later.
+The packages are ESM only and need React 18 or 19, MUI 9 and react-hook-form 7.62 or later.
 
 ```bash
 npm install @stackworx/react-hook-form-mui react-hook-form @mui/material @emotion/react @emotion/styled

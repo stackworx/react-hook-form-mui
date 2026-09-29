@@ -1,4 +1,4 @@
-import {createContext, use} from 'react';
+import {createContext, useContext} from 'react';
 import type {ReactNode} from 'react';
 
 /** Error text per RHF error type, used when a rule has no message of its own. */
@@ -24,12 +24,12 @@ export function FormErrorMessagesProvider({
   children: ReactNode;
 }) {
   return (
-    <MessagesContext value={{...defaultMessages, ...messages}}>
+    <MessagesContext.Provider value={{...defaultMessages, ...messages}}>
       {children}
-    </MessagesContext>
+    </MessagesContext.Provider>
   );
 }
 
 export function useFormErrorMessages(): FormErrorMessages {
-  return use(MessagesContext);
+  return useContext(MessagesContext);
 }

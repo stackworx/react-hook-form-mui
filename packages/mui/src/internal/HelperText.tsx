@@ -1,4 +1,4 @@
-import {createContext, use} from 'react';
+import {createContext, useContext} from 'react';
 import type {ReactNode} from 'react';
 
 const ReserveContext = createContext(true);
@@ -16,12 +16,16 @@ export function HelperTextProvider({reserve, children}: {
   reserve: boolean;
   children: ReactNode;
 }) {
-  return <ReserveContext value={reserve}>{children}</ReserveContext>;
+  return (
+    <ReserveContext.Provider value={reserve}>
+      {children}
+    </ReserveContext.Provider>
+  );
 }
 
 /** Whether a field keeps its empty helper text line: its own setting, else the provider's. */
 export function useReserveHelperText(reserve: boolean | undefined): boolean {
-  const byDefault = use(ReserveContext);
+  const byDefault = useContext(ReserveContext);
   return reserve ?? byDefault;
 }
 
