@@ -1,140 +1,155 @@
-import { Meta } from '@storybook/react';
-import { DatePicker } from '../../packages/x-date-pickers/src/DatePicker';
-import dayjs from 'dayjs';
-import { FormDecorator } from '../decorators/FormDecorator';
-import { ComponentProps } from 'react';
-import { UseFormProps } from 'react-hook-form/dist/types';
+import {DatePicker} from '@stackworx/react-hook-form-mui-x-date-pickers';
+import type {PickerErrorMessages} from '@stackworx/react-hook-form-mui-x-date-pickers';
+import type {Meta, StoryObj} from '@storybook/react-vite';
+import {DateTime} from 'luxon';
+import {
+  dateControl,
+  documented,
+  fieldArgs,
+  fieldArgTypes,
+  fieldProps,
+  formAndFieldControls,
+  formArgs,
+  formArgTypes,
+  fromDateControl,
+  requiredRule,
+} from './controls';
+import type {FieldArgs, FormArgs} from './controls';
+import {FormStory} from './FormStory';
 
-export default {
-  title: 'MUI-X/DatePicker',
-  decorators: [
-    (Story, context) => {
-      return (
-        <FormDecorator formProps={context.args.form}>
-          <Story />
-        </FormDecorator>
-      );
+interface Args extends FormArgs, FieldArgs {
+  initial?: number;
+  minDate?: number;
+  maxDate?: number;
+  disablePast: boolean;
+  disableFuture: boolean;
+  closeOnSelect: boolean;
+  readOnly: boolean;
+  format: string;
+  messages?: PickerErrorMessages;
+}
+
+const meta = {
+  title: 'MUI X/DatePicker',
+  component: documented<Args>(DatePicker),
+  args: {
+    ...formArgs,
+    ...fieldArgs,
+    label: 'Delivery date',
+    disablePast: false,
+    disableFuture: false,
+    closeOnSelect: true,
+    readOnly: false,
+    format: '',
+  },
+  argTypes: {
+    ...formArgTypes,
+    ...fieldArgTypes,
+    initial: {
+      control: 'date',
+      description: "The field's starting value.",
+      table: {category: 'Field'},
     },
-  ],
-  component: DatePicker,
+    minDate: {control: 'date'},
+    maxDate: {control: 'date'},
+    format: {control: 'text', description: "Empty uses the locale's format."},
+  },
   parameters: {
-    layout: 'fullscreen',
-  },
-  args: {
-    name: 'picker',
-    form: {
-      defaultValues: { picker: dayjs().toDate() },
+    controls: {
+      include: [
+        ...formAndFieldControls,
+        'initial',
+        'minDate',
+        'maxDate',
+        'disablePast',
+        'disableFuture',
+        'closeOnSelect',
+        'readOnly',
+        'format',
+      ],
     },
   },
-  argTypes: { onSubmit: { action: 'submit' } },
-} as Meta<ComponentProps<typeof DatePicker> & { form: UseFormProps }>;
+  render: (args) => (
+    <FormStory<{deliveryDate: DateTime | null}>
+      // A new starting value needs a new form: default values are read once.
+      key={String(args.initial)}
+      defaultValues={{deliveryDate: fromDateControl(args.initial) ?? null}}
+      settings={args}
+    >
+      {(control) => (
+        <DatePicker
+          name='deliveryDate'
+          control={control}
+          {...fieldProps(args)}
+          rules={{required: requiredRule(args)}}
+          minDate={fromDateControl(args.minDate)}
+          maxDate={fromDateControl(args.maxDate)}
+          disablePast={args.disablePast}
+          disableFuture={args.disableFuture}
+          closeOnSelect={args.closeOnSelect}
+          readOnly={args.readOnly}
+          format={args.format === '' ? undefined : args.format}
+          messages={args.messages}
+        />
+      )}
+    </FormStory>
+  ),
+} satisfies Meta<Args>;
+export default meta;
 
-export const Default = {
+type Story = StoryObj<typeof meta>;
+
+export const Required: Story = {args: {required: 'Pick a delivery date'}};
+
+export const MinAndMax: Story = {
   args: {
-    label: 'Default',
+    minDate: dateControl('2026-10-01'),
+    maxDate: dateControl('2026-10-31'),
+    helperText: 'During October 2026',
   },
 };
 
-export const Required = {
+export const CustomMessages: Story = {
   args: {
-    label: 'Required',
-    rules: { required: true, message: 'This fields is required' },
-  },
-};
-
-export const WithHelperText = {
-  args: {
-    label: 'With Helper Text',
-    rules: { required: 'This field is required' },
-    slotProps: {
-      textField: {
-        helperText: 'Will be replaced with error message...',
-      },
-    },
-  },
-};
-
-export const InvalidDate = {
-  args: {
-    label: 'Invalid Date',
-    form: {
-      defaultValues: { picker: '2024-66-81' },
-    },
-  },
-};
-
-export const DisablePast = {
-  args: {
-    form: {
-      defaultValues: { picker: dayjs().subtract(1, 'day').toDate() },
-    },
-    label: 'Disable Past',
     disablePast: true,
-  },
-};
-
-export const DisableFuture = {
-  args: {
-    form: {
-      defaultValues: { picker: dayjs().add(1, 'day').toDate() },
-    },
-    label: 'Disable Future',
-    disableFuture: true,
-  },
-};
-
-export const MaxDate = {
-  args: {
-    label: 'Max Date',
-    maxDate: dayjs().subtract(1, 'day').toDate(),
-  },
-};
-
-export const MinDate = {
-  args: {
-    label: 'Min Date',
-    minDate: dayjs().add(1, 'day').toDate(),
-  },
-};
-
-export const ShouldDisableDate = {
-  args: {
-    label: 'Should Disable Date',
-    form: { defaultValues: { picker: dayjs().add(1, 'day').toDate() } },
-    shouldDisableDate: (dateParam) => {
-      const tomorrow = dayjs().add(1, 'day').startOf('day');
-      const selectedDate = dayjs(dateParam).startOf('day');
-
-      return selectedDate.isSame(tomorrow);
+    helperText: 'Today or later',
+    messages: {
+      disablePast: 'We cannot deliver in the past',
+      invalidDate: 'That date does not exist',
     },
   },
 };
 
-export const ShouldDisableMonth = {
+export const Disabled: Story = {
   args: {
-    label: 'Should Disable Month (Next month not allowed)',
-    form: { defaultValues: { picker: dayjs().add(1, 'month').toDate() } },
-    shouldDisableMonth: (dateParam) => {
-      const month = dayjs().add(1, 'month').startOf('month');
-      const selectedMonth = dayjs(dateParam).startOf('month');
-
-      return selectedMonth.isSame(month);
-    },
+    disabled: true,
+    initial: dateControl('2026-10-05'),
+    helperText: 'Booked deliveries cannot be moved',
   },
 };
 
-export const ShouldDisableYear = {
-  args: {
-    label: 'Should Disable Year (2025 not allowed)',
-    // defaultValue: dayjs().year(2025).month(0).date(1).toDate(),
-    form: {
-      defaultValues: { picker: dayjs().year(2025).month(0).date(1).toDate() },
-    },
-    shouldDisableYear: (dateParam) => {
-      const disabledYear = 2025;
-      const selectedYear = dayjs(dateParam).year();
-
-      return selectedYear === disabledYear;
-    },
-  },
+export const IsoString: Story = {
+  name: 'Stored as an ISO string',
+  args: {helperText: 'Stored as an ISO 8601 date (yyyy-MM-dd)'},
+  render: (args) => (
+    <FormStory<{deliveryDate: string | null}>
+      defaultValues={{deliveryDate: '2026-10-05'}}
+      settings={args}
+    >
+      {(control) => (
+        <DatePicker
+          name='deliveryDate'
+          control={control}
+          {...fieldProps(args)}
+          rules={{required: requiredRule(args)}}
+          disablePast={args.disablePast}
+          disableFuture={args.disableFuture}
+          transform={{
+            input: (value) => (value === null ? null : DateTime.fromISO(value)),
+            output: (date) => date?.toISODate() ?? null,
+          }}
+        />
+      )}
+    </FormStory>
+  ),
 };

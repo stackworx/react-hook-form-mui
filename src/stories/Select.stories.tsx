@@ -1,117 +1,96 @@
-import Stack from '@mui/material/Stack';
-import MenuItem from '@mui/material/MenuItem';
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm } from 'react-hook-form';
+import {Select} from '@stackworx/react-hook-form-mui';
+import type {Meta, StoryObj} from '@storybook/react-vite';
+import {
+  documented,
+  fieldArgs,
+  fieldArgTypes,
+  fieldProps,
+  formAndFieldControls,
+  formArgs,
+  formArgTypes,
+  requiredRule,
+} from './controls';
+import type {FieldArgs, FormArgs} from './controls';
+import {FormStory} from './FormStory';
 
-import { Select } from '../../packages/mui/src/Select';
-import { Form } from './Form';
+interface Args extends FormArgs, FieldArgs {
+  size: 'small' | 'medium';
+  variant: 'outlined' | 'filled' | 'standard';
+}
 
-export default {
+const lengths = [
+  {value: 4, label: '4 hours'},
+  {value: 8, label: '8 hours'},
+  {value: 12, label: '12 hours'},
+];
+
+const meta = {
   title: 'Core/Select',
-  component: Select,
-  parameters: {
-    layout: 'fullscreen',
+  component: documented<Args>(Select),
+  args: {
+    ...formArgs,
+    ...fieldArgs,
+    label: 'Booking length',
+    required: 'Pick a length',
+    size: 'medium',
+    variant: 'outlined',
   },
-  argTypes: { onSubmit: { action: 'submit' } },
-} as Meta<typeof Select>;
-
-const Template: StoryFn<typeof Select> = (args: any) => {
-  const formProps = useForm<{
-    text: any;
-  }>({
-    defaultValues: {
-      text: args.SelectProps?.multiple ? [] : '',
+  argTypes: {
+    ...formArgTypes,
+    ...fieldArgTypes,
+    size: {control: 'inline-radio', options: ['small', 'medium']},
+    variant: {
+      control: 'inline-radio',
+      options: ['outlined', 'filled', 'standard'],
     },
-  });
-  return (
-    <Form {...formProps} onSubmit={args.onSubmit}>
-      <Stack>
+  },
+  parameters: {
+    controls: {include: [...formAndFieldControls, 'size', 'variant']},
+  },
+  render: (args) => (
+    <FormStory<{length: number | null}>
+      defaultValues={{length: null}}
+      settings={args}
+    >
+      {(control) => (
         <Select
-          name="text"
-          label="Text"
-          control={formProps.control}
-          errors={formProps.formState.errors}
-          {...args}
+          name='length'
+          control={control}
+          {...fieldProps(args)}
+          rules={{required: requiredRule(args)}}
+          options={lengths}
+          size={args.size}
+          variant={args.variant}
         />
-      </Stack>
-    </Form>
-  );
-};
+      )}
+    </FormStory>
+  ),
+} satisfies Meta<Args>;
+export default meta;
 
-export const Default = {
-  render: Template,
+type Story = StoryObj<typeof meta>;
 
-  args: {
-    label: 'Default',
-    children: [
-      <MenuItem key={10} value={10}>
-        Ten
-      </MenuItem>,
-      <MenuItem key={20} value={20}>
-        Twenty
-      </MenuItem>,
-      <MenuItem key={30} value={30}>
-        Thirty
-      </MenuItem>,
-    ],
-  },
-};
+export const Default: Story = {};
 
-export const Required = {
-  render: Template,
-
-  args: {
-    label: 'Required',
-    rules: { required: 'Required' },
-    children: [
-      <MenuItem key={10} value={10}>
-        Ten
-      </MenuItem>,
-      <MenuItem key={20} value={20}>
-        Twenty
-      </MenuItem>,
-      <MenuItem key={30} value={30}>
-        Thirty
-      </MenuItem>,
-    ],
-  },
-};
-
-export const SingleSelect = {
-  render: Template,
-
-  args: {
-    label: 'Single Select',
-    children: [
-      <MenuItem key={10} value={10}>
-        Ten
-      </MenuItem>,
-      <MenuItem key={20} value={20}>
-        Twenty
-      </MenuItem>,
-      <MenuItem key={30} value={30}>
-        Thirty
-      </MenuItem>,
-    ],
-  },
-};
-
-export const MultipleSelect = {
-  render: Template,
-
-  args: {
-    label: 'Multiple Select',
-    SelectProps: { multiple: true },
-    children: [
-      <MenuItem key={10} value={10}>
-        Ten
-      </MenuItem>,
-      <MenuItem key={20} value={20}>
-        Twenty
-      </MenuItem>,
-      <MenuItem key={30} value={30}>
-        Thirty
-      </MenuItem>,
-    ],
-  },
+export const Multiple: Story = {
+  args: {label: 'Allowed lengths', required: ''},
+  render: (args) => (
+    <FormStory<{lengths: number[]}>
+      defaultValues={{lengths: []}}
+      settings={args}
+    >
+      {(control) => (
+        <Select
+          name='lengths'
+          control={control}
+          {...fieldProps(args)}
+          rules={{required: requiredRule(args)}}
+          options={lengths}
+          multiple
+          size={args.size}
+          variant={args.variant}
+        />
+      )}
+    </FormStory>
+  ),
 };

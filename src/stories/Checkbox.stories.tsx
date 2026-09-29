@@ -1,75 +1,70 @@
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm } from 'react-hook-form';
+import {Checkbox} from '@stackworx/react-hook-form-mui';
+import type {Meta, StoryObj} from '@storybook/react-vite';
+import {
+  documented,
+  fieldArgs,
+  fieldArgTypes,
+  fieldProps,
+  formAndFieldControls,
+  formArgs,
+  formArgTypes,
+  requiredRule,
+} from './controls';
+import type {FieldArgs, FormArgs} from './controls';
+import {FormStory} from './FormStory';
 
-import { Checkbox } from '../../packages/mui/src/Checkbox';
-import { CheckboxWithLabel } from '../../packages/mui/src/CheckboxWithLabel';
-import { Form } from './Form';
+interface Args extends FormArgs, FieldArgs {
+  size: 'small' | 'medium' | 'large';
+  color:
+    | 'primary'
+    | 'secondary'
+    | 'error'
+    | 'info'
+    | 'success'
+    | 'warning'
+    | 'default';
+}
 
-export default {
+const meta = {
   title: 'Core/Checkbox',
-  component: Checkbox,
+  component: documented<Args>(Checkbox),
+  args: {
+    ...formArgs,
+    ...fieldArgs,
+    label: 'I accept the terms',
+    helperText: 'Required to continue',
+    required: 'Please accept the terms',
+    size: 'medium',
+    color: 'primary',
+  },
+  argTypes: {
+    ...formArgTypes,
+    ...fieldArgTypes,
+    size: {control: 'inline-radio', options: ['small', 'medium', 'large']},
+  },
   parameters: {
-    layout: 'fullscreen',
+    controls: {include: [...formAndFieldControls, 'size', 'color']},
   },
-  argTypes: { onSubmit: { action: 'submit' } },
-} as Meta<typeof Checkbox>;
+  render: (args) => (
+    <FormStory<{accept: boolean}>
+      defaultValues={{accept: false}}
+      settings={args}
+    >
+      {(control) => (
+        <Checkbox
+          name='accept'
+          control={control}
+          {...fieldProps(args)}
+          rules={{required: requiredRule(args)}}
+          size={args.size}
+          color={args.color}
+        />
+      )}
+    </FormStory>
+  ),
+} satisfies Meta<Args>;
+export default meta;
 
-const WithFormControlLabel: StoryFn<typeof Checkbox> = (args: any) => {
-  const formProps = useForm<{
-    checkbox: any;
-  }>({
-    defaultValues: {
-      checkbox: false,
-    },
-  });
-  return (
-    <Form {...formProps} onSubmit={args.onSubmit}>
-      <CheckboxWithLabel
-        name="checkbox"
-        label="checkbox"
-        control={formProps.control}
-        errors={formProps.formState.errors}
-        {...args}
-      />
-    </Form>
-  );
-};
+type Story = StoryObj<typeof meta>;
 
-const Template: StoryFn<typeof Checkbox> = (args: any) => {
-  const formProps = useForm<{
-    checkbox: any;
-  }>({
-    defaultValues: {
-      checkbox: false,
-    },
-  });
-  return (
-    <Form {...formProps} onSubmit={args.onSubmit}>
-      <Checkbox
-        name="checkbox"
-        control={formProps.control}
-        errors={formProps.formState.errors}
-        {...args}
-      />
-    </Form>
-  );
-};
-
-export const Default = {
-  render: Template,
-};
-
-export const Required = {
-  render: Template,
-
-  args: {
-    rules: { required: 'Required' },
-  },
-};
-
-export const WithFormLabel = {
-  render: WithFormControlLabel,
-  args: {
-    rules: { required: 'Required' },
-  },
-};
+export const Default: Story = {};

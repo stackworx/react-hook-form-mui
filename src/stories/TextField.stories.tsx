@@ -1,136 +1,113 @@
-import Stack from '@mui/material/Stack';
-import MenuItem from '@mui/material/MenuItem';
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm } from 'react-hook-form';
+import {TextField} from '@stackworx/react-hook-form-mui';
+import type {Meta, StoryObj} from '@storybook/react-vite';
+import {
+  documented,
+  fieldArgs,
+  fieldArgTypes,
+  fieldProps,
+  formAndFieldControls,
+  formArgs,
+  formArgTypes,
+  requiredRule,
+} from './controls';
+import type {FieldArgs, FormArgs} from './controls';
+import {FormStory} from './FormStory';
 
-import { TextField } from '../../packages/mui/src/TextField';
-import { Form } from './Form';
+interface Args extends FormArgs, FieldArgs {
+  placeholder: string;
+  multiline: boolean;
+  minRows: number;
+  size: 'small' | 'medium';
+  variant: 'outlined' | 'filled' | 'standard';
+}
 
-export default {
+const meta = {
   title: 'Core/TextField',
-  component: TextField,
+  component: documented<Args>(TextField),
+  args: {
+    ...formArgs,
+    ...fieldArgs,
+    label: 'Full name',
+    helperText: 'As it appears on your ID',
+    required: 'Name is required',
+    placeholder: '',
+    multiline: false,
+    minRows: 3,
+    size: 'medium',
+    variant: 'outlined',
+  },
+  argTypes: {
+    ...formArgTypes,
+    ...fieldArgTypes,
+    size: {control: 'inline-radio', options: ['small', 'medium']},
+    variant: {
+      control: 'inline-radio',
+      options: ['outlined', 'filled', 'standard'],
+    },
+  },
   parameters: {
-    layout: 'fullscreen',
-  },
-  argTypes: { onSubmit: { action: 'submit' } },
-} as Meta<typeof TextField>;
-
-const Template: StoryFn<typeof TextField> = (args: any) => {
-  const formProps = useForm<{
-    text: any;
-  }>({
-    defaultValues: {
-      text: args.SelectProps?.multiple ? [] : '',
+    controls: {
+      include: [
+        ...formAndFieldControls,
+        'placeholder',
+        'multiline',
+        'minRows',
+        'size',
+        'variant',
+      ],
     },
-  });
-  return (
-    <Form {...formProps} onSubmit={args.onSubmit}>
-      <Stack>
+  },
+  render: (args) => (
+    <FormStory<{name: string}> defaultValues={{name: ''}} settings={args}>
+      {(control) => (
         <TextField
-          name="text"
-          label="Text"
-          control={formProps.control}
-          errors={formProps.formState.errors}
-          {...args}
+          name='name'
+          control={control}
+          {...fieldProps(args)}
+          rules={{required: requiredRule(args)}}
+          placeholder={args.placeholder === '' ? undefined : args.placeholder}
+          multiline={args.multiline}
+          minRows={args.multiline ? args.minRows : undefined}
+          size={args.size}
+          variant={args.variant}
         />
-      </Stack>
-    </Form>
-  );
-};
+      )}
+    </FormStory>
+  ),
+} satisfies Meta<Args>;
+export default meta;
 
-export const Default = {
-  render: Template,
+type Story = StoryObj<typeof meta>;
 
+export const Default: Story = {};
+
+export const Transform: Story = {
+  name: 'Transform (upper-cased)',
   args: {
-    label: 'Default',
+    label: 'Cost centre',
+    helperText: 'Upper-cased as you type, as ABC-123',
+    required: '',
   },
-};
-
-export const RegexCheck = {
-  render: Template,
-
-  args: {
-    label: 'RegexCheck',
-    helperText: 'Some text',
-    rules: {
-      pattern: {
-        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-        message: 'Enter a valid Email Address',
-      },
-    },
-  },
-};
-
-export const MinLength = {
-  render: Template,
-  args: {
-    label: 'MinLength',
-    helperText: 'Should be overriden by error',
-    rules: {
-      minLength: { value: 10, message: 'Minimum length is 10 characters' },
-    },
-  },
-};
-
-export const MaxLength = {
-  render: Template,
-  args: {
-    label: 'MaxLength',
-    helperText: 'Should be overriden by error',
-    rules: {
-      maxLength: { value: 5, message: 'Max length is 5 characters' },
-    },
-  },
-};
-
-export const Required = {
-  render: Template,
-
-  args: {
-    label: 'Required',
-    rules: { required: true, maxLength: 5 },
-  },
-};
-
-export const SingleSelect = {
-  render: Template,
-
-  args: {
-    label: 'Single Select',
-    rules: { required: 'Required' },
-    select: true,
-    children: [
-      <MenuItem key={10} value={10}>
-        Ten
-      </MenuItem>,
-      <MenuItem key={20} value={20}>
-        Twenty
-      </MenuItem>,
-      <MenuItem key={30} value={30}>
-        Thirty
-      </MenuItem>,
-    ],
-  },
-};
-
-export const MultipleSelect = {
-  render: Template,
-
-  args: {
-    label: 'Multiple Select',
-    rules: { required: 'Required' },
-    select: true,
-    SelectProps: { multiple: true },
-    children: [
-      <MenuItem key={10} value={10}>
-        Ten
-      </MenuItem>,
-      <MenuItem key={20} value={20}>
-        Twenty
-      </MenuItem>,
-      <MenuItem key={30} value={30}>
-        Thirty
-      </MenuItem>,
-    ],
-  },
+  render: (args) => (
+    <FormStory<{code: string}> defaultValues={{code: ''}} settings={args}>
+      {(control) => (
+        <TextField
+          name='code'
+          control={control}
+          {...fieldProps(args)}
+          size={args.size}
+          variant={args.variant}
+          transform={{
+            input: (value) => value,
+            output: (text) =>
+              text.toUpperCase(),
+          }}
+          rules={{
+            required: requiredRule(args),
+            pattern: {value: /^[A-Z]{3}-\d{3}$/, message: 'Use ABC-123'},
+          }}
+        />
+      )}
+    </FormStory>
+  ),
 };

@@ -1,102 +1,250 @@
-import { Meta } from '@storybook/react';
-import { Autocomplete } from '../../packages/mui/src/Autocomplete';
-import { FormDecorator } from '../decorators/FormDecorator';
-import { UseFormProps } from 'react-hook-form/dist/types';
-import { Movie, top100Films } from './data';
-import { ComponentProps } from 'react';
-import TextField from '@mui/material/TextField';
-import { useFormState } from 'react-hook-form';
+import {Autocomplete} from '@stackworx/react-hook-form-mui';
+import type {Meta, StoryObj} from '@storybook/react-vite';
+import {
+  documented,
+  fieldArgs,
+  fieldArgTypes,
+  fieldProps,
+  formAndFieldControls,
+  formArgs,
+  formArgTypes,
+  requiredRule,
+} from './controls';
+import type {FieldArgs, FormArgs} from './controls';
+import {FormStory} from './FormStory';
+import {locations} from './locations';
+import type {Location} from './locations';
 
-export default {
+interface Args extends FormArgs, FieldArgs {
+  placeholder: string;
+  disableClearable: boolean;
+  size: 'small' | 'medium';
+  groupByRegion: boolean;
+  limitTags: number;
+}
+
+const getOptionKey = (location: Location) => location.id;
+const getOptionLabel = (location: Location) => location.name;
+const byRegion = (location: Location) => location.region;
+const byId = (id: string) => locations.filter((location) => location.id === id);
+
+/** The props the Autocomplete controls set, except `groupByRegion` and the multiple-only `limitTags`. */
+function autocompleteProps(args: Args) {
+  return {
+    placeholder: args.placeholder === '' ? undefined : args.placeholder,
+    disableClearable: args.disableClearable,
+    size: args.size,
+  };
+}
+
+const regionGroups = (
+  args: Args,
+) => (args.groupByRegion ? byRegion : undefined);
+
+const autocompleteControls = [
+  ...formAndFieldControls,
+  'placeholder',
+  'disableClearable',
+  'size',
+  'groupByRegion',
+];
+
+const meta = {
   title: 'Core/Autocomplete',
-  decorators: [
-    (Story, context) => {
-      return (
-        <FormDecorator formProps={context.args.form}>
-          <Story />
-        </FormDecorator>
-      );
-    },
-  ],
-  render: ({
-    name,
-    control,
-    rules,
-    label,
-    helperText,
-    ...autocompleteProps
-  }) => {
-    const { touchedFields, errors } = useFormState();
-
-    return (
-      <Autocomplete
-        {...autocompleteProps}
-        name={name}
-        control={control}
-        rules={rules}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            name={name}
-            label={label}
-            error={touchedFields[name] && !!errors[name]}
-            helperText={(errors[name]?.message as string) ?? helperText ?? ' '}
-            variant="outlined"
-          />
-        )}
-      />
-    );
-  },
-  parameters: {
-    layout: 'fullscreen',
-  },
+  component: documented<Args>(Autocomplete),
   args: {
-    name: 'autocomplete',
-    options: top100Films,
-    getOptionLabel: (option: Movie) => option.title,
-    form: {
-      defaultValues: { autocomplete: top100Films[0] },
+    ...formArgs,
+    ...fieldArgs,
+    label: 'Home location',
+    required: 'Pick a home location',
+    placeholder: '',
+    disableClearable: false,
+    size: 'medium',
+    groupByRegion: true,
+    limitTags: -1,
+  },
+  argTypes: {
+    ...formArgTypes,
+    ...fieldArgTypes,
+    disableClearable: {control: 'boolean'},
+    size: {control: 'inline-radio', options: ['small', 'medium']},
+    groupByRegion: {
+      control: 'boolean',
+      description: 'Groups the options by region with `groupBy`.',
     },
   },
-  actions: {
-    onSubmit: 'submit',
-  },
-  argTypes: { onSubmit: { action: 'submit' } },
-} as Meta<
-  ComponentProps<typeof Autocomplete> & {
-    form: UseFormProps;
-    label: string;
-    helperText: string;
-  }
->;
+  parameters: {controls: {include: autocompleteControls}},
+  render: (args) => (
+    <FormStory<{home: Location | null}>
+      defaultValues={{home: byId('L1')[0] ?? null}}
+      settings={args}
+    >
+      {(control) => (
+        <Autocomplete
+          name='home'
+          control={control}
+          {...fieldProps(args)}
+          {...autocompleteProps(args)}
+          groupBy={regionGroups(args)}
+          rules={{required: requiredRule(args)}}
+          options={locations}
+          getOptionKey={getOptionKey}
+          getOptionLabel={getOptionLabel}
+        />
+      )}
+    </FormStory>
+  ),
+} satisfies Meta<Args>;
+export default meta;
 
-export const Default = {
-  args: {
-    label: 'Default',
-  },
+type Story = StoryObj<typeof meta>;
+
+export const StoresTheOption: Story = {name: 'Stores the option'};
+
+export const StoresTheOptions: Story = {
+  name: 'Stores the options (multiple)',
+  args: {label: 'Other locations', required: '', groupByRegion: false},
+  parameters: {controls: {include: [...autocompleteControls, 'limitTags']}},
+  render: (args) => (
+    <FormStory<{otherLocations: Location[]}>
+      defaultValues={{otherLocations: [...byId('L2'), ...byId('L12')]}}
+      settings={args}
+    >
+      {(control) => (
+        <Autocomplete
+          name='otherLocations'
+          control={control}
+          {...fieldProps(args)}
+          {...autocompleteProps(args)}
+          groupBy={regionGroups(args)}
+          rules={{required: requiredRule(args)}}
+          options={locations}
+          getOptionKey={getOptionKey}
+          getOptionLabel={getOptionLabel}
+          multiple
+          limitTags={args.limitTags}
+        />
+      )}
+    </FormStory>
+  ),
 };
 
-export const Multiple = {
-  args: {
-    form: {
-      defaultValues: { autocomplete: [top100Films[0], top100Films[1]] },
-    },
-    label: 'Multiple',
-    multiple: true,
-  },
+export const StoresAnId: Story = {
+  name: 'Stores an id (getOptionValue)',
+  render: (args) => (
+    <FormStory<{homeId: string | null}>
+      defaultValues={{homeId: 'L1'}}
+      settings={args}
+    >
+      {(control) => (
+        <Autocomplete
+          name='homeId'
+          control={control}
+          {...fieldProps(args)}
+          {...autocompleteProps(args)}
+          groupBy={regionGroups(args)}
+          rules={{required: requiredRule(args)}}
+          options={locations}
+          getOptionKey={getOptionKey}
+          getOptionLabel={getOptionLabel}
+          getOptionValue={(location) => location.id}
+        />
+      )}
+    </FormStory>
+  ),
 };
 
-export const Required = {
-  args: {
-    label: 'Required',
-    rules: { required: 'Required' },
-  },
+export const StoresIds: Story = {
+  name: 'Stores ids (multiple)',
+  args: {label: 'Other locations', required: '', groupByRegion: false},
+  parameters: {controls: {include: [...autocompleteControls, 'limitTags']}},
+  render: (args) => (
+    <FormStory<{locationIds: string[]}>
+      defaultValues={{locationIds: ['L2', 'L12']}}
+      settings={args}
+    >
+      {(control) => (
+        <Autocomplete
+          name='locationIds'
+          control={control}
+          {...fieldProps(args)}
+          {...autocompleteProps(args)}
+          groupBy={regionGroups(args)}
+          rules={{required: requiredRule(args)}}
+          options={locations}
+          getOptionKey={getOptionKey}
+          getOptionLabel={getOptionLabel}
+          getOptionValue={(location) => location.id}
+          multiple
+          limitTags={args.limitTags}
+        />
+      )}
+    </FormStory>
+  ),
 };
 
-export const WithHelperText = {
-  args: {
-    label: 'With Helper Text',
-    rules: { required: 'Required' },
-    helperText: 'Should be overwritten by error',
-  },
+const ungroupedControls = autocompleteControls.filter(
+  (name) => name !== 'groupByRegion',
+);
+
+const sizes = ['Extra small', 'Small', 'Medium', 'Large', 'Extra large'];
+
+export const PlainStrings: Story = {
+  name: 'Plain strings (no getOptionKey or getOptionLabel)',
+  args: {label: 'Size', required: 'Pick a size'},
+  parameters: {controls: {include: ungroupedControls}},
+  render: (args) => (
+    <FormStory<{size: string | null}>
+      defaultValues={{size: 'Medium'}}
+      settings={args}
+    >
+      {(control) => (
+        <Autocomplete
+          name='size'
+          control={control}
+          {...fieldProps(args)}
+          {...autocompleteProps(args)}
+          rules={{required: requiredRule(args)}}
+          options={sizes}
+        />
+      )}
+    </FormStory>
+  ),
+};
+
+interface Colour {
+  id: number;
+  label: string;
+}
+
+const colours: Colour[] = [
+  {id: 1, label: 'Red'},
+  {id: 2, label: 'Green'},
+  {id: 3, label: 'Blue'},
+  {id: 4, label: 'Yellow'},
+];
+
+export const ObjectsWithALabel: Story = {
+  name: 'Objects with a label (no getOptionLabel)',
+  args: {label: 'Colour', required: 'Pick a colour'},
+  parameters: {controls: {include: ungroupedControls}},
+  render: (args) => (
+    <FormStory<{colour: Colour | null}>
+      // A copy, not one of `colours`: the stored option is matched by getOptionKey.
+      defaultValues={{colour: {id: 2, label: 'Green'}}}
+      settings={args}
+    >
+      {(control) => (
+        <Autocomplete
+          name='colour'
+          control={control}
+          {...fieldProps(args)}
+          {...autocompleteProps(args)}
+          rules={{required: requiredRule(args)}}
+          options={colours}
+          getOptionKey={(colour) => colour.id}
+        />
+      )}
+    </FormStory>
+  ),
 };

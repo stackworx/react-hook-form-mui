@@ -1,78 +1,134 @@
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormLabel from '@mui/material/FormLabel';
+import Radio from '@mui/material/Radio';
+import type {RadioProps as MuiRadioProps} from '@mui/material/Radio';
+import RadioGroupBase from '@mui/material/RadioGroup';
+import {useId} from 'react';
+import type {ChangeEvent, FocusEvent, ReactNode} from 'react';
+import type {FieldPath, FieldValues} from 'react-hook-form';
+import {composeHandlers} from './internal/composeHandlers.js';
+import {changeHandler} from './internal/fieldHandlers.js';
+import type {FieldHandlerProps} from './internal/fieldHandlers.js';
+import {focusTargetIndex} from './internal/FieldOption.js';
+import type {FieldOption, OptionValue} from './internal/FieldOption.js';
 import {
-  useController,
-  FieldValues,
-  FieldPath,
-  UseControllerProps,
-  useFormState,
-  Control,
-  FieldError,
-} from 'react-hook-form';
-import MuiRadioGroup, {
-  RadioGroupProps as MuiRadioGroupProps,
-  useRadioGroup,
-} from '@mui/material/RadioGroup';
-import { default as MuiRadio, type RadioProps } from '@mui/material/Radio';
+  splitControllerProps,
+  useFieldController,
+} from './internal/useFieldController.js';
+import type {FieldControllerProps} from './internal/useFieldController.js';
+import {useHelperText} from './internal/HelperText.js';
+import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
 export type RadioGroupProps<
-  TName extends FieldPath<TFieldValues>,
-  TFieldValues extends FieldValues = FieldValues,
-> = UseControllerProps<TFieldValues, TName> &
-  Omit<
-    MuiRadioGroupProps,
-    'checked' | 'name' | 'value' | 'defaultChecked' | 'form'
-  >;
-
-export function RadioGroup<
-  TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues,
->({ control, name, rules, ...props }: RadioGroupProps<TName, TFieldValues>) {
-  const {
-    field: { onChange, onBlur, value },
-  } = useController({
-    name,
-    control,
-    rules,
-  });
+  TName extends FieldPath<TFieldValues>,
+  TValue extends OptionValue,
+  TTransformedValues = TFieldValues,
+> =
+  & FieldControllerProps<TFieldValues, TName, TTransformedValues>
+  & ReserveHelperTextProps
+  & FieldHandlerProps<
+    [event: ChangeEvent<HTMLInputElement>, value: TValue | null],
+    [event: FocusEvent<HTMLDivElement>]
+  >
+  & {
+    options: readonly FieldOption<TValue>[];
+    label?: ReactNode;
+    helperText?: ReactNode;
+    row?: boolean;
+    required?: boolean;
+    size?: MuiRadioProps['size'];
+    color?: MuiRadioProps['color'];
+  };
 
-  return (
-    <MuiRadioGroup
-      {...props}
-      onChange={onChange}
-      onBlur={onBlur}
-      value={value}
-      name={name}
-    />
+/** One radio per option; the form value is the chosen option's value (`TValue | null`). */
+export function RadioGroup<
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
+  TValue extends OptionValue,
+  TTransformedValues = TFieldValues,
+>(props: RadioGroupProps<TFieldValues, TName, TValue, TTransformedValues>) {
+  const [
+    controllerProps,
+    {
+      options,
+      label,
+      helperText,
+      reserveHelperText,
+      row,
+      required,
+      size,
+      color,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
+    },
+  ] = splitControllerProps<
+    TFieldValues,
+    TName,
+    RadioGroupProps<TFieldValues, TName, TValue, TTransformedValues>,
+    TTransformedValues
+  >(props);
+  const {field, errorText, hasError} = useFieldController(controllerProps);
+  const {name, onChange, onBlur, ref, disabled} = field;
+  const labelId = useId();
+  const helperId = useId();
+  const {helper, describes} = useHelperText(
+    errorText,
+    helperText,
+    reserveHelperText,
   );
-}
-
-RadioGroup.displayName = 'MuiReactHookFormRadioGroup';
-
-interface MyRadioProps<T extends FieldValues> extends RadioProps {
-  control: Control<T>;
-}
-
-export function Radio<T extends FieldValues>({
-  control,
-  ...props
-}: MyRadioProps<T>) {
-  const radioGroup = useRadioGroup();
-  const { errors } = useFormState({ control });
-
-  const fieldName = radioGroup?.name || props.name || '';
-  const fieldError = (errors as Record<string, FieldError>)[fieldName];
-
-  const showError = !!fieldError;
+  const current: unknown = field.value;
+  const selectedIndex = options.findIndex((option) =>
+    Object.is(option.value, current)
+  );
+  const focusIndex = focusTargetIndex(
+    options,
+    (value) => Object.is(value, current),
+  );
+  const change = changeHandler((_event, value) => {
+    onChange(value);
+  }, {handleChange, suppressFormChange});
 
   return (
-    <MuiRadio
-      sx={{
-        ...(showError && {
-          '& .MuiSvgIcon-root': {
-            color: 'error.main',
-          },
-        }),
-      }}
-      {...props}
-    />
+    <FormControl error={hasError} disabled={disabled} required={required}>
+      {label ? <FormLabel id={labelId}>{label}</FormLabel> : null}
+      <RadioGroupBase
+        name={name}
+        row={row}
+        aria-labelledby={label ? labelId : undefined}
+        aria-describedby={describes ? helperId : undefined}
+        // MUI reports the radio's string value; the index maps it back to the typed option value.
+        value={selectedIndex >= 0 ? String(selectedIndex) : ''}
+        onChange={(event, value) => {
+          change(event, options[Number(value)]?.value ?? null);
+        }}
+        onBlur={composeHandlers<Parameters<NonNullable<typeof handleBlur>>>(
+          onBlur,
+          handleBlur,
+        )}
+      >
+        {options.map((option, index) => (
+          <FormControlLabel
+            key={String(option.value)}
+            value={String(index)}
+            label={option.label}
+            disabled={option.disabled}
+            control={
+              <Radio
+                size={size}
+                color={color}
+                slotProps={{
+                  input: {ref: index === focusIndex ? ref : undefined},
+                }}
+              />
+            }
+          />
+        ))}
+      </RadioGroupBase>
+      {helper ? <FormHelperText id={helperId}>{helper}</FormHelperText> : null}
+    </FormControl>
   );
 }

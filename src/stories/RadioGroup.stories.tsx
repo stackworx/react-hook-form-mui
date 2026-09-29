@@ -1,68 +1,76 @@
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm } from 'react-hook-form';
+import {RadioGroup} from '@stackworx/react-hook-form-mui';
+import type {Meta, StoryObj} from '@storybook/react-vite';
+import {
+  documented,
+  fieldArgs,
+  fieldArgTypes,
+  fieldProps,
+  formAndFieldControls,
+  formArgs,
+  formArgTypes,
+  requiredRule,
+} from './controls';
+import type {FieldArgs, FormArgs} from './controls';
+import {FormStory} from './FormStory';
 
-import { Radio, RadioGroup } from '../../packages/mui/src/RadioGroup';
-import { Form } from './Form';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
+interface Args extends FormArgs, FieldArgs {
+  row: boolean;
+  size: 'small' | 'medium';
+  color:
+    | 'primary'
+    | 'secondary'
+    | 'error'
+    | 'info'
+    | 'success'
+    | 'warning'
+    | 'default';
+}
 
-export default {
+const meta = {
   title: 'Core/RadioGroup',
-  component: RadioGroup,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  argTypes: { onSubmit: { action: 'submit' } },
-} as Meta<typeof RadioGroup>;
-
-const Template: StoryFn<typeof RadioGroup> = (args: any) => {
-  const formProps = useForm<{
-    radioGroup: any;
-  }>({
-    defaultValues: {
-      radioGroup: false,
-    },
-  });
-  return (
-    <Form {...formProps} onSubmit={args.onSubmit}>
-      <FormControl>
-        <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
-        <RadioGroup
-          name="radioGroup"
-          control={formProps.control}
-          errors={formProps.formState.errors}
-          {...args}
-        >
-          <FormControlLabel
-            value="female"
-            control={<Radio control={formProps.control} />}
-            label="Female"
-          />
-          <FormControlLabel
-            value="male"
-            control={<Radio control={formProps.control} />}
-            label="Male"
-          />
-          <FormControlLabel
-            value="other"
-            control={<Radio control={formProps.control} />}
-            label="Other"
-          />
-        </RadioGroup>
-      </FormControl>
-    </Form>
-  );
-};
-
-export const Default = {
-  render: Template,
-};
-
-export const Required = {
-  render: Template,
-
+  component: documented<Args>(RadioGroup),
   args: {
-    rules: { required: 'This field is required' },
+    ...formArgs,
+    ...fieldArgs,
+    label: 'Is this a gift?',
+    required: 'Choose one',
+    row: true,
+    size: 'medium',
+    color: 'primary',
   },
-};
+  argTypes: {
+    ...formArgTypes,
+    ...fieldArgTypes,
+    size: {control: 'inline-radio', options: ['small', 'medium']},
+  },
+  parameters: {
+    controls: {include: [...formAndFieldControls, 'row', 'size', 'color']},
+  },
+  render: (args) => (
+    <FormStory<{gift: boolean | null}>
+      defaultValues={{gift: null}}
+      settings={args}
+    >
+      {(control) => (
+        <RadioGroup
+          name='gift'
+          control={control}
+          {...fieldProps(args)}
+          rules={{
+            // RHF's `required` rejects `false`, which is what "No" stores.
+            validate: (value) => value !== null || (requiredRule(args) ?? true),
+          }}
+          row={args.row}
+          size={args.size}
+          color={args.color}
+          options={[{value: true, label: 'Yes'}, {value: false, label: 'No'}]}
+        />
+      )}
+    </FormStory>
+  ),
+} satisfies Meta<Args>;
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};

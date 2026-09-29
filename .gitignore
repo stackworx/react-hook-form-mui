@@ -6,6 +6,7 @@ dist
 yarn-error.log
 .idea
 yarn.lock
+*.tsbuildinfo
 
 storybook-static/
 coverage
@@ -13,3 +14,4 @@ lerna-debug.log
 
 # IDE Files
 *.code-workspace
+.nx

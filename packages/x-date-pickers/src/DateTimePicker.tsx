@@ -1,107 +1,92 @@
+import {DateTimePicker as MuiDateTimePicker} from '@mui/x-date-pickers/DateTimePicker';
+import type {DateTimePickerProps as MuiDateTimePickerProps} from '@mui/x-date-pickers/DateTimePicker';
+import type {
+  DateTimeValidationError,
+  PickerValidDate,
+} from '@mui/x-date-pickers/models';
+import type {ReactNode} from 'react';
+import type {FieldPath, FieldValues} from 'react-hook-form';
 import {
-  FieldPath,
-  FieldValues,
-  useController,
-  UseControllerProps,
-} from 'react-hook-form';
+  pickerTextFieldSlotProps,
+  pickerValueProps,
+} from './internal/bindings.js';
 import {
-  DateTimePicker as MuiDateTimePicker,
-  type DateTimePickerProps as MuiDateTimePickerProps,
-} from '@mui/x-date-pickers/DateTimePicker';
-import { PickerValidDate } from '@mui/x-date-pickers/models';
-import {
-  useLocalizationContext,
-  useUtils,
-  validateDateTime,
-} from '@mui/x-date-pickers/internals';
-import { mapDateTimePickerValidationErrorMessage } from './utils/DatePickerValidationErrorsToMessage.ts';
-import { TextFieldProps } from '@mui/material/TextField';
+  splitPickerProps,
+  usePickerController,
+} from './internal/usePickerController.js';
+import type {PickerControllerProps} from './internal/usePickerController.js';
+import type {PickersTextFieldProps} from '@mui/x-date-pickers/PickersTextField';
+import type {FieldHandlerProps} from '@stackworx/react-hook-form-mui';
 
-type DateTimePickerProps<
+export type DateTimePickerProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
-  TDate extends PickerValidDate,
-  TEnableAccessibleFieldDOMStructure extends boolean = false,
-> = UseControllerProps<TFieldValues, TName> &
-  Omit<
-    MuiDateTimePickerProps<TDate, TEnableAccessibleFieldDOMStructure>,
-    'value' | 'name'
-  >;
+  TTransformedValues = TFieldValues,
+> =
+  & PickerControllerProps<
+    TFieldValues,
+    TName,
+    PickerValidDate | null,
+    TTransformedValues
+  >
+  & FieldHandlerProps<
+    Parameters<NonNullable<MuiDateTimePickerProps['onChange']>>,
+    Parameters<NonNullable<PickersTextFieldProps['onBlur']>>
+  >
+  & Omit<
+    MuiDateTimePickerProps,
+    'value' | 'defaultValue' | 'onChange' | 'name' | 'disabled' | 'inputRef'
+  >
+  & {helperText?: ReactNode};
 
+/** MUI X DateTimePicker bound to RHF; the form value is the adapter date, or `transform`'s output. */
 export function DateTimePicker<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
-  TDate extends PickerValidDate,
-  TEnableAccessibleFieldDOMStructure extends boolean = false,
->({
-  name,
-  rules,
-  control,
-  ...props
-}: DateTimePickerProps<
-  TFieldValues,
-  TName,
-  TDate,
-  TEnableAccessibleFieldDOMStructure
->) {
-  const { slotProps, ...otherPickerProps } = props;
-  const { getTimezone } = useUtils();
-  const adapter = useLocalizationContext<TDate>();
-  const {
-    field: { onChange, value, ref, onBlur },
-    fieldState,
-  } = useController({
-    name,
-    control,
-    rules: {
-      ...rules,
-      validate: {
-        ...rules?.validate,
-        internalMuiError: () => {
-          const muiValidationError = validateDateTime({
-            value,
-            props: {
-              ...props,
-              disableFuture: !!props.disableFuture,
-              disablePast: !!props.disablePast,
-              minDate: props.minDateTime ?? props.minDate,
-              maxDate: props.maxDateTime ?? props.maxDate,
-              minTime: props.minDateTime ?? props.minTime,
-              maxTime: props.maxDateTime ?? props.maxTime,
-              timezone: getTimezone(value),
-            },
-            adapter,
-          });
-
-          return (
-            mapDateTimePickerValidationErrorMessage(
-              muiValidationError,
-              props
-            ) ?? true
-          );
-        },
-      },
+  TTransformedValues = TFieldValues,
+>(props: DateTimePickerProps<TFieldValues, TName, TTransformedValues>) {
+  const [
+    controllerProps,
+    {
+      helperText,
+      onError,
+      slotProps,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
+      ...rest
     },
-  });
+  ] = splitPickerProps<
+    TFieldValues,
+    TName,
+    PickerValidDate | null,
+    DateTimePickerProps<TFieldValues, TName, TTransformedValues>,
+    TTransformedValues
+  >(props);
+  const picker = usePickerController<
+    TFieldValues,
+    TName,
+    PickerValidDate | null,
+    DateTimeValidationError,
+    TTransformedValues
+  >(controllerProps, null);
 
   return (
     <MuiDateTimePicker
-      onChange={onChange}
-      value={value}
-      ref={ref}
+      {...rest}
+      {...pickerValueProps(picker, onError, {
+        handleChange,
+        suppressFormChange,
+      })}
       slotProps={{
         ...slotProps,
-        textField: {
-          ...slotProps?.textField,
-          inputRef: ref,
-          error: !!fieldState.error,
-          onBlur,
-          helperText:
-            fieldState.error?.message ??
-            (slotProps?.textField as TextFieldProps)?.helperText,
-        },
+        textField: pickerTextFieldSlotProps(
+          picker,
+          slotProps?.textField,
+          helperText,
+          handleBlur,
+        ),
       }}
-      {...otherPickerProps}
     />
   );
 }

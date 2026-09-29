@@ -1,228 +1,165 @@
-import { Meta } from '@storybook/react';
-import { DateTimePicker } from '../../packages/x-date-pickers/src/DateTimePicker';
-import dayjs from 'dayjs';
-import { FormDecorator } from '../decorators/FormDecorator';
-import { UseFormProps } from 'react-hook-form/dist/types';
-import { ComponentProps } from 'react';
+import {DateTimePicker} from '@stackworx/react-hook-form-mui-x-date-pickers';
+import type {PickerErrorMessages} from '@stackworx/react-hook-form-mui-x-date-pickers';
+import type {Meta, StoryObj} from '@storybook/react-vite';
+import {DateTime} from 'luxon';
+import {
+  dateControl,
+  documented,
+  fieldArgs,
+  fieldArgTypes,
+  fieldProps,
+  formAndFieldControls,
+  formArgs,
+  formArgTypes,
+  fromDateControl,
+  requiredRule,
+} from './controls';
+import type {FieldArgs, FormArgs} from './controls';
+import {FormStory} from './FormStory';
 
-export default {
-  title: 'MUI-X/DateTimePicker',
-  decorators: [
-    (Story, context) => {
-      return (
-        <FormDecorator formProps={context.args.form}>
-          <Story />
-        </FormDecorator>
-      );
+interface Args extends FormArgs, FieldArgs {
+  initial?: number;
+  minDateTime?: number;
+  maxDateTime?: number;
+  disablePast: boolean;
+  disableFuture: boolean;
+  ampm: boolean;
+  closeOnSelect: boolean;
+  readOnly: boolean;
+  format: string;
+  shouldDisableDate?: (day: DateTime) => boolean;
+  minutesStep?: number;
+  messages?: PickerErrorMessages;
+}
+
+const meta = {
+  title: 'MUI X/DateTimePicker',
+  component: documented<Args>(DateTimePicker),
+  args: {
+    ...formArgs,
+    ...fieldArgs,
+    label: 'Appointment',
+    disablePast: false,
+    disableFuture: false,
+    ampm: false,
+    closeOnSelect: false,
+    readOnly: false,
+    format: '',
+  },
+  argTypes: {
+    ...formArgTypes,
+    ...fieldArgTypes,
+    initial: {
+      control: 'date',
+      description: "The field's starting value.",
+      table: {category: 'Field'},
     },
-  ],
-  component: DateTimePicker,
+    minDateTime: {control: 'date'},
+    maxDateTime: {control: 'date'},
+    format: {control: 'text', description: "Empty uses the locale's format."},
+  },
   parameters: {
-    layout: 'fullscreen',
-  },
-  args: {
-    name: 'picker',
-    form: {
-      defaultValues: { picker: dayjs().toDate() },
+    controls: {
+      include: [
+        ...formAndFieldControls,
+        'initial',
+        'minDateTime',
+        'maxDateTime',
+        'disablePast',
+        'disableFuture',
+        'ampm',
+        'closeOnSelect',
+        'readOnly',
+        'format',
+      ],
     },
   },
-  actions: {
-    onSubmit: 'submit',
-  },
-  argTypes: { onSubmit: { action: 'submit' } },
-} as Meta<ComponentProps<typeof DateTimePicker> & { form: UseFormProps }>;
+  render: (args) => (
+    <FormStory<{appointment: DateTime | null}>
+      // A new starting value needs a new form: default values are read once.
+      key={String(args.initial)}
+      defaultValues={{appointment: fromDateControl(args.initial) ?? null}}
+      settings={args}
+    >
+      {(control) => (
+        <DateTimePicker
+          name='appointment'
+          control={control}
+          {...fieldProps(args)}
+          rules={{required: requiredRule(args)}}
+          minDateTime={fromDateControl(args.minDateTime)}
+          maxDateTime={fromDateControl(args.maxDateTime)}
+          disablePast={args.disablePast}
+          disableFuture={args.disableFuture}
+          ampm={args.ampm}
+          closeOnSelect={args.closeOnSelect}
+          readOnly={args.readOnly}
+          format={args.format === '' ? undefined : args.format}
+          shouldDisableDate={args.shouldDisableDate}
+          minutesStep={args.minutesStep}
+          messages={args.messages}
+        />
+      )}
+    </FormStory>
+  ),
+} satisfies Meta<Args>;
+export default meta;
 
-export const Default = {
-  args: {
-    label: 'Default',
-  },
-};
+type Story = StoryObj<typeof meta>;
 
-export const Required = {
-  args: {
-    label: 'Required',
-    rules: { required: true },
-    form: {
-      defaultValues: { picker: undefined },
-    },
-  },
-};
+export const Required: Story = {args: {required: 'Pick a date and time'}};
 
-export const WithHelperText = {
+export const MinAndMax: Story = {
   args: {
-    label: 'With Helper Text',
-    rules: { required: 'This field is required' },
-    slotProps: {
-      textField: {
-        helperText: 'Will be replaced with error message...',
-      },
-    },
-  },
-};
-
-export const InvalidDate = {
-  args: {
-    label: 'Invalid Date',
-    form: {
-      defaultValues: { picker: '2025' },
-    },
-  },
-};
-
-export const DisablePast = {
-  args: {
-    form: {
-      defaultValues: { picker: dayjs().subtract(1, 'day').toDate() },
-    },
-    label: 'Disable Past',
-    disablePast: true,
+    minDateTime: dateControl('2026-10-05T08:00'),
+    maxDateTime: dateControl('2026-10-09T17:00'),
+    helperText: 'From 08:00 on 5 October to 17:00 on 9 October 2026',
   },
 };
 
-export const DisableFuture = {
+export const CustomMessages: Story = {
   args: {
-    form: {
-      defaultValues: { picker: dayjs().add(1, 'day').toDate() },
-    },
-    label: 'Disable Future',
-    disableFuture: true,
-  },
-};
-
-export const MaxDate = {
-  args: {
-    label: 'Max Date',
-    maxDate: dayjs().subtract(1, 'day').toDate(),
-  },
-};
-
-export const MinDate = {
-  args: {
-    label: 'Min Date',
-    minDate: dayjs().add(1, 'day').toDate(),
-  },
-};
-
-export const MaxDateTime = {
-  args: {
-    label: 'Max Date Time',
-    maxDateTime: dayjs().subtract(1, 'hour').toDate(),
-  },
-};
-
-export const MinDateTime = {
-  args: {
-    label: 'Min Date Time',
-    minDateTime: dayjs().add(1, 'hour').toDate(),
-  },
-};
-
-export const MaxTime = {
-  args: {
-    label: 'Max Time',
-    maxTime: dayjs().subtract(1, 'hour').toDate(),
-  },
-};
-
-export const MinTime = {
-  args: {
-    label: 'Max Time',
-    minTime: dayjs().add(1, 'hour').toDate(),
-  },
-};
-
-export const MinutesStep = {
-  args: {
-    label: 'Minutes Step',
-    minutesStep: '15',
-  },
-};
-
-export const ShouldDisableDate = {
-  args: {
-    label: 'Should Disable Date - (Tomorrow not allowed)',
-    form: { defaultValues: { picker: dayjs().add(1, 'day').toDate() } },
-    shouldDisableDate: (dateParam) => {
-      const tomorrow = dayjs().add(1, 'day').startOf('day');
-      const selectedDate = dayjs(dateParam).startOf('day');
-
-      return selectedDate.isSame(tomorrow);
+    shouldDisableDate: (day) => day.weekday > 5,
+    minutesStep: 15,
+    helperText: 'Weekdays, on the quarter hour',
+    messages: {
+      shouldDisableDate: 'Appointments are on weekdays only',
+      minutesStep: 'Pick a quarter-hour slot',
     },
   },
 };
 
-export const ShouldDisableMonth = {
+export const Disabled: Story = {
   args: {
-    label: 'Should Disable Month (Next month not allowed)',
-    form: { defaultValues: { picker: dayjs().add(1, 'month').toDate() } },
-    shouldDisableMonth: (dateParam) => {
-      const month = dayjs().add(1, 'month').startOf('month');
-      const selectedMonth = dayjs(dateParam).startOf('month');
-
-      return selectedMonth.isSame(month);
-    },
+    disabled: true,
+    initial: dateControl('2026-10-05T10:30'),
+    helperText: 'Confirmed appointments cannot be moved',
   },
 };
 
-export const ShouldDisableYear = {
-  args: {
-    label: 'Should Disable Year (2025 not allowed)',
-    // defaultValue: dayjs().year(2025).month(0).date(1).toDate(),
-    form: {
-      defaultValues: { picker: dayjs().year(2025).month(0).date(1).toDate() },
-    },
-    shouldDisableYear: (dateParam) => {
-      const disabledYear = 2025;
-      const selectedYear = dayjs(dateParam).year();
-
-      return selectedYear === disabledYear;
-    },
-  },
-};
-
-export const ShouldDisableTimeHours = {
-  args: {
-    label: 'Should Disable Time Hours (5AM not allowed)',
-    form: {
-      defaultValues: { picker: dayjs().hour(5).minute(0).second(0).toDate() },
-    },
-    shouldDisableTime: (timeParam) => {
-      const disabledHour = 5;
-      const selectedHour = dayjs(timeParam).hour();
-
-      return selectedHour === disabledHour;
-    },
-  },
-};
-
-export const ShouldDisableTimeMinutes = {
-  args: {
-    label: 'Should Disable Time Minutes (Half hour not allowed)',
-    form: {
-      defaultValues: { picker: dayjs().hour(5).minute(30).second(0).toDate() },
-    },
-    shouldDisableTime: (timeParam) => {
-      const disabledMinute = 30;
-      const selectedMinute = dayjs(timeParam).minute();
-
-      return selectedMinute === disabledMinute;
-    },
-  },
-};
-
-export const ShouldDisableTimeSeconds = {
-  args: {
-    label: 'Should Disable Time Seconds (45 seconds not allowed)',
-    // defaultValue: dayjs().minute(0).second(45).toDate(),
-    form: {
-      defaultValues: { picker: dayjs().minute(0).second(45).toDate() },
-    },
-    views: ['year', 'day', 'hours', 'minutes', 'seconds'],
-    shouldDisableTime: (timeParam) => {
-      const disabledSecond = 45;
-      const selectedSecond = dayjs(timeParam).second();
-
-      return selectedSecond === disabledSecond;
-    },
-  },
+export const IsoString: Story = {
+  name: 'Stored as an ISO string',
+  args: {helperText: 'Stored as an ISO 8601 date-time with its offset'},
+  render: (args) => (
+    <FormStory<{appointment: string | null}>
+      defaultValues={{appointment: '2026-10-05T10:30:00.000+02:00'}}
+      settings={args}
+    >
+      {(control) => (
+        <DateTimePicker
+          name='appointment'
+          control={control}
+          {...fieldProps(args)}
+          rules={{required: requiredRule(args)}}
+          disablePast={args.disablePast}
+          disableFuture={args.disableFuture}
+          ampm={args.ampm}
+          transform={{
+            input: (value) => (value === null ? null : DateTime.fromISO(value)),
+            output: (date) => date?.toISO() ?? null,
+          }}
+        />
+      )}
+    </FormStory>
+  ),
 };

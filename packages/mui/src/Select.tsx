@@ -1,45 +1,133 @@
+import MenuItem from '@mui/material/MenuItem';
+import TextFieldBase from '@mui/material/TextField';
+import type {TextFieldProps as MuiTextFieldProps} from '@mui/material/TextField';
+import {useForkRef} from '@mui/material/utils';
+import type {FieldPath, FieldValues} from 'react-hook-form';
+import {composeHandlers} from './internal/composeHandlers.js';
+import {changeHandler} from './internal/fieldHandlers.js';
+import type {MuiHandlerProps} from './internal/fieldHandlers.js';
+import type {FieldOption} from './internal/FieldOption.js';
+import {forceSlotProps} from './internal/forceSlotProps.js';
+import type {DistributiveOmit} from './internal/types.js';
 import {
-  useController,
-  FieldValues,
-  UseControllerProps,
-  FieldPath,
-} from 'react-hook-form';
-import MuiTextField, {
-  TextFieldProps as MuiTextFieldProps,
-} from '@mui/material/TextField';
+  splitControllerProps,
+  useFieldController,
+} from './internal/useFieldController.js';
+import type {FieldControllerProps} from './internal/useFieldController.js';
+import {useHelperText} from './internal/HelperText.js';
+import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
 export type SelectProps<
-  TName extends FieldPath<TFieldValues>,
-  TFieldValues extends FieldValues = FieldValues,
-> = UseControllerProps<TFieldValues, TName> &
-  Omit<MuiTextFieldProps, 'value' | 'name'>;
-
-export function Select<
-  TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues,
->({ control, name, rules, ...props }: SelectProps<TName, TFieldValues>) {
-  const {
-    field: { onChange, onBlur, value, ref },
-    fieldState: { error },
-  } = useController({
-    name,
-    control,
-    rules,
-  });
+  TName extends FieldPath<TFieldValues>,
+  TValue extends string | number,
+  TTransformedValues = TFieldValues,
+> =
+  & FieldControllerProps<TFieldValues, TName, TTransformedValues>
+  & ReserveHelperTextProps
+  & MuiHandlerProps<MuiTextFieldProps>
+  & DistributiveOmit<
+    MuiTextFieldProps,
+    | 'select'
+    | 'value'
+    | 'name'
+    | 'defaultValue'
+    | 'disabled'
+    | 'children'
+    | 'onChange'
+    | 'onBlur'
+  >
+  & {
+    options: readonly FieldOption<TValue>[];
+    /** Stores `TValue[]` instead of `TValue | null`. */
+    multiple?: boolean;
+  };
+
+/** A select whose form value is the chosen option's `value` (`TValue | null`, or `TValue[]` when `multiple`). */
+export function Select<
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
+  TValue extends string | number,
+  TTransformedValues = TFieldValues,
+>(props: SelectProps<TFieldValues, TName, TValue, TTransformedValues>) {
+  const [
+    controllerProps,
+    {
+      options,
+      multiple = false,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
+      inputRef,
+      error,
+      helperText,
+      reserveHelperText,
+      slotProps,
+      ...rest
+    },
+  ] = splitControllerProps<
+    TFieldValues,
+    TName,
+    SelectProps<TFieldValues, TName, TValue, TTransformedValues>,
+    TTransformedValues
+  >(props);
+  const {field, errorText, hasError} = useFieldController(controllerProps);
+  const {helper} = useHelperText(errorText, helperText, reserveHelperText);
+  const ref = useForkRef(field.ref, inputRef);
+
+  // MUI hands back the MenuItem value; a browser autofill can hand back a comma-joined string.
+  const toOptionValue = (raw: unknown) =>
+    options.find((option) =>
+      Object.is(option.value, raw) || String(option.value) === raw
+    )?.value;
+  const current: unknown = field.value;
+  const value = multiple
+    ? (Array.isArray(current) ? current : [])
+    : (current ?? '');
 
   return (
-    <MuiTextField
-      {...props}
-      inputRef={ref}
-      onChange={onChange}
-      onBlur={onBlur}
+    <TextFieldBase
+      {...rest}
+      select
+      name={field.name}
       value={value}
-      name={name}
-      error={!!error}
-      helperText={error?.message ?? props.helperText ?? ' '}
-      select //Textfield as Select
-    />
+      onChange={changeHandler((event) => {
+        const raw: unknown = event.target.value;
+        if (multiple) {
+          const list: unknown[] = typeof raw === 'string'
+            ? raw.split(',')
+            : Array.isArray(raw)
+            ? raw
+            : [];
+          field.onChange(
+            list.map(toOptionValue).filter((item) => item !== undefined),
+          );
+        } else {
+          field.onChange(toOptionValue(raw) ?? null);
+        }
+      }, {handleChange, suppressFormChange})}
+      onBlur={composeHandlers<Parameters<NonNullable<typeof handleBlur>>>(
+        field.onBlur,
+        handleBlur,
+      )}
+      inputRef={ref}
+      disabled={field.disabled}
+      error={hasError || error}
+      helperText={helper}
+      slotProps={{
+        ...slotProps,
+        select: forceSlotProps(slotProps?.select, () => ({multiple})),
+      }}
+    >
+      {options.map((option) => (
+        <MenuItem
+          key={String(option.value)}
+          value={option.value}
+          disabled={option.disabled}
+        >
+          {option.label}
+        </MenuItem>
+      ))}
+    </TextFieldBase>
   );
 }
-
-Select.displayName = 'MuiReactHookFormSelect';

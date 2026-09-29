@@ -1,69 +1,92 @@
+import {DateRangePicker as MuiDateRangePicker} from '@mui/x-date-pickers-pro/DateRangePicker';
+import type {DateRangePickerProps as MuiDateRangePickerProps} from '@mui/x-date-pickers-pro/DateRangePicker';
+import type {
+  DateRange,
+  DateRangeValidationError,
+} from '@mui/x-date-pickers-pro/models';
+import type {PickerValidDate} from '@mui/x-date-pickers/models';
 import {
-  FieldPath,
-  FieldValues,
-  useController,
-  UseControllerProps,
-} from 'react-hook-form';
-import { type DateRangePickerProps as MuiDateRangePickerProps } from '@mui/x-date-pickers-pro/DateRangePicker';
-import type { PickerValidDate } from '@mui/x-date-pickers/models';
+  pickerTextFieldSlotProps,
+  pickerValueProps,
+  splitPickerProps,
+  usePickerController,
+} from '@stackworx/react-hook-form-mui-x-date-pickers';
+import type {PickerControllerProps} from '@stackworx/react-hook-form-mui-x-date-pickers';
+import type {ReactNode} from 'react';
+import type {FieldPath, FieldValues} from 'react-hook-form';
+import {emptyRange} from './internal/emptyRange.js';
+import type {PickersTextFieldProps} from '@mui/x-date-pickers/PickersTextField';
+import type {FieldHandlerProps} from '@stackworx/react-hook-form-mui';
 
 export type DateRangePickerProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
-  TDate extends PickerValidDate,
-  TEnableAccessibleFieldDOMStructure extends boolean,
-> = Omit<
-  MuiDateRangePickerProps<TDate, TEnableAccessibleFieldDOMStructure>,
-  'value' | 'name'
-> &
-  UseControllerProps<TFieldValues, TName>;
+  TTransformedValues = TFieldValues,
+> =
+  & PickerControllerProps<
+    TFieldValues,
+    TName,
+    DateRange<PickerValidDate>,
+    TTransformedValues
+  >
+  & FieldHandlerProps<
+    Parameters<NonNullable<MuiDateRangePickerProps['onChange']>>,
+    Parameters<NonNullable<PickersTextFieldProps['onBlur']>>
+  >
+  & Omit<
+    MuiDateRangePickerProps,
+    'value' | 'defaultValue' | 'onChange' | 'name' | 'disabled' | 'inputRef'
+  >
+  & {helperText?: ReactNode};
 
+/** MUI X Pro DateRangePicker bound to RHF; the form value is `[start, end]`, or `transform`'s output. */
 export function DateRangePicker<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
-  TDate extends PickerValidDate,
-  TEnableAccessibleFieldDOMStructure extends boolean,
->({
-  name,
-  control,
-  rules,
-  ...props
-}: DateRangePickerProps<
-  TFieldValues,
-  TName,
-  TDate,
-  TEnableAccessibleFieldDOMStructure
->) {
-  const { slotProps, ...otherPickerProps } = props;
-
-  const {
-    field: { onChange, ref, onBlur },
-    fieldState,
-  } = useController({
-    name,
-    control,
-    rules: {
-      ...rules,
+  TTransformedValues = TFieldValues,
+>(props: DateRangePickerProps<TFieldValues, TName, TTransformedValues>) {
+  const [
+    controllerProps,
+    {
+      helperText,
+      onError,
+      slotProps,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
+      ...rest
     },
-  });
+  ] = splitPickerProps<
+    TFieldValues,
+    TName,
+    DateRange<PickerValidDate>,
+    DateRangePickerProps<TFieldValues, TName, TTransformedValues>,
+    TTransformedValues
+  >(props);
+  const picker = usePickerController<
+    TFieldValues,
+    TName,
+    DateRange<PickerValidDate>,
+    DateRangeValidationError,
+    TTransformedValues
+  >(controllerProps, emptyRange);
 
   return (
-    <DateRangePicker
-      name={name}
-      onChange={onChange}
+    <MuiDateRangePicker
+      {...rest}
+      {...pickerValueProps(picker, onError, {
+        handleChange,
+        suppressFormChange,
+      })}
       slotProps={{
         ...slotProps,
-        textField: {
-          ...slotProps?.textField,
-          inputRef: ref,
-          error: !!fieldState.error,
-          onBlur,
-          helperText:
-            //@ts-expect-error incomplete typing
-            fieldState.error?.message ?? slotProps?.textField?.helperText,
-        },
+        textField: pickerTextFieldSlotProps(
+          picker,
+          slotProps?.textField,
+          helperText,
+          handleBlur,
+        ),
       }}
-      {...otherPickerProps}
     />
   );
 }

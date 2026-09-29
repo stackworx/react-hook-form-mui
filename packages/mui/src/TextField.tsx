@@ -1,44 +1,81 @@
+import TextFieldBase from '@mui/material/TextField';
+import type {TextFieldProps as MuiTextFieldProps} from '@mui/material/TextField';
+import {useForkRef} from '@mui/material/utils';
+import type {FieldPath, FieldPathValue, FieldValues} from 'react-hook-form';
+import {composeHandlers} from './internal/composeHandlers.js';
+import {changeHandler} from './internal/fieldHandlers.js';
+import type {MuiHandlerProps} from './internal/fieldHandlers.js';
+import type {FieldTransform} from './internal/FieldTransform.js';
+import type {DistributiveOmit} from './internal/types.js';
 import {
-  useController,
-  FieldValues,
-  UseControllerProps,
-  FieldPath,
-} from 'react-hook-form';
-import MuiTextField, {
-  TextFieldProps as MuiTextFieldProps,
-} from '@mui/material/TextField';
+  splitControllerProps,
+  useFieldController,
+} from './internal/useFieldController.js';
+import type {FieldControllerProps} from './internal/useFieldController.js';
+import {useHelperText} from './internal/HelperText.js';
+import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
 export type TextFieldProps<
-  TName extends FieldPath<TFieldValues>,
-  TFieldValues extends FieldValues = FieldValues,
-> = UseControllerProps<TFieldValues, TName> &
-  Omit<MuiTextFieldProps, 'value' | 'name'>;
-
-export function TextField<
-  TName extends FieldPath<TFieldValues>,
   TFieldValues extends FieldValues,
->({ control, name, rules, ...props }: TextFieldProps<TName, TFieldValues>) {
-  const {
-    field: { onChange, onBlur, value, ref },
-    fieldState: { error },
-  } = useController({
-    name,
-    control,
-    rules,
-  });
+  TName extends FieldPath<TFieldValues>,
+  TTransformedValues = TFieldValues,
+> =
+  & FieldControllerProps<TFieldValues, TName, TTransformedValues>
+  & ReserveHelperTextProps
+  & MuiHandlerProps<MuiTextFieldProps>
+  & DistributiveOmit<
+    MuiTextFieldProps,
+    'name' | 'value' | 'defaultValue' | 'disabled' | 'onChange' | 'onBlur'
+  >
+  & {transform?: FieldTransform<FieldPathValue<TFieldValues, TName>, string>};
+
+/** MUI TextField bound to RHF; the form value is the text, or `transform`'s output. */
+export function TextField<
+  TFieldValues extends FieldValues,
+  TName extends FieldPath<TFieldValues>,
+  TTransformedValues = TFieldValues,
+>(props: TextFieldProps<TFieldValues, TName, TTransformedValues>) {
+  const [
+    controllerProps,
+    {
+      transform,
+      handleChange,
+      handleBlur,
+      suppressFormChange,
+      inputRef,
+      error,
+      helperText,
+      reserveHelperText,
+      ...rest
+    },
+  ] = splitControllerProps<
+    TFieldValues,
+    TName,
+    TextFieldProps<TFieldValues, TName, TTransformedValues>,
+    TTransformedValues
+  >(props);
+  const {field, errorText, hasError} = useFieldController(controllerProps);
+  const {helper} = useHelperText(errorText, helperText, reserveHelperText);
+  const ref = useForkRef(field.ref, inputRef);
 
   return (
-    <MuiTextField
-      {...props}
+    <TextFieldBase
+      {...rest}
+      name={field.name}
+      value={transform ? transform.input(field.value) : (field.value ?? '')}
+      onChange={changeHandler((event) => {
+        field.onChange(
+          transform ? transform.output(event.target.value) : event.target.value,
+        );
+      }, {handleChange, suppressFormChange})}
+      onBlur={composeHandlers<Parameters<NonNullable<typeof handleBlur>>>(
+        field.onBlur,
+        handleBlur,
+      )}
       inputRef={ref}
-      onChange={onChange}
-      onBlur={onBlur}
-      value={value}
-      name={name}
-      error={!!error}
-      helperText={error?.message ?? props.helperText ?? ' '}
+      disabled={field.disabled}
+      error={hasError || error}
+      helperText={helper}
     />
   );
 }
-
-TextField.displayName = 'MuiReactHookFormTextField';

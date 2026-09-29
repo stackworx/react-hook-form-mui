@@ -1,47 +1,69 @@
-import { StoryFn, Meta } from '@storybook/react';
-import { useForm } from 'react-hook-form';
+import {Switch} from '@stackworx/react-hook-form-mui';
+import type {Meta, StoryObj} from '@storybook/react-vite';
+import {
+  documented,
+  fieldArgs,
+  fieldArgTypes,
+  fieldProps,
+  formAndFieldControls,
+  formArgs,
+  formArgTypes,
+  requiredRule,
+} from './controls';
+import type {FieldArgs, FormArgs} from './controls';
+import {FormStory} from './FormStory';
 
-import { Switch } from '../../packages/mui/src/Switch';
-import { Form } from './Form';
+interface Args extends FormArgs, FieldArgs {
+  size: 'small' | 'medium';
+  color:
+    | 'primary'
+    | 'secondary'
+    | 'error'
+    | 'info'
+    | 'success'
+    | 'warning'
+    | 'default';
+}
 
-export default {
+const meta = {
   title: 'Core/Switch',
-  component: Switch,
-  parameters: {
-    layout: 'fullscreen',
-  },
-  argTypes: { onSubmit: { action: 'submit' } },
-} as Meta<typeof Switch>;
-
-const Template: StoryFn<typeof Switch> = (args: any) => {
-  const formProps = useForm<{
-    switch: any;
-  }>({
-    defaultValues: {
-      switch: false,
-    },
-  });
-  return (
-    <Form {...formProps} onSubmit={args.onSubmit}>
-      <Switch
-        name="switch"
-        label="Text"
-        control={formProps.control}
-        errors={formProps.formState.errors}
-        {...args}
-      />
-    </Form>
-  );
-};
-
-export const Default = {
-  render: Template,
-};
-
-export const Required = {
-  render: Template,
-
+  component: documented<Args>(Switch),
   args: {
-    rules: { required: 'Required' },
+    ...formArgs,
+    ...fieldArgs,
+    label: 'Email notifications',
+    helperText: 'Order updates and receipts',
+    size: 'medium',
+    color: 'primary',
   },
-};
+  argTypes: {
+    ...formArgTypes,
+    ...fieldArgTypes,
+    size: {control: 'inline-radio', options: ['small', 'medium']},
+  },
+  parameters: {
+    controls: {include: [...formAndFieldControls, 'size', 'color']},
+  },
+  render: (args) => (
+    <FormStory<{notifications: boolean}>
+      defaultValues={{notifications: true}}
+      settings={args}
+    >
+      {(control) => (
+        <Switch
+          name='notifications'
+          control={control}
+          {...fieldProps(args)}
+          rules={{required: requiredRule(args)}}
+          size={args.size}
+          color={args.color}
+        />
+      )}
+    </FormStory>
+  ),
+} satisfies Meta<Args>;
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};

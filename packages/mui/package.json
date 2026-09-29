@@ -1,22 +1,46 @@
 {
   "name": "@stackworx/react-hook-form-mui",
-  "type": "module",
-  "main": "./dist/main.js",
-  "typings": "dist/main.d.ts",
+  "version": "0.1.0",
+  "description": "React Hook Form bindings for MUI (Material UI) inputs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stackworx/react-hook-form-mui.git",
+    "directory": "packages/mui"
+  },
   "license": "MIT",
-  "version": "0.0.5",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "@stackworx/source": "./src/main.ts",
+      "types": "./dist/main.d.ts",
+      "import": "./dist/main.js"
+    },
+    "./number-field": {
+      "@stackworx/source": "./src/NumberField.tsx",
+      "types": "./dist/NumberField.d.ts",
+      "import": "./dist/NumberField.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc -b && vite build",
-    "typecheck": "tsc -b",
-    "test": "vitest",
+    "build": "vite build",
     "prepublishOnly": "npm run build"
   },
-  "prettier": {
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
   "peerDependencies": {
-    "@mui/material": ">=5.6.0 || >=6.0.0",
-    "react-hook-form": ">7.0.0"
+    "@base-ui/react": "^1.0.0",
+    "@mui/material": "^9.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-hook-form": ">=7.62.0 <8"
+  },
+  "peerDependenciesMeta": {
+    "@base-ui/react": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "^24.15.0 || >=26.0.0"
   }
 }
