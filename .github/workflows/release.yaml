@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write # pushes a <package>@<version> tag for each version it publishes
+  id-token: write # required for npm trusted publishing (OIDC)
+
+# One release at a time, and never cancelled halfway through publishing.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # The tags, so versions released before are not tagged again.
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      # Trusted publishing (OIDC) requires npm >= 11.5.1
+      - name: Update npm
+        run: npm install -g npm@latest
+      - run: npm ci
+      - run: npm run check
+      # No NPM_TOKEN: npm authenticates through OIDC with the trusted publisher configured for this
+      # workflow on npmjs.com, and adds provenance itself.
+      - name: Publish the versions npm doesn't have yet, in dependency order
+        run: npm run release:publish
+      - name: Tag each published version
+        run: |
+          for dir in packages/*/; do
+            tag=$(node -p "const p = require('./${dir}package.json'); p.name + '@' + p.version")
+            if ! git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+              git tag "$tag"
+              git push origin "refs/tags/$tag"
+            fi
+          done

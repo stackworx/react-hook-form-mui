@@ -312,4 +312,26 @@ line, a required message and the component's own props) and the form around it (
 `HelperTextProvider`, disabled). The panel under the fields shows the live form state, and Submit
 logs the values in the Actions tab.
 
+### Releasing
+
+Each package has its own version, managed with Lerna.
+
+1. On a branch, run `npm run release:version`. Lerna lists the packages changed since their last
+   `<package>@<version>` tag, asks for each new version and updates the Pro package's dependency on the
+   pickers to match. It doesn't commit, tag or push, so add the changes to `CHANGELOG.md` and open a
+   PR.
+2. Once the PR is merged, publish a GitHub release from `main`. The Release workflow runs the checks,
+   publishes each version npm doesn't have yet, in dependency order and with provenance, and tags it
+   `<package>@<version>`. To retry a run that failed, start the workflow from the Actions tab.
+
+The workflow publishes through npm's trusted publishing: each package on npmjs.com trusts
+`release.yaml` in this repository, so no npm token is stored. Until that is set up, `npm login` and
+then `npm run release:publish` publish the same versions from a checkout of `main`, without
+provenance.
+
+Lerna doesn't change peer ranges, and below 1.0 a caret range doesn't reach the next minor version.
+So before a breaking release of `@stackworx/react-hook-form-mui` (for example 0.1.x to 0.2.0), set the
+pickers' and the Pro package's peer range on it to the new version (`^0.2.0`), then run
+`npm run release:version`. Otherwise Lerna's lockfile update fails with `ERESOLVE`.
+
 See [CHANGELOG.md](CHANGELOG.md) for the changes since 0.0.x.

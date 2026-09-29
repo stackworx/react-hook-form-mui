@@ -1,4 +1,12 @@
 {
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
   "packages": ["packages/*"],
-  "version": "independent"
+  "version": "independent",
+  "npmClient": "npm",
+  "command": {
+    "version": {
+      "gitTagVersion": false,
+      "push": false
+    }
+  }
 }
