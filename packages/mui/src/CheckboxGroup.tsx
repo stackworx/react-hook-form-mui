@@ -15,21 +15,26 @@ import {
   useFieldController,
 } from './internal/useFieldController.js';
 import type {FieldControllerProps} from './internal/useFieldController.js';
+import {useHelperText} from './internal/HelperText.js';
+import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
 export type CheckboxGroupProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
   TValue extends OptionValue,
   TTransformedValues = TFieldValues,
-> = FieldControllerProps<TFieldValues, TName, TTransformedValues> & {
-  options: readonly FieldOption<TValue>[];
-  label?: ReactNode;
-  helperText?: ReactNode;
-  row?: boolean;
-  required?: boolean;
-  size?: MuiCheckboxProps['size'];
-  color?: MuiCheckboxProps['color'];
-};
+> =
+  & FieldControllerProps<TFieldValues, TName, TTransformedValues>
+  & ReserveHelperTextProps
+  & {
+    options: readonly FieldOption<TValue>[];
+    label?: ReactNode;
+    helperText?: ReactNode;
+    row?: boolean;
+    required?: boolean;
+    size?: MuiCheckboxProps['size'];
+    color?: MuiCheckboxProps['color'];
+  };
 
 /** One checkbox per option; the form value is the array of checked option values. */
 export function CheckboxGroup<
@@ -40,7 +45,7 @@ export function CheckboxGroup<
 >(props: CheckboxGroupProps<TFieldValues, TName, TValue, TTransformedValues>) {
   const [
     controllerProps,
-    {options, label, helperText, row, required, size, color},
+    {options, label, helperText, reserveHelperText, row, required, size, color},
   ] = splitControllerProps<
     TFieldValues,
     TName,
@@ -50,7 +55,11 @@ export function CheckboxGroup<
   const {field, errorText, hasError} = useFieldController(controllerProps);
   const {name, onChange, onBlur, ref, disabled} = field;
   const helperId = useId();
-  const helper = errorText ?? helperText;
+  const {helper, describes} = useHelperText(
+    errorText,
+    helperText,
+    reserveHelperText,
+  );
   const current: unknown = field.value;
   const selected: readonly unknown[] = Array.isArray(current) ? current : [];
   const isSelected = (value: TValue) =>
@@ -64,7 +73,7 @@ export function CheckboxGroup<
       error={hasError}
       disabled={disabled}
       required={required}
-      aria-describedby={helper ? helperId : undefined}
+      aria-describedby={describes ? helperId : undefined}
     >
       {label ? <FormLabel component='legend'>{label}</FormLabel> : null}
       <FormGroup row={row}>

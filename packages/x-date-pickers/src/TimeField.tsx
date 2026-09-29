@@ -5,7 +5,7 @@ import type {
   TimeValidationError,
 } from '@mui/x-date-pickers/models';
 import type {FieldPath, FieldValues} from 'react-hook-form';
-import {pickerValueProps} from './internal/bindings.js';
+import {pickerHelperText, pickerValueProps} from './internal/bindings.js';
 import {composeHandlers} from './internal/composeHandlers.js';
 import {
   splitPickerProps,
@@ -56,7 +56,7 @@ export function TimeField<
       {...rest}
       {...pickerValueProps(picker, onError)}
       error={picker.error || error}
-      helperText={picker.helperText ?? helperText}
+      helperText={pickerHelperText(picker, helperText)}
       onBlur={composeHandlers<Parameters<NonNullable<typeof onBlur>>>(
         picker.onBlur,
         onBlur,

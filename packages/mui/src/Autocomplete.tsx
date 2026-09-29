@@ -20,6 +20,8 @@ import {
   useFieldController,
 } from './internal/useFieldController.js';
 import type {FieldControllerProps} from './internal/useFieldController.js';
+import {useHelperText} from './internal/HelperText.js';
+import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
 /**
  * What an autocomplete stores: the selected option, or what `getOptionValue` returns for it; an array of
@@ -65,6 +67,7 @@ export type AutocompleteProps<
   TTransformedValues = TFieldValues,
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
+  & ReserveHelperTextProps
   & {
     options: readonly TOption[];
     /** Identifies an option. A stored option is matched by it, not by reference. */
@@ -123,6 +126,7 @@ export function Autocomplete<
       multiple,
       label,
       helperText,
+      reserveHelperText,
       placeholder,
       onBlur,
       ...rest
@@ -140,6 +144,7 @@ export function Autocomplete<
     TTransformedValues
   >(props);
   const {field, errorText, hasError} = useFieldController(controllerProps);
+  const {helper} = useHelperText(errorText, helperText, reserveHelperText);
   const mapping = optionMapping(getOptionKey, getOptionValue);
   const byLookupKey = indexOptions(options, mapping.lookupKey);
   const value = useStableSelection(
@@ -189,7 +194,7 @@ export function Autocomplete<
           placeholder={placeholder}
           inputRef={field.ref}
           error={hasError}
-          helperText={errorText ?? helperText}
+          helperText={helper}
         />
       )}
     />

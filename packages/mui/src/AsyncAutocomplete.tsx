@@ -34,6 +34,8 @@ import {
   useFieldController,
 } from './internal/useFieldController.js';
 import type {FieldControllerProps} from './internal/useFieldController.js';
+import {useHelperText} from './internal/HelperText.js';
+import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
 type MuiProps<TOption, TMultiple extends boolean | undefined> =
   MuiAutocompleteProps<TOption, TMultiple, boolean | undefined, false>;
@@ -46,6 +48,7 @@ export type AsyncAutocompleteProps<
   TTransformedValues = TFieldValues,
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
+  & ReserveHelperTextProps
   & {
     source: OptionsSource<TOption>;
     /** Identifies an option. A stored option is matched by it, not by reference. */
@@ -117,6 +120,7 @@ export function AsyncAutocomplete<
       multiple,
       label,
       helperText,
+      reserveHelperText,
       placeholder,
       debounceMs = 250,
       knownOptions = [],
@@ -141,6 +145,7 @@ export function AsyncAutocomplete<
     TTransformedValues
   >(props);
   const {field, errorText, hasError} = useFieldController(controllerProps);
+  const {helper} = useHelperText(errorText, helperText, reserveHelperText);
 
   const mapping = optionMapping(getOptionKey, getOptionValue);
   // Selected options, so their labels survive pages and searches that no longer include them.
@@ -332,7 +337,7 @@ export function AsyncAutocomplete<
             placeholder={placeholder}
             inputRef={field.ref}
             error={hasError}
-            helperText={errorText ?? helperText}
+            helperText={helper}
             slotProps={{
               ...params.slotProps,
               input: {

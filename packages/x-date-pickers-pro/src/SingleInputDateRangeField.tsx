@@ -6,6 +6,7 @@ import type {
 } from '@mui/x-date-pickers-pro/models';
 import type {PickerValidDate} from '@mui/x-date-pickers/models';
 import {
+  pickerHelperText,
   pickerValueProps,
   splitPickerProps,
   usePickerController,
@@ -63,7 +64,7 @@ export function SingleInputDateRangeField<
       {...rest}
       {...pickerValueProps(picker, onError)}
       error={picker.error || error}
-      helperText={picker.helperText ?? helperText}
+      helperText={pickerHelperText(picker, helperText)}
       onBlur={(event) => {
         picker.onBlur();
         onBlur?.(event);

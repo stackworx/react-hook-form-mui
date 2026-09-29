@@ -22,6 +22,21 @@ export function pickerValueProps<TValue, TError>(
   };
 }
 
+/**
+ * What a picker's helper line shows: the error, else `helperText`, else a reserved blank. MUI draws a
+ * `' '` helper text as an aria-hidden zero-width space, which keeps the line's height.
+ */
+export function pickerHelperText(
+  picker: Pick<
+    PickerController<unknown, unknown>,
+    'helperText' | 'reserveHelperText'
+  >,
+  helperText: ReactNode,
+): ReactNode {
+  return picker.helperText ?? helperText
+    ?? (picker.reserveHelperText ? ' ' : undefined);
+}
+
 type TextFieldSlotProps = Partial<
   Pick<PickersTextFieldProps, 'error' | 'helperText' | 'onBlur'>
 >;
@@ -33,14 +48,14 @@ export function pickerTextFieldSlotProps<
 >(
   picker: Pick<
     PickerController<unknown, unknown>,
-    'error' | 'helperText' | 'onBlur'
+    'error' | 'helperText' | 'reserveHelperText' | 'onBlur'
   >,
   slotProps: TProps | ((ownerState: TOwnerState) => TProps) | undefined,
   helperText: ReactNode,
 ) {
   return forceSlotProps(slotProps, (textField) => ({
     error: picker.error,
-    helperText: picker.helperText ?? helperText ?? textField?.helperText,
+    helperText: pickerHelperText(picker, helperText ?? textField?.helperText),
     onBlur: composeHandlers<Parameters<NonNullable<TProps['onBlur']>>>(
       picker.onBlur,
       textField?.onBlur,

@@ -14,6 +14,8 @@ import {
   useFieldController,
 } from './internal/useFieldController.js';
 import type {FieldControllerProps} from './internal/useFieldController.js';
+import {useHelperText} from './internal/HelperText.js';
+import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
 const IncreaseIcon = createSvgIcon(
   <path d='M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z' />,
@@ -36,6 +38,7 @@ export type NumberFieldProps<
   TTransformedValues = TFieldValues,
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
+  & ReserveHelperTextProps
   & Pick<
     BaseNumberField.Root.Props,
     | 'min'
@@ -68,6 +71,7 @@ export function NumberField<
     {
       label,
       helperText,
+      reserveHelperText,
       placeholder,
       size = 'medium',
       fullWidth,
@@ -84,7 +88,11 @@ export function NumberField<
   const {name, onChange, onBlur, ref, disabled} = field;
   const generatedId = useId();
   const id = idProp ?? generatedId;
-  const helper = errorText ?? helperText;
+  const {helper, describes} = useHelperText(
+    errorText,
+    helperText,
+    reserveHelperText,
+  );
   const helperId = `${id}-helper-text`;
   const value = field.value as number | null | undefined;
 
@@ -132,7 +140,7 @@ export function NumberField<
               input: {
                 ...inputProps,
                 'aria-invalid': hasError,
-                'aria-describedby': helper ? helperId : undefined,
+                'aria-describedby': describes ? helperId : undefined,
               },
             }}
             endAdornment={

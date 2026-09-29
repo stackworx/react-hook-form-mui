@@ -14,27 +14,32 @@ import {
   useFieldController,
 } from './internal/useFieldController.js';
 import type {FieldControllerProps} from './internal/useFieldController.js';
+import {useHelperText} from './internal/HelperText.js';
+import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
 export type ToggleButtonGroupProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
   TValue extends OptionValue,
   TTransformedValues = TFieldValues,
-> = FieldControllerProps<TFieldValues, TName, TTransformedValues> & {
-  options: readonly FieldOption<TValue>[];
-  label?: ReactNode;
-  helperText?: ReactNode;
-  /** Lay the buttons out in a row (default) or a column. */
-  row?: boolean;
-  required?: boolean;
-  /** `true` (default) stores `TValue | null`; `false` stores `TValue[]`. */
-  exclusive?: boolean;
-  /** Ignore a click that would clear the selection. */
-  enforceValue?: boolean;
-  size?: MuiToggleButtonGroupProps['size'];
-  color?: MuiToggleButtonGroupProps['color'];
-  fullWidth?: boolean;
-};
+> =
+  & FieldControllerProps<TFieldValues, TName, TTransformedValues>
+  & ReserveHelperTextProps
+  & {
+    options: readonly FieldOption<TValue>[];
+    label?: ReactNode;
+    helperText?: ReactNode;
+    /** Lay the buttons out in a row (default) or a column. */
+    row?: boolean;
+    required?: boolean;
+    /** `true` (default) stores `TValue | null`; `false` stores `TValue[]`. */
+    exclusive?: boolean;
+    /** Ignore a click that would clear the selection. */
+    enforceValue?: boolean;
+    size?: MuiToggleButtonGroupProps['size'];
+    color?: MuiToggleButtonGroupProps['color'];
+    fullWidth?: boolean;
+  };
 
 /** Toggle buttons driven by options, storing one value (exclusive) or an array. */
 export function ToggleButtonGroup<
@@ -56,6 +61,7 @@ export function ToggleButtonGroup<
       options,
       label,
       helperText,
+      reserveHelperText,
       row = true,
       required,
       exclusive = true,
@@ -74,7 +80,11 @@ export function ToggleButtonGroup<
   const {onChange, onBlur, ref, disabled} = field;
   const labelId = useId();
   const helperId = useId();
-  const helper = errorText ?? helperText;
+  const {helper, describes} = useHelperText(
+    errorText,
+    helperText,
+    reserveHelperText,
+  );
   const current: unknown = field.value;
   const selected: readonly unknown[] = exclusive
     ? (current === null || current === undefined ? [] : [current])
@@ -94,7 +104,7 @@ export function ToggleButtonGroup<
       {label ? <FormLabel id={labelId}>{label}</FormLabel> : null}
       <ToggleButtonGroupBase
         aria-labelledby={label ? labelId : undefined}
-        aria-describedby={helper ? helperId : undefined}
+        aria-describedby={describes ? helperId : undefined}
         value={exclusive ? (current ?? null) : selected}
         exclusive={exclusive}
         orientation={row ? 'horizontal' : 'vertical'}

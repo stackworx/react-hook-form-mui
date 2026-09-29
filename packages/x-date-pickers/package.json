@@ -27,6 +27,7 @@
   "peerDependencies": {
     "@mui/material": "^9.0.0",
     "@mui/x-date-pickers": "^9.0.0",
+    "@stackworx/react-hook-form-mui": "^0.1.0",
     "react": "^19.0.0",
     "react-hook-form": ">=7.62.0 <8"
   },

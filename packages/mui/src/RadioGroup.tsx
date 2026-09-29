@@ -15,21 +15,26 @@ import {
   useFieldController,
 } from './internal/useFieldController.js';
 import type {FieldControllerProps} from './internal/useFieldController.js';
+import {useHelperText} from './internal/HelperText.js';
+import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
 export type RadioGroupProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
   TValue extends OptionValue,
   TTransformedValues = TFieldValues,
-> = FieldControllerProps<TFieldValues, TName, TTransformedValues> & {
-  options: readonly FieldOption<TValue>[];
-  label?: ReactNode;
-  helperText?: ReactNode;
-  row?: boolean;
-  required?: boolean;
-  size?: MuiRadioProps['size'];
-  color?: MuiRadioProps['color'];
-};
+> =
+  & FieldControllerProps<TFieldValues, TName, TTransformedValues>
+  & ReserveHelperTextProps
+  & {
+    options: readonly FieldOption<TValue>[];
+    label?: ReactNode;
+    helperText?: ReactNode;
+    row?: boolean;
+    required?: boolean;
+    size?: MuiRadioProps['size'];
+    color?: MuiRadioProps['color'];
+  };
 
 /** One radio per option; the form value is the chosen option's value (`TValue | null`). */
 export function RadioGroup<
@@ -40,7 +45,7 @@ export function RadioGroup<
 >(props: RadioGroupProps<TFieldValues, TName, TValue, TTransformedValues>) {
   const [
     controllerProps,
-    {options, label, helperText, row, required, size, color},
+    {options, label, helperText, reserveHelperText, row, required, size, color},
   ] = splitControllerProps<
     TFieldValues,
     TName,
@@ -51,7 +56,11 @@ export function RadioGroup<
   const {name, onChange, onBlur, ref, disabled} = field;
   const labelId = useId();
   const helperId = useId();
-  const helper = errorText ?? helperText;
+  const {helper, describes} = useHelperText(
+    errorText,
+    helperText,
+    reserveHelperText,
+  );
   const current: unknown = field.value;
   const selectedIndex = options.findIndex((option) =>
     Object.is(option.value, current)
@@ -68,7 +77,7 @@ export function RadioGroup<
         name={name}
         row={row}
         aria-labelledby={label ? labelId : undefined}
-        aria-describedby={helper ? helperId : undefined}
+        aria-describedby={describes ? helperId : undefined}
         // MUI reports the radio's string value; the index maps it back to the typed option value.
         value={selectedIndex >= 0 ? String(selectedIndex) : ''}
         onChange={(_event, value) => {

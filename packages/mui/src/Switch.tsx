@@ -12,6 +12,8 @@ import {
   useFieldController,
 } from './internal/useFieldController.js';
 import type {FieldControllerProps} from './internal/useFieldController.js';
+import {useHelperText} from './internal/HelperText.js';
+import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
 export type SwitchProps<
   TFieldValues extends FieldValues,
@@ -19,6 +21,7 @@ export type SwitchProps<
   TTransformedValues = TFieldValues,
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
+  & ReserveHelperTextProps
   & Omit<MuiSwitchProps, 'name' | 'checked' | 'defaultChecked' | 'disabled'>
   & {label: ReactNode; helperText?: ReactNode};
 
@@ -30,7 +33,15 @@ export function Switch<
 >(props: SwitchProps<TFieldValues, TName, TTransformedValues>) {
   const [
     controllerProps,
-    {label, helperText, onChange, onBlur, slotProps, ...rest},
+    {
+      label,
+      helperText,
+      reserveHelperText,
+      onChange,
+      onBlur,
+      slotProps,
+      ...rest
+    },
   ] = splitControllerProps<
     TFieldValues,
     TName,
@@ -40,7 +51,11 @@ export function Switch<
   const {field, errorText, hasError} = useFieldController(controllerProps);
   const {name, value, ref, disabled} = field;
   const helperId = useId();
-  const helper = errorText ?? helperText;
+  const {helper, describes} = useHelperText(
+    errorText,
+    helperText,
+    reserveHelperText,
+  );
 
   return (
     <ToggleFieldShell
@@ -67,7 +82,7 @@ export function Switch<
             input: forceSlotProps(slotProps?.input, (input) => ({
               ref: mergeRefs(ref, input?.ref),
               'aria-invalid': hasError,
-              'aria-describedby': helper ? helperId : undefined,
+              'aria-describedby': describes ? helperId : undefined,
             })),
           }}
         />

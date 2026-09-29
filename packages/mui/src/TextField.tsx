@@ -9,6 +9,8 @@ import {
   useFieldController,
 } from './internal/useFieldController.js';
 import type {FieldControllerProps} from './internal/useFieldController.js';
+import {useHelperText} from './internal/HelperText.js';
+import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
 /** Maps the form value to the text shown in the input and back. */
 export interface TextFieldTransform<TValue> {
@@ -22,6 +24,7 @@ export type TextFieldProps<
   TTransformedValues = TFieldValues,
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
+  & ReserveHelperTextProps
   & DistributiveOmit<
     MuiTextFieldProps,
     'name' | 'value' | 'defaultValue' | 'disabled'
@@ -35,7 +38,16 @@ export function TextField<
 >(props: TextFieldProps<TFieldValues, TName, TTransformedValues>) {
   const [
     controllerProps,
-    {transform, onChange, onBlur, inputRef, error, helperText, ...rest},
+    {
+      transform,
+      onChange,
+      onBlur,
+      inputRef,
+      error,
+      helperText,
+      reserveHelperText,
+      ...rest
+    },
   ] = splitControllerProps<
     TFieldValues,
     TName,
@@ -43,6 +55,7 @@ export function TextField<
     TTransformedValues
   >(props);
   const {field, errorText, hasError} = useFieldController(controllerProps);
+  const {helper} = useHelperText(errorText, helperText, reserveHelperText);
   const ref = useForkRef(field.ref, inputRef);
 
   return (
@@ -63,7 +76,7 @@ export function TextField<
       inputRef={ref}
       disabled={field.disabled}
       error={hasError || error}
-      helperText={errorText ?? helperText}
+      helperText={helper}
     />
   );
 }

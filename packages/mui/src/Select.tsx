@@ -12,6 +12,8 @@ import {
   useFieldController,
 } from './internal/useFieldController.js';
 import type {FieldControllerProps} from './internal/useFieldController.js';
+import {useHelperText} from './internal/HelperText.js';
+import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
 export type SelectProps<
   TFieldValues extends FieldValues,
@@ -20,6 +22,7 @@ export type SelectProps<
   TTransformedValues = TFieldValues,
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
+  & ReserveHelperTextProps
   & DistributiveOmit<
     MuiTextFieldProps,
     'select' | 'value' | 'name' | 'defaultValue' | 'disabled' | 'children'
@@ -47,6 +50,7 @@ export function Select<
       inputRef,
       error,
       helperText,
+      reserveHelperText,
       slotProps,
       ...rest
     },
@@ -57,6 +61,7 @@ export function Select<
     TTransformedValues
   >(props);
   const {field, errorText, hasError} = useFieldController(controllerProps);
+  const {helper} = useHelperText(errorText, helperText, reserveHelperText);
   const ref = useForkRef(field.ref, inputRef);
 
   // MUI hands back the MenuItem value; a browser autofill can hand back a comma-joined string.
@@ -98,7 +103,7 @@ export function Select<
       inputRef={ref}
       disabled={field.disabled}
       error={hasError || error}
-      helperText={errorText ?? helperText}
+      helperText={helper}
       slotProps={{
         ...slotProps,
         select: forceSlotProps(slotProps?.select, () => ({multiple})),

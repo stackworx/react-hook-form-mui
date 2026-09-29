@@ -1,3 +1,4 @@
+import {useReserveHelperText} from '@stackworx/react-hook-form-mui';
 import {useRef} from 'react';
 import {useController} from 'react-hook-form';
 import type {
@@ -43,6 +44,11 @@ export type PickerControllerProps<
   transform?: PickerTransform<FieldPathValue<TFieldValues, TName>, TValue>;
   /** Overrides the default text per RHF rule type or MUI X validation code. */
   messages?: PickerErrorMessages;
+  /**
+   * Keeps the helper text line while it's empty, so an error appearing doesn't move the fields below.
+   * Defaults to the nearest `HelperTextProvider`, else `true`.
+   */
+  reserveHelperText?: boolean;
 };
 
 export interface PickerController<TValue, TError> {
@@ -55,6 +61,7 @@ export interface PickerController<TValue, TError> {
   disabled: boolean | undefined;
   error: boolean;
   helperText: string | undefined;
+  reserveHelperText: boolean;
 }
 
 type PickerControllerKey =
@@ -65,9 +72,10 @@ type PickerControllerKey =
   | 'shouldUnregister'
   | 'disabled'
   | 'transform'
-  | 'messages';
+  | 'messages'
+  | 'reserveHelperText';
 
-/** Separates the controller props (plus `transform` and `messages`) from the picker's own props. */
+/** Separates the controller props (plus `transform`, `messages` and `reserveHelperText`) from the picker's own props. */
 export function splitPickerProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
@@ -94,6 +102,7 @@ export function splitPickerProps<
     disabled,
     transform,
     messages,
+    reserveHelperText,
     ...rest
   } = props;
   return [
@@ -106,6 +115,7 @@ export function splitPickerProps<
       disabled,
       transform,
       messages,
+      reserveHelperText,
     },
     rest,
   ];
@@ -150,7 +160,9 @@ export function usePickerController<
     disabled,
     transform,
     messages,
+    reserveHelperText,
   } = props;
+  const reserve = useReserveHelperText(reserveHelperText);
   const muiErrorRef = useRef<string | null>(null);
   const customValidate = rules?.validate;
   const {field, fieldState, formState} = useController({
@@ -200,5 +212,6 @@ export function usePickerController<
     disabled: field.disabled,
     error: error !== undefined,
     helperText: resolveErrorText(error, messages),
+    reserveHelperText: reserve,
   };
 }

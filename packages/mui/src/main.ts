@@ -16,6 +16,11 @@ export {
   useFormErrorMessages,
 } from './internal/FormErrorMessages.js';
 export type {FormErrorMessages} from './internal/FormErrorMessages.js';
+export {
+  HelperTextProvider,
+  useReserveHelperText,
+} from './internal/HelperText.js';
+export type {ReserveHelperTextProps} from './internal/HelperText.js';
 export type {FieldControllerProps} from './internal/useFieldController.js';
 export {RadioGroup} from './RadioGroup.js';
 export type {RadioGroupProps} from './RadioGroup.js';

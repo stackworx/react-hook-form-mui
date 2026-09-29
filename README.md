@@ -19,7 +19,7 @@ npm install @stackworx/react-hook-form-mui react-hook-form @mui/material @emotio
 # NumberField only:
 npm install @base-ui/react
 
-# Date and time pickers (bring any MUI X adapter, e.g. Luxon):
+# Date and time pickers (with the core package above; bring any MUI X adapter, e.g. Luxon):
 npm install @stackworx/react-hook-form-mui-x-date-pickers @mui/x-date-pickers luxon
 
 # Range pickers (MUI X Pro licence):
@@ -34,6 +34,9 @@ npm install @stackworx/react-hook-form-mui-x-date-pickers-pro @mui/x-date-picker
 - The helper text shows the rule's message when there is an error, and your `helperText` otherwise.
   A rule without a message (`rules={{required: true}}`) falls back to `FormErrorMessagesProvider`
   (English defaults), then to the error type.
+- An empty helper line keeps its space, so an error appearing doesn't move the fields below it.
+  `reserveHelperText={false}` turns that off for one field, and `HelperTextProvider` for a form or
+  section; a field's own setting wins.
 - Your `onChange` and `onBlur` run after the form binding instead of replacing it.
 - `form.setFocus(name)` focuses the input.
 - An `undefined` value renders as empty (`''`, `null` or `[]`), so there are no
@@ -45,6 +48,15 @@ import {FormErrorMessagesProvider} from '@stackworx/react-hook-form-mui';
 <FormErrorMessagesProvider messages={{required: 'Dit is verpligtend'}}>
   <App />
 </FormErrorMessagesProvider>;
+```
+
+```tsx
+import {HelperTextProvider} from '@stackworx/react-hook-form-mui';
+
+// A dense filter bar that shows no helper text needs no reserved lines.
+<HelperTextProvider reserve={false}>
+  <Filters />
+</HelperTextProvider>;
 ```
 
 ## Core components

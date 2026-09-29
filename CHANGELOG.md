@@ -16,6 +16,8 @@ and `@stackworx/react-hook-form-mui-x-date-pickers-pro`.
   `@stackworx/react-hook-form-mui/number-field`, so apps without `@base-ui/react` never resolve it.
 - The tarballs contain `dist` only (no `src`, tsconfigs or `*.tsbuildinfo`).
 - The Pro package depends on `@stackworx/react-hook-form-mui-x-date-pickers`.
+- Both picker packages also need `@stackworx/react-hook-form-mui` (a peer), which holds the settings
+  every field in a form shares.
 
 #### All components
 
@@ -23,7 +25,7 @@ and `@stackworx/react-hook-form-mui-x-date-pickers-pro`.
   `useController`; they no longer leak onto MUI or the DOM. `disabled` now reaches React Hook Form,
   so a disabled field is not validated.
 - Your `onChange`/`onBlur` run alongside the form binding instead of replacing it.
-- `helperText` shows the error message, else your `helperText`. It no longer defaults to `' '`.
+- `helperText` shows the error message, else your `helperText`.
 - An `undefined` value renders as empty instead of switching from uncontrolled to controlled.
 
 #### Core
@@ -64,6 +66,10 @@ and `@stackworx/react-hook-form-mui-x-date-pickers-pro`.
   the same choice of stored value as `Autocomplete`. Selected options keep their labels across pages
   and searches.
 - `FormErrorMessagesProvider` for default and translated rule messages.
+- An empty helper line keeps its space, as `helperText=' '` did, so an error appearing doesn't move
+  the form. `reserveHelperText={false}` turns that off for a field, and `HelperTextProvider` for a
+  form or section.
 - Pickers: `DateField`, `TimeField` and `DateTimeField`, `transform` on every picker, and the
-  `usePickerController` / `pickerValueProps` / `pickerTextFieldSlotProps` building blocks.
+  `usePickerController` / `pickerValueProps` / `pickerTextFieldSlotProps` / `pickerHelperText`
+  building blocks.
 - Pro: `DateTimeRangePicker` and `SingleInputDateRangeField`.
