@@ -1,7 +1,28 @@
+import type {AutocompleteValue} from '@mui/material/Autocomplete';
 import {useState} from 'react';
 
-/** The option object(s) an autocomplete hands to MUI. */
-export type Selection<TOption> = TOption[] | TOption | null;
+/** What an autocomplete hands to MUI: an option, `null`, or an array of options when `multiple`. */
+export type Selection<TOption> = AutocompleteValue<
+  TOption,
+  boolean | undefined,
+  boolean | undefined,
+  false
+>;
+
+/** A string or number option is its own key. */
+export function defaultOptionKey(option: unknown): unknown {
+  return option;
+}
+
+/**
+ * MUI's default label, `option.label ?? option`, as a string: MUI's own logs an error for a number.
+ */
+export function defaultOptionLabel(option: unknown): string {
+  if (typeof option === 'object' && option !== null && 'label' in option) {
+    return String(option.label);
+  }
+  return String(option);
+}
 
 /** How an autocomplete maps between its options and what the form stores. */
 export interface OptionMapping<TOption, TValue> {
@@ -21,7 +42,7 @@ export interface OptionMapping<TOption, TValue> {
  * reference: React Hook Form clones default values, and a refetch returns new objects.
  */
 export function optionMapping<TOption, TValue>(
-  getOptionKey: (option: TOption) => string,
+  getOptionKey: (option: TOption) => unknown,
   getOptionValue: ((option: TOption) => TValue) | undefined,
 ): OptionMapping<TOption, TValue> {
   if (getOptionValue) {
@@ -35,10 +56,12 @@ export function optionMapping<TOption, TValue>(
     toValue: (option) => option as unknown as TValue,
     lookupKey: getOptionKey,
     // A stored option still shows when the options no longer include it: it carries its own label.
+    // An empty string is no selection, as it is for MUI.
     resolve: (stored, candidates) =>
-      typeof stored === 'object' && stored !== null
-        ? (candidates.get(getOptionKey(stored as TOption)) ?? stored as TOption)
-        : undefined,
+      stored === null || stored === undefined
+        ? undefined
+        : (candidates.get(getOptionKey(stored as TOption))
+          ?? (stored === '' ? undefined : stored as TOption)),
   };
 }
 
@@ -91,7 +114,7 @@ export function asList<TOption>(selection: Selection<TOption>): TOption[] {
  */
 export function useStableSelection<TOption>(
   next: Selection<TOption>,
-  getOptionKey: (option: TOption) => string,
+  getOptionKey: (option: TOption) => unknown,
   getOptionLabel: (option: TOption) => string,
 ): Selection<TOption> {
   const [stable, setStable] = useState(next);

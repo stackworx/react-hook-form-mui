@@ -377,3 +377,29 @@ test('without getOptionValue it stores the options, which keep their labels with
     {id: 'L2', name: 'Warehouse'},
   ]);
 });
+
+test('string options need no getOptionKey or getOptionLabel', async () => {
+  const source: OptionsSource<string> = {
+    options: ['Small', 'Medium'],
+    loading: false,
+    onSearch: vi.fn(),
+    hasMore: false,
+    onLoadMore: vi.fn(),
+  };
+  const {form} = renderWithForm<{size: string | null}>(
+    (control) => (
+      <AsyncAutocomplete
+        name='size'
+        control={control}
+        label='Size'
+        source={source}
+      />
+    ),
+    {defaultValues: {size: 'Large'}},
+  );
+  const input = screen.getByRole('combobox', {name: 'Size'});
+  expect(input).toHaveValue('Large');
+  await userEvent.click(input);
+  await userEvent.click(screen.getByRole('option', {name: 'Medium'}));
+  expect(form.getValues('size')).toBe('Medium');
+});

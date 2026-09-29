@@ -9,6 +9,8 @@ import type {FieldPath, FieldValues, PathValue} from 'react-hook-form';
 import {composeHandlers} from './internal/composeHandlers.js';
 import {
   asList,
+  defaultOptionKey,
+  defaultOptionLabel,
   indexOptions,
   optionMapping,
   optionsForValues,
@@ -30,7 +32,7 @@ import type {ReserveHelperTextProps} from './internal/HelperText.js';
 export type AutocompleteFieldValue<
   TValue,
   TMultiple extends boolean | undefined,
-> = TMultiple extends true ? TValue[] : TValue | null;
+> = AutocompleteValue<TValue, TMultiple, false, false>;
 
 /**
  * What one selection stores in the field `TName`: the field's type, or its element type when `multiple`.
@@ -59,6 +61,34 @@ export type OptionValueProps<TOption, TStored> = [TOption] extends [TStored] ? {
     getOptionValue: (option: TOption) => TStored;
   };
 
+type MuiOptionProps<TOption> = MuiAutocompleteProps<
+  TOption,
+  boolean | undefined,
+  boolean | undefined,
+  false
+>;
+
+// MUI's conventions: a string or number option is its own key and label, and an object's label is its
+// `label`. Options that follow them need neither prop.
+export type OptionKeyProps<TOption> = [TOption] extends [string | number] ? {
+    /** Identifies an option. Defaults to the option itself. */
+    getOptionKey?: MuiOptionProps<TOption>['getOptionKey'];
+  }
+  : {
+    /** Identifies an option. A stored option is matched by it, not by reference. */
+    getOptionKey: NonNullable<MuiOptionProps<TOption>['getOptionKey']>;
+  };
+
+export type OptionLabelProps<TOption> = [TOption] extends
+  [string | number | {label: string}] ? {
+    /** The option's text. Defaults to its `label`, or the option itself. */
+    getOptionLabel?: MuiOptionProps<TOption>['getOptionLabel'];
+  }
+  : {
+    /** The option's text. */
+    getOptionLabel: NonNullable<MuiOptionProps<TOption>['getOptionLabel']>;
+  };
+
 export type AutocompleteProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
@@ -70,14 +100,13 @@ export type AutocompleteProps<
   & ReserveHelperTextProps
   & {
     options: readonly TOption[];
-    /** Identifies an option. A stored option is matched by it, not by reference. */
-    getOptionKey: (option: TOption) => string;
-    getOptionLabel: (option: TOption) => string;
     multiple?: TMultiple;
     label: ReactNode;
     helperText?: ReactNode;
     placeholder?: string;
   }
+  & OptionKeyProps<TOption>
+  & OptionLabelProps<TOption>
   & OptionValueProps<
     TOption,
     AutocompleteStoredValue<TFieldValues, TName, TMultiple>
@@ -98,8 +127,8 @@ export type AutocompleteProps<
 
 /**
  * An Autocomplete over a static list. The form stores the selected option, or `getOptionValue`'s result
- * for it. A stored value without a matching option is dropped on the next change; a stored option still
- * shows until then.
+ * for it. Options can be strings, numbers or objects, as in MUI. A stored value without a matching option
+ * is dropped on the next change; a stored option still shows until then.
  */
 export function Autocomplete<
   TFieldValues extends FieldValues,
@@ -121,7 +150,7 @@ export function Autocomplete<
     {
       options,
       getOptionKey,
-      getOptionLabel,
+      getOptionLabel = defaultOptionLabel,
       getOptionValue,
       multiple,
       label,
@@ -145,7 +174,8 @@ export function Autocomplete<
   >(props);
   const {field, errorText, hasError} = useFieldController(controllerProps);
   const {helper} = useHelperText(errorText, helperText, reserveHelperText);
-  const mapping = optionMapping(getOptionKey, getOptionValue);
+  const keyOf = getOptionKey ?? defaultOptionKey;
+  const mapping = optionMapping(keyOf, getOptionValue);
   const byLookupKey = indexOptions(options, mapping.lookupKey);
   const value = useStableSelection(
     optionsForValues(
@@ -153,14 +183,14 @@ export function Autocomplete<
       Boolean(multiple),
       (stored) => mapping.resolve(stored, byLookupKey),
     ),
-    getOptionKey,
+    keyOf,
     getOptionLabel,
   );
   // MUI warns about a value that none of its options match.
-  const keys = new Set(options.map(getOptionKey));
+  const keys = new Set(options.map(keyOf));
   const shownOptions = [
     ...options,
-    ...asList(value).filter((option) => !keys.has(getOptionKey(option))),
+    ...asList(value).filter((option) => !keys.has(keyOf(option))),
   ];
 
   return (
@@ -184,7 +214,7 @@ export function Autocomplete<
       getOptionLabel={getOptionLabel}
       getOptionKey={getOptionKey}
       isOptionEqualToValue={(option, selected) =>
-        getOptionKey(option) === getOptionKey(selected)}
+        keyOf(option) === keyOf(selected)}
       disabled={field.disabled}
       renderInput={(params) => (
         <TextFieldBase

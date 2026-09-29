@@ -40,10 +40,12 @@ and `@stackworx/react-hook-form-mui-x-date-pickers-pro`.
   `true`, and `enforceValue` keeps the current selection.
 - **Select** takes `options` instead of `MenuItem` children and `multiple` instead of
   `SelectProps.multiple`. It stores the option's typed value, and `null` when empty.
-- **Autocomplete** needs `getOptionKey`, `getOptionLabel` and `label`, and renders its own input. It
-  still stores the selected option, now matched by `getOptionKey` rather than by reference, so default
-  values and refetched options stay selected. `getOptionValue` stores something else instead, such as
-  the option's id; the field's type decides which is allowed.
+- **Autocomplete** needs `label` and renders its own input. Options follow MUI's conventions: strings
+  and numbers need neither `getOptionKey` nor `getOptionLabel`, and an object's label defaults to its
+  `label`. Object options need `getOptionKey`, and a stored option is matched by it rather than by
+  reference, so default values and refetched options stay selected. It still stores the selected
+  option; `getOptionValue` stores something else instead, such as the option's id, and the field's
+  type decides which is allowed.
 - The 0.0.x components passed `inputRef`, which MUI 9 removed; refs now go through `slotProps.input`.
 
 #### Date and time pickers
@@ -63,7 +65,7 @@ and `@stackworx/react-hook-form-mui-x-date-pickers-pro`.
 
 - `TextField` `transform`; `NumberField` (Base UI recipe, `number | null`).
 - `AsyncAutocomplete`: server-backed options through an `OptionsSource`, with a load-more footer and
-  the same choice of stored value as `Autocomplete`. Selected options keep their labels across pages
+  the same option conventions and choice of stored value as `Autocomplete`. Selected options keep their labels across pages
   and searches.
 - `FormErrorMessagesProvider` for default and translated rule messages.
 - An empty helper line keeps its space, as `helperText=' '` did, so an error appearing doesn't move

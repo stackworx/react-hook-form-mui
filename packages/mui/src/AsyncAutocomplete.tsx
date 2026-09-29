@@ -16,12 +16,16 @@ import type {ListboxWithFooterProps} from './asyncAutocomplete/ListboxWithFooter
 import type {OptionsSource} from './asyncAutocomplete/OptionsSource.js';
 import type {
   AutocompleteStoredValue,
+  OptionKeyProps,
+  OptionLabelProps,
   OptionValueProps,
 } from './Autocomplete.js';
 import {composeHandlers} from './internal/composeHandlers.js';
 import {forceSlotProps} from './internal/forceSlotProps.js';
 import {
   asList,
+  defaultOptionKey,
+  defaultOptionLabel,
   indexOptions,
   optionMapping,
   optionsForValues,
@@ -51,9 +55,6 @@ export type AsyncAutocompleteProps<
   & ReserveHelperTextProps
   & {
     source: OptionsSource<TOption>;
-    /** Identifies an option. A stored option is matched by it, not by reference. */
-    getOptionKey: (option: TOption) => string;
-    getOptionLabel: (option: TOption) => string;
     multiple?: TMultiple;
     label: ReactNode;
     helperText?: ReactNode;
@@ -67,6 +68,8 @@ export type AsyncAutocompleteProps<
     /** @default (loaded, total) => `Showing ${loaded} of ${total} — type to narrow` */
     countText?: (loaded: number, total: number) => ReactNode;
   }
+  & OptionKeyProps<TOption>
+  & OptionLabelProps<TOption>
   & OptionValueProps<
     TOption,
     AutocompleteStoredValue<TFieldValues, TName, TMultiple>
@@ -92,8 +95,8 @@ const defaultCountText = (loaded: number, total: number) =>
 
 /**
  * An Autocomplete over server-backed options (an `OptionsSource` the app builds). The form stores the
- * selected option, or `getOptionValue`'s result for it. Selected options keep their labels when later
- * pages or searches no longer contain them.
+ * selected option, or `getOptionValue`'s result for it. Options can be strings, numbers or objects, as in
+ * MUI. Selected options keep their labels when later pages or searches no longer contain them.
  */
 export function AsyncAutocomplete<
   TFieldValues extends FieldValues,
@@ -115,7 +118,7 @@ export function AsyncAutocomplete<
     {
       source,
       getOptionKey,
-      getOptionLabel,
+      getOptionLabel = defaultOptionLabel,
       getOptionValue,
       multiple,
       label,
@@ -147,7 +150,8 @@ export function AsyncAutocomplete<
   const {field, errorText, hasError} = useFieldController(controllerProps);
   const {helper} = useHelperText(errorText, helperText, reserveHelperText);
 
-  const mapping = optionMapping(getOptionKey, getOptionValue);
+  const keyOf = getOptionKey ?? defaultOptionKey;
+  const mapping = optionMapping(keyOf, getOptionValue);
   // Selected options, so their labels survive pages and searches that no longer include them.
   const [picked, setPicked] = useState<ReadonlyMap<unknown, TOption>>(
     () => new Map(),
@@ -180,13 +184,13 @@ export function AsyncAutocomplete<
       (stored) =>
         mapping.resolve(stored, available) ?? mapping.resolve(stored, picked),
     ),
-    getOptionKey,
+    keyOf,
     getOptionLabel,
   );
-  const sourceKeys = new Set(source.options.map(getOptionKey));
+  const sourceKeys = new Set(source.options.map(keyOf));
   const options = [
     ...source.options,
-    ...asList(value).filter((option) => !sourceKeys.has(getOptionKey(option))),
+    ...asList(value).filter((option) => !sourceKeys.has(keyOf(option))),
   ];
 
   // What the source was last asked for; drives the footer text.
@@ -317,7 +321,7 @@ export function AsyncAutocomplete<
       getOptionLabel={getOptionLabel}
       getOptionKey={getOptionKey}
       isOptionEqualToValue={(option, selected) =>
-        getOptionKey(option) === getOptionKey(selected)}
+        keyOf(option) === keyOf(selected)}
       loading={source.loading}
       disabled={field.disabled}
       slotProps={{

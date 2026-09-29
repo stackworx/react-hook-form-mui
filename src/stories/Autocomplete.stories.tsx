@@ -28,15 +28,18 @@ const getOptionLabel = (location: Location) => location.name;
 const byRegion = (location: Location) => location.region;
 const byId = (id: string) => locations.filter((location) => location.id === id);
 
-/** The props the Autocomplete controls set, except the multiple-only `limitTags`. */
+/** The props the Autocomplete controls set, except `groupByRegion` and the multiple-only `limitTags`. */
 function autocompleteProps(args: Args) {
   return {
     placeholder: args.placeholder === '' ? undefined : args.placeholder,
     disableClearable: args.disableClearable,
     size: args.size,
-    groupBy: args.groupByRegion ? byRegion : undefined,
   };
 }
+
+const regionGroups = (
+  args: Args,
+) => (args.groupByRegion ? byRegion : undefined);
 
 const autocompleteControls = [
   ...formAndFieldControls,
@@ -82,6 +85,7 @@ const meta = {
           control={control}
           {...fieldProps(args)}
           {...autocompleteProps(args)}
+          groupBy={regionGroups(args)}
           rules={{required: requiredRule(args)}}
           options={locations}
           getOptionKey={getOptionKey}
@@ -112,6 +116,7 @@ export const StoresTheOptions: Story = {
           control={control}
           {...fieldProps(args)}
           {...autocompleteProps(args)}
+          groupBy={regionGroups(args)}
           rules={{required: requiredRule(args)}}
           options={locations}
           getOptionKey={getOptionKey}
@@ -137,6 +142,7 @@ export const StoresAnId: Story = {
           control={control}
           {...fieldProps(args)}
           {...autocompleteProps(args)}
+          groupBy={regionGroups(args)}
           rules={{required: requiredRule(args)}}
           options={locations}
           getOptionKey={getOptionKey}
@@ -163,6 +169,7 @@ export const StoresIds: Story = {
           control={control}
           {...fieldProps(args)}
           {...autocompleteProps(args)}
+          groupBy={regionGroups(args)}
           rules={{required: requiredRule(args)}}
           options={locations}
           getOptionKey={getOptionKey}
@@ -170,6 +177,72 @@ export const StoresIds: Story = {
           getOptionValue={(location) => location.id}
           multiple
           limitTags={args.limitTags}
+        />
+      )}
+    </FormStory>
+  ),
+};
+
+const ungroupedControls = autocompleteControls.filter(
+  (name) => name !== 'groupByRegion',
+);
+
+const sizes = ['Extra small', 'Small', 'Medium', 'Large', 'Extra large'];
+
+export const PlainStrings: Story = {
+  name: 'Plain strings (no getOptionKey or getOptionLabel)',
+  args: {label: 'Size', required: 'Pick a size'},
+  parameters: {controls: {include: ungroupedControls}},
+  render: (args) => (
+    <FormStory<{size: string | null}>
+      defaultValues={{size: 'Medium'}}
+      settings={args}
+    >
+      {(control) => (
+        <Autocomplete
+          name='size'
+          control={control}
+          {...fieldProps(args)}
+          {...autocompleteProps(args)}
+          rules={{required: requiredRule(args)}}
+          options={sizes}
+        />
+      )}
+    </FormStory>
+  ),
+};
+
+interface Colour {
+  id: number;
+  label: string;
+}
+
+const colours: Colour[] = [
+  {id: 1, label: 'Red'},
+  {id: 2, label: 'Green'},
+  {id: 3, label: 'Blue'},
+  {id: 4, label: 'Yellow'},
+];
+
+export const ObjectsWithALabel: Story = {
+  name: 'Objects with a label (no getOptionLabel)',
+  args: {label: 'Colour', required: 'Pick a colour'},
+  parameters: {controls: {include: ungroupedControls}},
+  render: (args) => (
+    <FormStory<{colour: Colour | null}>
+      // A copy, not one of `colours`: the stored option is matched by getOptionKey.
+      defaultValues={{colour: {id: 2, label: 'Green'}}}
+      settings={args}
+    >
+      {(control) => (
+        <Autocomplete
+          name='colour'
+          control={control}
+          {...fieldProps(args)}
+          {...autocompleteProps(args)}
+          rules={{required: requiredRule(args)}}
+          options={colours}
+          getOptionKey={(colour) => colour.id}
         />
       )}
     </FormStory>

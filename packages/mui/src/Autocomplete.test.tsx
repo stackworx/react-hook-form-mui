@@ -266,3 +266,138 @@ test('a stored option that the options no longer include still shows', () => {
     'Old depot',
   );
 });
+
+interface Film {
+  id: number;
+  label: string;
+}
+
+const films: Film[] = [
+  {id: 1, label: 'Casablanca'},
+  {id: 2, label: 'Metropolis'},
+];
+
+test('string options are their own key and label', async () => {
+  const {form} = renderWithForm<{size: string | null}>(
+    (control) => (
+      <Autocomplete
+        name='size'
+        control={control}
+        label='Size'
+        options={['Small', 'Medium', 'Large']}
+      />
+    ),
+    {defaultValues: {size: 'Large'}},
+  );
+  const input = screen.getByRole('combobox', {name: 'Size'});
+  expect(input).toHaveValue('Large');
+  await userEvent.click(input);
+  expect(screen.getByRole('option', {name: 'Large'})).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  await userEvent.click(screen.getByRole('option', {name: 'Medium'}));
+  expect(form.getValues('size')).toBe('Medium');
+});
+
+test('multiple number options store the numbers', async () => {
+  const {form} = renderWithForm<{floors: number[]}>(
+    (control) => (
+      <Autocomplete
+        name='floors'
+        control={control}
+        label='Floors'
+        options={[1, 2, 3]}
+        multiple
+      />
+    ),
+    {defaultValues: {floors: [2]}},
+  );
+  expect(screen.getByRole('button', {name: '2'})).toBeInTheDocument();
+  await userEvent.click(screen.getByRole('combobox', {name: 'Floors'}));
+  await userEvent.click(screen.getByRole('option', {name: '3'}));
+  expect(form.getValues('floors')).toEqual([2, 3]);
+});
+
+test('an empty string is no selection', async () => {
+  renderWithForm<{size: string | null}>(
+    (control) => (
+      <Autocomplete
+        name='size'
+        control={control}
+        label='Size'
+        options={['Small', 'Medium']}
+      />
+    ),
+    {defaultValues: {size: ''}},
+  );
+  const input = screen.getByRole('combobox', {name: 'Size'});
+  expect(input).toHaveValue('');
+  await userEvent.click(input);
+  expect(screen.getAllByRole('option')).toHaveLength(2);
+});
+
+test("an object's label defaults to its label, and keys can be numbers", async () => {
+  renderWithForm<{film: Film | null}>(
+    (control) => (
+      <Autocomplete
+        name='film'
+        control={control}
+        label='Film'
+        options={films}
+        getOptionKey={(film) => film.id}
+      />
+    ),
+    {defaultValues: {film: {id: 2, label: 'Metropolis'}}},
+  );
+  const input = screen.getByRole('combobox', {name: 'Film'});
+  expect(input).toHaveValue('Metropolis');
+  await userEvent.click(input);
+  expect(screen.getByRole('option', {name: 'Metropolis'})).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+});
+
+test('the option type decides whether getOptionKey and getOptionLabel are needed', () => {
+  const control = undefined as unknown as Control<{
+    size: string | null;
+    film: Film | null;
+    location: Location | null;
+  }>;
+  const elements = [
+    <Autocomplete
+      key='strings'
+      name='size'
+      control={control}
+      label='Size'
+      options={['Small']}
+    />,
+    <Autocomplete
+      key='labelled objects'
+      name='film'
+      control={control}
+      label='Film'
+      options={films}
+      getOptionKey={(film) => film.id}
+    />,
+    // @ts-expect-error objects need getOptionKey
+    <Autocomplete
+      key='no key'
+      name='film'
+      control={control}
+      label='Film'
+      options={films}
+    />,
+    // @ts-expect-error objects without a label need getOptionLabel
+    <Autocomplete
+      key='no label'
+      name='location'
+      control={control}
+      label='Location'
+      options={locations}
+      getOptionKey={getOptionKey}
+    />,
+  ];
+  expect(elements).toHaveLength(4);
+});

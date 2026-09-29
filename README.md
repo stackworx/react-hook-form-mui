@@ -169,10 +169,31 @@ Stores `TValue | null` (the default, `exclusive`) or `TValue[]` (`exclusive={fal
 
 A static list. The form stores the selected option, or an array of them with `multiple`, as MUI's
 Autocomplete does. To store something else, such as the option's id, pass `getOptionValue`; the field's
-type decides which is allowed. Stored options are matched by `getOptionKey`, not by reference, so
-default values and refetched options stay selected.
+type decides which is allowed.
+
+Options follow MUI's conventions. A string or number is its own key and label, so it needs neither
+`getOptionKey` nor `getOptionLabel`, and an object's label defaults to its `label`. Objects need
+`getOptionKey`: stored options are matched by it, not by reference, so default values and refetched
+options stay selected.
 
 ```tsx
+// Strings: stores the size, {size: string | null}
+<Autocomplete
+  name='size'
+  control={control}
+  label='Size'
+  options={['Small', 'Medium', 'Large']}
+/>;
+
+// Objects with a label: stores the colour, {colour: {id: number; label: string} | null}
+<Autocomplete
+  name='colour'
+  control={control}
+  label='Colour'
+  options={colours}
+  getOptionKey={(colour) => colour.id}
+/>;
+
 // Stores the locations: {locations: Location[]}
 <Autocomplete
   name='locations'
@@ -199,7 +220,7 @@ default values and refetched options stay selected.
 
 ### AsyncAutocomplete
 
-Server-backed options, with the same choice of stored value as `Autocomplete`. The library never
+Server-backed options, with the same option conventions and choice of stored value as `Autocomplete`. The library never
 fetches: you pass an `OptionsSource` (for example built from Relay's `usePaginationFragment`).
 
 ```ts
