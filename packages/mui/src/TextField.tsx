@@ -31,6 +31,7 @@ export type TextFieldProps<
   >
   & {transform?: TextFieldTransform<FieldPathValue<TFieldValues, TName>>};
 
+/** MUI TextField bound to RHF; the form value is the text, or `transform`'s output. */
 export function TextField<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,

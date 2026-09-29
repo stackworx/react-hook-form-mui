@@ -7,6 +7,7 @@ import type {Preview} from '@storybook/react-vite';
 const theme = createTheme();
 
 const preview: Preview = {
+  tags: ['autodocs'],
   parameters: {layout: 'padded'},
   decorators: [
     (Story) => (

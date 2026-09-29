@@ -20,12 +20,24 @@ import type {Meta, StoryObj} from '@storybook/react-vite';
 import {DateTime} from 'luxon';
 import {useWatch} from 'react-hook-form';
 import type {Control} from 'react-hook-form';
+import {formArgs, formArgTypes, formControls} from './controls';
+import type {FormArgs} from './controls';
 import {FormStory} from './FormStory';
 import {airports, useCitySource} from './trips';
 import type {City} from './trips';
 
-const meta = {title: 'Examples/Book a trip'} satisfies Meta;
+const meta = {
+  title: 'Examples/Book a trip',
+  args: {...formArgs},
+  argTypes: {...formArgTypes},
+  parameters: {
+    controls: {include: formControls},
+  },
+  render: (args) => <TripForm settings={args} />,
+} satisfies Meta<FormArgs>;
 export default meta;
+
+type Story = StoryObj<typeof meta>;
 
 /** What a booking API would take: an option, codes, and ISO dates, times and timestamps. */
 interface Trip {
@@ -105,10 +117,10 @@ function FlexibleDays({control}: {control: Control<Trip>}) {
   );
 }
 
-function TripForm() {
+function TripForm({settings}: {settings: FormArgs}) {
   const citySource = useCitySource();
   return (
-    <FormStory<Trip> defaultValues={defaultValues}>
+    <FormStory<Trip> defaultValues={defaultValues} settings={settings}>
       {(control) => (
         <>
           <Heading>Where</Heading>
@@ -255,7 +267,4 @@ function TripForm() {
   );
 }
 
-export const BookATrip: StoryObj = {
-  name: 'Book a trip',
-  render: () => <TripForm />,
-};
+export const BookATrip: Story = {name: 'Book a trip'};

@@ -3,12 +3,13 @@ import {useEffect, useEffectEvent, useState} from 'react';
 
 /**
  * An in-memory stand-in for a Relay pagination fragment: filters by `text`, pages by `pageSize` and
- * answers after a short delay.
+ * answers after `latencyMs`.
  */
 export function useInMemorySource<T>(
   items: readonly T[],
   text: (item: T) => string,
   pageSize = 8,
+  latencyMs = 300,
 ): OptionsSource<T> {
   const [search, setSearch] = useState('');
   const [pages, setPages] = useState(1);
@@ -31,11 +32,11 @@ export function useInMemorySource<T>(
   useEffect(() => {
     const timer = setTimeout(() => {
       settle();
-    }, 300);
+    }, latencyMs);
     return () => {
       clearTimeout(timer);
     };
-  }, [search, pages]);
+  }, [search, pages, latencyMs]);
 
   return {
     options,

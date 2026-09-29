@@ -304,7 +304,12 @@ import {DateRangePicker} from '@stackworx/react-hook-form-mui-x-date-pickers-pro
 ```bash
 npm install
 npm run check            # dprint, ESLint, TypeScript, Vitest, library builds
-npm run storybook        # one story per component
+npm run storybook        # every component, its Docs page and a "Book a trip" example
 ```
+
+Each story's Controls panel changes the field (label, helper text, disabled, the reserved helper
+line, a required message and the component's own props) and the form around it (validation mode,
+`HelperTextProvider`, disabled). The panel under the fields shows the live form state, and Submit
+logs the values in the Actions tab.
 
 See [CHANGELOG.md](CHANGELOG.md) for the changes since 0.0.x.

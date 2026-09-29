@@ -30,6 +30,14 @@ export const locations: Location[] = regions.flatMap((region, r) =>
 );
 
 /** Locations served like a paged, searchable API. */
-export function useLocationSource(): OptionsSource<Location> {
-  return useInMemorySource(locations, (location) => location.name);
+export function useLocationSource(
+  pageSize?: number,
+  latencyMs?: number,
+): OptionsSource<Location> {
+  return useInMemorySource(
+    locations,
+    (location) => location.name,
+    pageSize,
+    latencyMs,
+  );
 }
