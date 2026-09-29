@@ -9,3 +9,5 @@ npm install @base-ui/react # only for NumberField (@stackworx/react-hook-form-mu
 ```
 
 Examples and API: https://github.com/stackworx/react-hook-form-mui#readme
+
+Upgrading from 0.0.x: https://github.com/stackworx/react-hook-form-mui/blob/main/MIGRATION.md

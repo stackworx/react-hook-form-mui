@@ -9,3 +9,5 @@ npm install @stackworx/react-hook-form-mui-x-date-pickers @mui/x-date-pickers re
 ```
 
 Examples and API: https://github.com/stackworx/react-hook-form-mui#readme
+
+Upgrading from 0.0.x: https://github.com/stackworx/react-hook-form-mui/blob/main/MIGRATION.md

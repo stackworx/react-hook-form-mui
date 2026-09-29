@@ -5,6 +5,8 @@
 All three packages: `@stackworx/react-hook-form-mui`, `@stackworx/react-hook-form-mui-x-date-pickers`
 and `@stackworx/react-hook-form-mui-x-date-pickers-pro`.
 
+Upgrading from 0.0.x? [MIGRATION.md](MIGRATION.md) walks through the changes with before and after code.
+
 ### Breaking changes
 
 #### Peers and packaging

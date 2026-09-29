@@ -12,7 +12,8 @@ error text, `setFocus` and `disabled` all behave the same way.
 
 ## Install
 
-The packages are ESM only and need React 18 or 19, MUI 9 and react-hook-form 7.62 or later.
+The packages are ESM only and need React 18 or 19, MUI 9 and react-hook-form 7.62 or later. Upgrading from
+0.0.x? See [MIGRATION.md](MIGRATION.md).
 
 ```bash
 npm install @stackworx/react-hook-form-mui react-hook-form @mui/material @emotion/react @emotion/styled
