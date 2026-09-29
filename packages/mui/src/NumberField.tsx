@@ -35,13 +35,6 @@ function SSRInitialFilled(_props: {value: number | null | undefined}) {
 }
 SSRInitialFilled.muiName = 'Input';
 
-type BaseChangeArgs = Parameters<
-  NonNullable<BaseNumberField.Root.Props['onValueChange']>
->;
-type BaseBlurArgs = Parameters<
-  NonNullable<BaseNumberField.Input.Props['onBlur']>
->;
-
 export type NumberFieldProps<
   TFieldValues extends FieldValues,
   TName extends FieldPathByValue<TFieldValues, number | null | undefined>,
@@ -49,7 +42,10 @@ export type NumberFieldProps<
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
   & ReserveHelperTextProps
-  & FieldHandlerProps<BaseChangeArgs, BaseBlurArgs>
+  & FieldHandlerProps<
+    Parameters<NonNullable<BaseNumberField.Root.Props['onValueChange']>>,
+    Parameters<NonNullable<BaseNumberField.Input.Props['onBlur']>>
+  >
   & Pick<
     BaseNumberField.Root.Props,
     | 'min'
@@ -115,7 +111,7 @@ export function NumberField<
       {...rootProps}
       name={name}
       value={value ?? null}
-      onValueChange={changeHandler<BaseChangeArgs>((next) => {
+      onValueChange={changeHandler((next) => {
         onChange(next);
       }, {handleChange, suppressFormChange})}
       disabled={disabled}
@@ -138,7 +134,10 @@ export function NumberField<
       <BaseNumberField.Input
         id={id}
         ref={ref}
-        onBlur={composeHandlers<BaseBlurArgs>(onBlur, handleBlur)}
+        onBlur={composeHandlers<Parameters<NonNullable<typeof handleBlur>>>(
+          onBlur,
+          handleBlur,
+        )}
         render={(inputProps, state) => (
           <OutlinedInput
             label={label}

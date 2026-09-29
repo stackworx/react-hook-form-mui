@@ -1,4 +1,9 @@
 import {useReserveHelperText} from '@stackworx/react-hook-form-mui';
+import type {
+  FieldControllerProps,
+  FieldTransform,
+  ReserveHelperTextProps,
+} from '@stackworx/react-hook-form-mui';
 import {useRef} from 'react';
 import {useController} from 'react-hook-form';
 import type {
@@ -6,7 +11,6 @@ import type {
   FieldPath,
   FieldPathValue,
   FieldValues,
-  UseControllerProps,
 } from 'react-hook-form';
 import {
   defaultPickerErrorMessages,
@@ -14,42 +18,19 @@ import {
 } from '../pickerErrorMessages.js';
 import type {PickerErrorMessages} from '../pickerErrorMessages.js';
 
-/** The props a bound picker forwards to RHF's `useController`. */
-export type PickerFieldControllerProps<
-  TFieldValues extends FieldValues,
-  TName extends FieldPath<TFieldValues>,
-  TTransformedValues = TFieldValues,
-> = Pick<
-  UseControllerProps<TFieldValues, TName, TTransformedValues>,
-  | 'name'
-  | 'control'
-  | 'rules'
-  | 'defaultValue'
-  | 'shouldUnregister'
-  | 'disabled'
->;
-
-/** Maps the form value to the picker value and back (e.g. ISO strings to adapter dates). */
-export interface PickerTransform<TFormValue, TValue> {
-  input: (formValue: TFormValue) => TValue;
-  output: (value: TValue) => TFormValue;
-}
-
 export type PickerControllerProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
   TValue,
   TTransformedValues = TFieldValues,
-> = PickerFieldControllerProps<TFieldValues, TName, TTransformedValues> & {
-  transform?: PickerTransform<FieldPathValue<TFieldValues, TName>, TValue>;
-  /** Overrides the default text per RHF rule type or MUI X validation code. */
-  messages?: PickerErrorMessages;
-  /**
-   * Keeps the helper text line while it's empty, so an error appearing doesn't move the fields below.
-   * Defaults to the nearest `HelperTextProvider`, else `true`.
-   */
-  reserveHelperText?: boolean;
-};
+> =
+  & FieldControllerProps<TFieldValues, TName, TTransformedValues>
+  & ReserveHelperTextProps
+  & {
+    transform?: FieldTransform<FieldPathValue<TFieldValues, TName>, TValue>;
+    /** Overrides the default text per RHF rule type or MUI X validation code. */
+    messages?: PickerErrorMessages;
+  };
 
 export interface PickerController<TValue, TError> {
   value: TValue;

@@ -14,6 +14,17 @@ export interface FieldHandlerProps<
   suppressFormChange?: boolean;
 }
 
+/** `handleChange` and `handleBlur` taking the arguments of a MUI component's `onChange` and `onBlur`. */
+export type MuiHandlerProps<
+  TMuiProps extends {
+    onChange?: ((...args: never[]) => unknown) | undefined;
+    onBlur?: ((...args: never[]) => unknown) | undefined;
+  },
+> = FieldHandlerProps<
+  Parameters<NonNullable<TMuiProps['onChange']>>,
+  Parameters<NonNullable<TMuiProps['onBlur']>>
+>;
+
 /** The change handler a component gives MUI: the form's, unless suppressed, then `handleChange`. */
 export function changeHandler<TArgs extends unknown[]>(
   formChange: (...args: TArgs) => void,

@@ -20,11 +20,6 @@ import type {FieldControllerProps} from './internal/useFieldController.js';
 import {useHelperText} from './internal/HelperText.js';
 import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
-type ChangeArgs<TValue> = [
-  event: MouseEvent<HTMLElement>,
-  value: TValue | TValue[] | null,
-];
-
 export type ToggleButtonGroupProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
@@ -33,7 +28,10 @@ export type ToggleButtonGroupProps<
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
   & ReserveHelperTextProps
-  & FieldHandlerProps<ChangeArgs<TValue>, [event: FocusEvent<HTMLDivElement>]>
+  & FieldHandlerProps<
+    [event: MouseEvent<HTMLElement>, value: TValue | TValue[] | null],
+    [event: FocusEvent<HTMLDivElement>]
+  >
   & {
     options: readonly FieldOption<TValue>[];
     label?: ReactNode;
@@ -105,7 +103,7 @@ export function ToggleButtonGroup<
     options,
     (value) => selected.some((item) => Object.is(item, value)),
   );
-  const change = changeHandler<ChangeArgs<TValue>>((_event, value) => {
+  const change = changeHandler((_event, value) => {
     onChange(value);
   }, {handleChange, suppressFormChange});
 
@@ -134,7 +132,7 @@ export function ToggleButtonGroup<
           if (enforceValue && cleared) return;
           change(event, next);
         }}
-        onBlur={composeHandlers<[event: FocusEvent<HTMLDivElement>]>(
+        onBlur={composeHandlers<Parameters<NonNullable<typeof handleBlur>>>(
           onBlur,
           handleBlur,
         )}

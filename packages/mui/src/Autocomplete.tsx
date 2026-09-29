@@ -8,7 +8,7 @@ import type {ReactNode} from 'react';
 import type {FieldPath, FieldValues, PathValue} from 'react-hook-form';
 import {composeHandlers} from './internal/composeHandlers.js';
 import {changeHandler} from './internal/fieldHandlers.js';
-import type {FieldHandlerProps} from './internal/fieldHandlers.js';
+import type {MuiHandlerProps} from './internal/fieldHandlers.js';
 import {
   asList,
   defaultOptionKey,
@@ -28,15 +28,6 @@ import {
 import type {FieldControllerProps} from './internal/useFieldController.js';
 import {useHelperText} from './internal/HelperText.js';
 import type {ReserveHelperTextProps} from './internal/HelperText.js';
-
-/**
- * What an autocomplete stores: the selected option, or what `getOptionValue` returns for it; an array of
- * them when `multiple`.
- */
-export type AutocompleteFieldValue<
-  TValue,
-  TMultiple extends boolean | undefined,
-> = AutocompleteValue<TValue, TMultiple, false, false>;
 
 /**
  * What one selection stores in the field `TName`: the field's type, or its element type when `multiple`.
@@ -93,27 +84,6 @@ export type OptionLabelProps<TOption> = [TOption] extends
     getOptionLabel: NonNullable<MuiOptionProps<TOption>['getOptionLabel']>;
   };
 
-/** MUI's `onChange` arguments, which `handleChange` takes. */
-export type AutocompleteChangeArgs<
-  TOption,
-  TMultiple extends boolean | undefined,
-> = Parameters<
-  NonNullable<
-    MuiAutocompleteProps<TOption, TMultiple, boolean | undefined, false>[
-      'onChange'
-    ]
-  >
->;
-
-/** `handleChange` takes MUI's `onChange` arguments, and `handleBlur` its `onBlur` ones. */
-export type AutocompleteHandlerProps<
-  TOption,
-  TMultiple extends boolean | undefined,
-> = FieldHandlerProps<
-  AutocompleteChangeArgs<TOption, TMultiple>,
-  Parameters<NonNullable<MuiOptionProps<TOption>['onBlur']>>
->;
-
 export type AutocompleteProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
@@ -136,7 +106,9 @@ export type AutocompleteProps<
     TOption,
     AutocompleteStoredValue<TFieldValues, TName, TMultiple>
   >
-  & AutocompleteHandlerProps<TOption, TMultiple>
+  & MuiHandlerProps<
+    MuiAutocompleteProps<TOption, TMultiple, boolean | undefined, false>
+  >
   & Omit<
     MuiAutocompleteProps<TOption, TMultiple, boolean | undefined, false>,
     | 'options'
@@ -220,10 +192,7 @@ export function Autocomplete<
   const {inputText, setInputText, resyncText} = useSelectionText(
     inputTextFor(value, getOptionLabel, rest.renderValue !== undefined),
   );
-  const change = changeHandler<AutocompleteChangeArgs<TOption, TMultiple>>((
-    _event,
-    next,
-  ) => {
+  const change = changeHandler((_event, next) => {
     field.onChange(valuesForOptions(next, mapping.toValue));
   }, {handleChange, suppressFormChange});
   // MUI warns about a value that none of its options match.
@@ -253,9 +222,10 @@ export function Autocomplete<
         if (suppressFormChange) resyncText();
         change(event, next, reason, details);
       }}
-      onBlur={composeHandlers<
-        Parameters<NonNullable<MuiOptionProps<TOption>['onBlur']>>
-      >(field.onBlur, handleBlur)}
+      onBlur={composeHandlers<Parameters<NonNullable<typeof handleBlur>>>(
+        field.onBlur,
+        handleBlur,
+      )}
       getOptionLabel={getOptionLabel}
       getOptionKey={getOptionKey}
       isOptionEqualToValue={(option, selected) =>

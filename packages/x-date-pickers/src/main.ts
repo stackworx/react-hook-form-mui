@@ -18,8 +18,6 @@ export {
 export type {
   PickerController,
   PickerControllerProps,
-  PickerFieldControllerProps,
-  PickerTransform,
 } from './internal/usePickerController.js';
 export {
   defaultPickerErrorMessages,

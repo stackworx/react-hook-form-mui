@@ -88,9 +88,7 @@ export function RadioGroup<
     options,
     (value) => Object.is(value, current),
   );
-  const change = changeHandler<
-    [event: ChangeEvent<HTMLInputElement>, value: TValue | null]
-  >((_event, value) => {
+  const change = changeHandler((_event, value) => {
     onChange(value);
   }, {handleChange, suppressFormChange});
 
@@ -107,7 +105,7 @@ export function RadioGroup<
         onChange={(event, value) => {
           change(event, options[Number(value)]?.value ?? null);
         }}
-        onBlur={composeHandlers<[event: FocusEvent<HTMLDivElement>]>(
+        onBlur={composeHandlers<Parameters<NonNullable<typeof handleBlur>>>(
           onBlur,
           handleBlur,
         )}

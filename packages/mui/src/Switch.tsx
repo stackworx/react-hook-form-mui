@@ -5,7 +5,7 @@ import type {ReactNode} from 'react';
 import type {FieldPathByValue, FieldValues} from 'react-hook-form';
 import {composeHandlers} from './internal/composeHandlers.js';
 import {changeHandler} from './internal/fieldHandlers.js';
-import type {FieldHandlerProps} from './internal/fieldHandlers.js';
+import type {MuiHandlerProps} from './internal/fieldHandlers.js';
 import {forceSlotProps} from './internal/forceSlotProps.js';
 import {mergeRefs} from './internal/mergeRefs.js';
 import {ToggleFieldShell} from './internal/ToggleFieldShell.js';
@@ -17,9 +17,6 @@ import type {FieldControllerProps} from './internal/useFieldController.js';
 import {useHelperText} from './internal/HelperText.js';
 import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
-type MuiChangeArgs = Parameters<NonNullable<MuiSwitchProps['onChange']>>;
-type MuiBlurArgs = Parameters<NonNullable<MuiSwitchProps['onBlur']>>;
-
 export type SwitchProps<
   TFieldValues extends FieldValues,
   TName extends FieldPathByValue<TFieldValues, boolean | null | undefined>,
@@ -27,7 +24,7 @@ export type SwitchProps<
 > =
   & FieldControllerProps<TFieldValues, TName, TTransformedValues>
   & ReserveHelperTextProps
-  & FieldHandlerProps<MuiChangeArgs, MuiBlurArgs>
+  & MuiHandlerProps<MuiSwitchProps>
   & Omit<
     MuiSwitchProps,
     'name' | 'checked' | 'defaultChecked' | 'disabled' | 'onChange' | 'onBlur'
@@ -79,10 +76,13 @@ export function Switch<
           {...rest}
           name={name}
           checked={Boolean(value)}
-          onChange={changeHandler<MuiChangeArgs>((_event, checked) => {
+          onChange={changeHandler((_event, checked) => {
             field.onChange(checked);
           }, {handleChange, suppressFormChange})}
-          onBlur={composeHandlers<MuiBlurArgs>(field.onBlur, handleBlur)}
+          onBlur={composeHandlers<Parameters<NonNullable<typeof handleBlur>>>(
+            field.onBlur,
+            handleBlur,
+          )}
           slotProps={{
             ...slotProps,
             input: forceSlotProps(slotProps?.input, (input) => ({

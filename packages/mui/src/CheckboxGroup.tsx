@@ -21,8 +21,6 @@ import type {FieldControllerProps} from './internal/useFieldController.js';
 import {useHelperText} from './internal/HelperText.js';
 import type {ReserveHelperTextProps} from './internal/HelperText.js';
 
-type MuiBlurArgs = Parameters<NonNullable<MuiCheckboxProps['onBlur']>>;
-
 export type CheckboxGroupProps<
   TFieldValues extends FieldValues,
   TName extends FieldPath<TFieldValues>,
@@ -33,7 +31,7 @@ export type CheckboxGroupProps<
   & ReserveHelperTextProps
   & FieldHandlerProps<
     [event: ChangeEvent<HTMLInputElement>, values: TValue[]],
-    MuiBlurArgs
+    Parameters<NonNullable<MuiCheckboxProps['onBlur']>>
   >
   & {
     options: readonly FieldOption<TValue>[];
@@ -86,9 +84,7 @@ export function CheckboxGroup<
   const isSelected = (value: TValue) =>
     selected.some((item) => Object.is(item, value));
   const focusIndex = focusTargetIndex(options, isSelected);
-  const change = changeHandler<
-    [event: ChangeEvent<HTMLInputElement>, values: TValue[]]
-  >((_event, values) => {
+  const change = changeHandler((_event, values) => {
     onChange(values);
   }, {handleChange, suppressFormChange});
 
@@ -120,7 +116,9 @@ export function CheckboxGroup<
                   ) as TValue[];
                   change(event, checked ? [...without, option.value] : without);
                 }}
-                onBlur={composeHandlers<MuiBlurArgs>(onBlur, handleBlur)}
+                onBlur={composeHandlers<
+                  Parameters<NonNullable<typeof handleBlur>>
+                >(onBlur, handleBlur)}
                 slotProps={{
                   input: {ref: index === focusIndex ? ref : undefined},
                 }}

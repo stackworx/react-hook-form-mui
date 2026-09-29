@@ -15,8 +15,6 @@ import {ListboxWithFooter} from './asyncAutocomplete/ListboxWithFooter.js';
 import type {ListboxWithFooterProps} from './asyncAutocomplete/ListboxWithFooter.js';
 import type {OptionsSource} from './asyncAutocomplete/OptionsSource.js';
 import type {
-  AutocompleteChangeArgs,
-  AutocompleteHandlerProps,
   AutocompleteStoredValue,
   OptionKeyProps,
   OptionLabelProps,
@@ -24,6 +22,7 @@ import type {
 } from './Autocomplete.js';
 import {composeHandlers} from './internal/composeHandlers.js';
 import {changeHandler} from './internal/fieldHandlers.js';
+import type {MuiHandlerProps} from './internal/fieldHandlers.js';
 import {forceSlotProps} from './internal/forceSlotProps.js';
 import {
   asList,
@@ -79,7 +78,7 @@ export type AsyncAutocompleteProps<
     TOption,
     AutocompleteStoredValue<TFieldValues, TName, TMultiple>
   >
-  & AutocompleteHandlerProps<TOption, TMultiple>
+  & MuiHandlerProps<MuiProps<TOption, TMultiple>>
   & Omit<
     MuiProps<TOption, TMultiple>,
     | 'options'
@@ -200,10 +199,7 @@ export function AsyncAutocomplete<
   const {inputText, setInputText, resyncText} = useSelectionText(
     inputTextFor(value, getOptionLabel, rest.renderValue !== undefined),
   );
-  const change = changeHandler<AutocompleteChangeArgs<TOption, TMultiple>>((
-    _event,
-    next,
-  ) => {
+  const change = changeHandler((_event, next) => {
     field.onChange(valuesForOptions(next, mapping.toValue));
   }, {handleChange, suppressFormChange});
   const sourceKeys = new Set(source.options.map(keyOf));
@@ -309,9 +305,10 @@ export function AsyncAutocomplete<
         if (suppressFormChange) resyncText();
         change(event, next, reason, details);
       }}
-      onBlur={composeHandlers<
-        Parameters<NonNullable<MuiProps<TOption, TMultiple>['onBlur']>>
-      >(field.onBlur, handleBlur)}
+      onBlur={composeHandlers<Parameters<NonNullable<typeof handleBlur>>>(
+        field.onBlur,
+        handleBlur,
+      )}
       inputValue={inputValueProp ?? inputText}
       onInputChange={(event, inputValue, reason) => {
         setInputText(inputValue);
