@@ -9,6 +9,6 @@ for pkg in mui x-date-pickers x-date-pickers-pro; do
   if [ -n "$(npm view "$name@$version" version 2>/dev/null)" ]; then
     echo "$name@$version is already on npm"
   else
-    npm publish -w "packages/$pkg"
+    npm publish --provenance --access public -w "packages/$pkg"
   fi
 done
